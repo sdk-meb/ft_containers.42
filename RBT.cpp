@@ -1,5 +1,6 @@
 
 # include<iostream>
+#include <cstdlib>
 
 
 # define	RED		1
@@ -33,7 +34,6 @@ template <class T_SHIP>
 			};
 			RBT(const RBT& tree){
 
-				std::cout << "CAC\n";
 				/* the copy assignment constructor here is dangerous, because the 
 					destroying of an object have a role in killing all his child */
 				Color	= tree.Color;
@@ -73,7 +73,7 @@ template <class T_SHIP>
 				return searching(ship, const_cast<RBT*> (this));
 			}
 			~RBT(){
-				std::cout << "destroy\n";
+				// std::cout << "destroy\n";
 				try { delete R_ch; }
 				catch(...){ }//std::cerr << "right 1\n";};
 				try { delete L_ch; }
@@ -91,43 +91,18 @@ template <class T_SHIP>
 				R_ch	= NIL;
 				Dirty	= NIL;
 			}
-			RBT&	operator=(RBT& tree)/*  half copy , inside */{
+			RBT&	operator=(const RBT& tree)/*  half copy , inside */{
 
-				std::cout << "CAO\n";
 				Ship	= tree.Ship;
 				Color	= tree.Color;
-				P		= tree.P;
-				L_ch	= tree.L_ch;
-				R_ch	= tree.R_ch;
-				Dirty	= tree.Dirty;
 				return *this;
 			}
 
-			void	swap(RBT& tree)/* global copy , inside/outside */{
+			void	swap(RBT& subtree){
 
-				std::cout << "SWAP\n";
-				if (WhoIm() == JU)
-					P->L_ch = &tree;
-				else if (WhoIm() == SE)
-					P->R_ch = &tree;
-				if (tree.WhoIm() == JU)
-					tree.P->L_ch = this;
-				else if (tree.WhoIm() == SE)
-					tree.P->R_ch = this;
-
-				if (R_ch)
-					R_ch->P = &tree;
-				if (tree.R_ch)
-					tree.R_ch->P = this;
-
-				if (L_ch)
-					L_ch->P = &tree;
-				if (tree.L_ch)
-					tree.L_ch->P = this;
-
-				RBT& tmp = tree;
-				tree = *this;
-				*this = tmp;
+				RBT tmp = *this;
+				*this = subtree;
+				subtree = tmp;
 			}
 
 			void	recolor(){
@@ -184,59 +159,42 @@ template <class T_SHIP>
 
 			void	lr()/* Left Rotation */ {
 
-				if (not(R_ch && R_ch->L_ch))
-					throw "_____lr ???____";
-				RBT&	_y	= *R_ch;
-				RBT&	ß	= *_y.L_ch;
+				RBT*	y = this->R_ch;
 
-				{/* ß <⤶ _y to x ⤷> ß  */
-					R_ch	= &ß;
-					ß.P 	= this;
-				}	
+				if (not(y))
+					return ;
+				swap(*R_ch);
+				this->R_ch = this->R_ch->R_ch;
+				if (this->R_ch)
+					this->R_ch->P = this;
+				y->R_ch = y->L_ch;
 
-				{/*  p ⥮ x to p ⥮ _y */
-					_y.P = P;
-					if (WhoIm() == ROOT)
-						swap(_y);			
-					else if (WhoIm() == SE)
-						P->R_ch	= &_y;
-					else
-						P->L_ch	= &_y;
-				}
+				y->L_ch = this->L_ch;
+				if (this->L_ch)
+					this->L_ch->P = y;
 
-				{/* x ⤷> _y to x <⤶ _y */
-					_y.L_ch	= this;
-					P		= &_y;
-				}
+				y->P = this;
+				this->L_ch = y;
 			}
 			void	rr()/* Rigth Rotation */{
 
-				if (not(L_ch && L_ch->R_ch))
-					throw "_____rr ???____";
-				RBT&	_x	= *L_ch;
-				RBT&	ß	= *_x.R_ch;
+				RBT*	x = this->L_ch;
 
-				{/* _x ⤷> ß to ß <⤶ this  */
-					L_ch	= &ß;
-					ß.P 	= this;
-				}
+				if (not(x))
+					return ;
+				swap(*L_ch);
+				this->L_ch = this->L_ch->L_ch;
+				if (this->L_ch)
+					this->L_ch->P = this;
+				x->L_ch = this->R_ch;
+				if (this->R_ch)
+					this->R_ch->P = x;
+				x->R_ch = this->R_ch;
+				if (x->R_ch)
+					x->R_ch->P = x;
 
-				{/*  p ⥮ this to p ⥮ _x */
-					_x.P = P;
-					if (WhoIm() == ROOT)
-						swap(_x);
-					else if (WhoIm() == SE)
-						P->R_ch	= &_x;
-					else if (WhoIm() == JU)
-						P->L_ch	= &_x;
-					else
-						exit(NOTHING);
-				}
-				
-				{/* _x <⤶ this to _x ⤷> this */
-					_x.R_ch	= this;
-					P		= &_x;
-				}
+				x->P = this;
+				this->R_ch = x;
 			}
 
 			void		adjustment(){
@@ -261,7 +219,6 @@ template <class T_SHIP>
 					if ((WhoIm() == SE && WhoIs(P) == SE)/* case 3.2.1 */
 						|| (WhoIm() == JU && WhoIs(P) == JU)/* case 3.2.3 */){
 
-					std::cout << "here seq "<< P->P->Ship <<" \n";
 						P->P->rr();
 						get_S().Color = RED;
 						P->Color = BLACK;
@@ -269,7 +226,6 @@ template <class T_SHIP>
 					else if ((WhoIm() == JU && WhoIs(P) == SE)/* case 3.2.2 */
 						|| (WhoIm() == SE && WhoIs(P) == JU)/* case 3.2.4 */){
 
-					std::cout << "here opps \n";
 						P->lr();
 						P->P->rr();/* case 3.2.1 */
 						get_S().Color = RED;
@@ -318,17 +274,19 @@ template <class T_SHIP>
 				return searching(ship, subtree);
 			}
 
-			public:void	print_tree( RBT& tree)
+			public:void	print_tree( RBT* tree)
 			{
-					std::cout << tree.Ship << ' '\
-					<< (tree.Color ? "R " : "B ");
+					if (not(tree))
+						return ;
+					std::cout << tree->Ship << ' '\
+					<< (tree->Color ? "R " : "B ");
 
-					if (tree.L_ch)
-						print_tree(*tree.L_ch);
-					if (tree.R_ch){
+					if (tree->L_ch)
+						print_tree(tree->L_ch);
+					if (tree->R_ch){
 
 						std::cout << std::endl;
-						print_tree(*tree.R_ch);
+						print_tree(tree->R_ch);
 					}
 			}
 	};
@@ -341,7 +299,10 @@ int	main(){
 
 		tree1.insert(3);
 		tree1.insert(1);
-		tree1.print_tree(tree1);
+		tree1.insert(10);
+
+		tree1.insert(9);
+		tree1.print_tree(&tree1);
 
 	}
 	catch(const char *f){ std::cerr << f << std::endl ; };
