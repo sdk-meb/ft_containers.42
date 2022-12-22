@@ -13,15 +13,15 @@
 
 template <class T_SHIP>
 	struct RBT {
-	
-		private:
+
+		// private:
 				T_SHIP			Ship;/* load */
 				bool			Color;
 				RBT*			P;/* root of subtree(parent), NIL if node has root*/
 				RBT*			L_ch;/* left subtree, youngest son*/
 				RBT*			R_ch;/* right subtree, eldest son*/
 				RBT*			Dirty;/* when load find in tree his similar */
-		
+
 		public:
 			RBT(const T_SHIP& ship): Ship(ship){
 
@@ -73,7 +73,6 @@ template <class T_SHIP>
 				return searching(ship, const_cast<RBT*> (this));
 			}
 			~RBT(){
-				// std::cout << "destroy\n";
 				try { delete R_ch; }
 				catch(...){ }//std::cerr << "right 1\n";};
 				try { delete L_ch; }
@@ -132,8 +131,9 @@ template <class T_SHIP>
 
 			RBT&	get_S() const/* Sibling */{
 
-				if (WhoIm() == ROOT)
+				if (WhoIm() == ROOT || not(P->R_ch) || not(P->L_ch))
 					throw "";
+				
 				if (WhoIm() == JU)
 					return *P->R_ch;
 				//else if (WhoIm() == SE)
@@ -208,10 +208,12 @@ template <class T_SHIP>
 
 					{/* ( uncle is RED )*/ /* case 3.1 */
 
+						// std::cout << "uncle red__\n";
 						P->recolor();
 						get_U().recolor();
 						if (P->P->WhoIm() != ROOT)
 							P->P->recolor();
+						// std::cout << "uncle red\n";
 					}
 				}
 				catch(...){
@@ -219,16 +221,22 @@ template <class T_SHIP>
 					if ((WhoIm() == SE && WhoIs(P) == SE)/* case 3.2.1 */
 						|| (WhoIm() == JU && WhoIs(P) == JU)/* case 3.2.3 */){
 
+						// std::cout << "seq___\n ";
 						P->P->rr();
-						get_S().Color = RED;
+						try{ get_S().Color = RED;}
+						catch(...){};
 						P->Color = BLACK;
+						// std::cout << "seq \n";
 					}
 					else if ((WhoIm() == JU && WhoIs(P) == SE)/* case 3.2.2 */
 						|| (WhoIm() == SE && WhoIs(P) == JU)/* case 3.2.4 */){
 
+						// std::cout << "op__\n ";
 						P->lr();
 						P->P->rr();/* case 3.2.1 */
-						get_S().Color = RED;
+						try{ get_S().Color = RED;}
+						catch(...){};
+						// std::cout << "op \n";
 						P->Color = BLACK;
 					}
 				}
@@ -278,11 +286,11 @@ template <class T_SHIP>
 			{
 					if (not(tree))
 						return ;
-					std::cout << tree->Ship << ' '\
-					<< (tree->Color ? "R " : "B ");
 
 					if (tree->L_ch)
 						print_tree(tree->L_ch);
+					std::cout << tree->Ship << ' '\
+					<< (tree->Color ? "R " : "B ");
 					if (tree->R_ch){
 
 						std::cout << std::endl;
@@ -294,18 +302,25 @@ template <class T_SHIP>
 
 int	main(){
 
-	struct RBT<int> tree1(7);
+	struct RBT<int> t(INT_MAX);
 	try{
 
-		tree1.insert(3);
-		tree1.insert(1);
-		tree1.insert(10);
+		size_t size_k = 8;
+		int k[] = {INT_MAX, 3, 10, 7, 8, 9, -3, -6, -6, -6};
+		for (size_t i = 1; i < size_k ; i++ )
+			t.insert(k[i]);
 
-		tree1.insert(9);
-		tree1.print_tree(&tree1);
+		for (size_t i = 0; i < size_k; i++){
 
-	}
-	catch(const char *f){ std::cerr << f << std::endl ; };
+			struct RBT<int> * tptr = const_cast< RBT<int>*>(t.search(k[i]));
+			std::cout << tptr << "[" << tptr->P << " P] ["<< tptr->L_ch << " L]" 
+			<< " ["<< tptr->R_ch << " R] ->" << tptr->Ship << ' ' << (tptr->Color ? "R " : "B ") << std::endl;
+		}
+
+		// t.print_tree(&t);
+		std::cout << std::endl;
+
+	}	catch(const char *f){ std::cerr << f << std::endl ; };
+
 	return 0;
 }
-
