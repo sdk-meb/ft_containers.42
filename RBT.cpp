@@ -1,6 +1,7 @@
 
 # include<iostream>
 #include <cstdlib>
+# include<climits>
 
 
 # define	RED		1
@@ -81,7 +82,7 @@ template <class T_SHIP>
 				catch(...){ }//std::cerr << "dirty 1\n";};
 			}
 
-		private :
+		// private :
 			RBT(const T_SHIP& ship, RBT& parent): Ship(ship){
 
 				Color	= RED;
@@ -93,7 +94,8 @@ template <class T_SHIP>
 			RBT&	operator=(const RBT& tree)/*  half copy , inside */{
 
 				Ship	= tree.Ship;
-				Color	= tree.Color;
+				if (WhoIm() != ROOT)
+					Color	= tree.Color;
 				return *this;
 			}
 
@@ -106,6 +108,8 @@ template <class T_SHIP>
 
 			void	recolor(){
 
+				if (WhoIm() == ROOT)
+					return ;
 				if (Color == RED)
 					Color = BLACK;
 				else
@@ -159,10 +163,10 @@ template <class T_SHIP>
 
 			void	lr()/* Left Rotation */ {
 
+				if (not(this->R_ch))
+					return ;
 				RBT*	y = this->R_ch;
 
-				if (not(y))
-					return ;
 				swap(*R_ch);
 				this->R_ch = this->R_ch->R_ch;
 				if (this->R_ch)
@@ -171,29 +175,27 @@ template <class T_SHIP>
 
 				y->L_ch = this->L_ch;
 				if (this->L_ch)
-					this->L_ch->P = y;
+					y->L_ch->P = y;
 
-				y->P = this;
 				this->L_ch = y;
 			}
 			void	rr()/* Rigth Rotation */{
 
+				if (not(this->L_ch))
+					return ;
 				RBT*	x = this->L_ch;
 
-				if (not(x))
-					return ;
 				swap(*L_ch);
 				this->L_ch = this->L_ch->L_ch;
 				if (this->L_ch)
 					this->L_ch->P = this;
-				x->L_ch = this->R_ch;
-				if (this->R_ch)
-					this->R_ch->P = x;
+
+				x->L_ch = x->R_ch;
+
 				x->R_ch = this->R_ch;
-				if (x->R_ch)
+				if (this->R_ch)
 					x->R_ch->P = x;
 
-				x->P = this;
 				this->R_ch = x;
 			}
 
@@ -206,39 +208,39 @@ template <class T_SHIP>
 					if (get_U().Color == BLACK)/* throw in case no uncle */
 						throw "";
 
-					{/* ( uncle is RED )*/ /* case 3.1 */
+					{/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
 
-						// std::cout << "uncle red__\n";
-						P->recolor();
-						get_U().recolor();
-						if (P->P->WhoIm() != ROOT)
-							P->P->recolor();
-						// std::cout << "uncle red\n";
+						P->Color = BLACK;
+						get_U().Color = BLACK;
+						P->P->recolor();
+						if (P->P->Color == RED)
+							P->P->adjustment();
 					}
 				}
 				catch(...){
 
-					if ((WhoIm() == SE && WhoIs(P) == SE)/* case 3.2.1 */
-						|| (WhoIm() == JU && WhoIs(P) == JU)/* case 3.2.3 */){
+					if (WhoIm() == JU && WhoIs(P) == SE)/* case 3.2.2 */{
 
-						// std::cout << "seq___\n ";
-						P->P->rr();
-						try{ get_S().Color = RED;}
-						catch(...){};
-						P->Color = BLACK;
-						// std::cout << "seq \n";
+						P->rr();/* I'M ju to SE */
+						goto C321;/* case 3.2.1 */
 					}
-					else if ((WhoIm() == JU && WhoIs(P) == SE)/* case 3.2.2 */
-						|| (WhoIm() == SE && WhoIs(P) == JU)/* case 3.2.4 */){
+					else if(WhoIm() == SE && WhoIs(P) == JU)/* case 3.2.4 */{
 
-						// std::cout << "op__\n ";
-						P->lr();
-						P->P->rr();/* case 3.2.1 */
-						try{ get_S().Color = RED;}
-						catch(...){};
-						// std::cout << "op \n";
-						P->Color = BLACK;
+						P->lr();/* I'M SU to ju */
+						goto C323;/* case 3.2.3 */
 					}
+					else if (WhoIm() == SE && WhoIs(P) == SE)/* case 3.2.1 */
+		C321:			P->P->lr();
+					else if (WhoIm() == JU && WhoIs(P) == JU)/* case 3.2.3 */
+		C323:			P->P->rr();
+					else
+						exit(3456);
+					try{ get_S().Color = RED;}
+						catch(...){};
+
+					P->recolor();
+					if (P->Color == RED)
+						P->adjustment();
 				}
 			}
 			void		insertion(const T_SHIP& ship, RBT* subtree)/* BST_i # binary search tree insertion # */{
@@ -281,46 +283,36 @@ template <class T_SHIP>
 					return  subtree;
 				return searching(ship, subtree);
 			}
-
-			public:void	print_tree( RBT* tree)
-			{
-					if (not(tree))
-						return ;
-
-					if (tree->L_ch)
-						print_tree(tree->L_ch);
-					std::cout << tree->Ship << ' '\
-					<< (tree->Color ? "R " : "B ");
-					if (tree->R_ch){
-
-						std::cout << std::endl;
-						print_tree(tree->R_ch);
-					}
-			}
 	};
-
 
 int	main(){
 
-	struct RBT<int> t(INT_MAX);
+	struct RBT<int> t(__INT_MAX__);
 	try{
 
-		size_t size_k = 8;
-		int k[] = {INT_MAX, 3, 10, 7, 8, 9, -3, -6, -6, -6};
-		for (size_t i = 1; i < size_k ; i++ )
+		size_t size_k = 12;
+		int k[] = {__INT_MAX__, -6, -10, 7, 8, 9, -3, 3, -63, -9, -8, -29,};
+		for (size_t i = 1; i < size_k ; i++)
 			t.insert(k[i]);
-
-		for (size_t i = 0; i < size_k; i++){
+		
+		for (size_t i = 0; i <= size_k; i++){
 
 			struct RBT<int> * tptr = const_cast< RBT<int>*>(t.search(k[i]));
-			std::cout << tptr << "[" << tptr->P << " P] ["<< tptr->L_ch << " L]" 
-			<< " ["<< tptr->R_ch << " R] ->" << tptr->Ship << ' ' << (tptr->Color ? "R " : "B ") << std::endl;
+			if (not(tptr))
+				continue;
+			std::cout	<< "["
+						<< (tptr->P ? tptr->P->Ship : 0)		<< " P] ["
+						<< (tptr->L_ch ? tptr->L_ch->Ship : 0)	<< " L] ["
+						<< (tptr->R_ch ? tptr->R_ch->Ship : 0)	<< " R] ("
+						<< tptr->Ship << ") " << (tptr->Color ? "R " : "B ")
+						<< std::endl;
 		}
 
-		// t.print_tree(&t);
 		std::cout << std::endl;
 
 	}	catch(const char *f){ std::cerr << f << std::endl ; };
 
 	return 0;
 }
+
+/*  c++ RBT.cpp -std=c++98 -Wall -Wextra -Werror -fsanitize=address  */
