@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2022/12/30 22:20:09 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2022/12/31 12:07:46 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,19 @@ namespace ft {
 				template< class U >
 					iterator_traits (const iterator_traits<U>& other)
 						: Super(other.base()) { };
-				value_type	base() const { return Super; };
+				value_type	base() const { return Super; }
 
+				iterator_traits&	operator=( const iterator_traits& rIt ){ Super = rIt.base(); return *this; }
 
 				iterator_traits&	operator++() { ++Super; return *this; }
 				iterator_traits&	operator--() { --Super; return *this; }
-				iterator_traits	operator++ (int) { return iterator_traits(Super++); }/* * 2 ????????? */ 
-				iterator_traits	operator-- (int) { return  iterator_traits(Super--); }/* * 2 ????????? */ 
-				iterator_traits	operator+ (ptrdiff_t n) const { return iterator_traits(Super + n); }
-				iterator_traits	operator- (ptrdiff_t n) const { return iterator_traits(Super - n); }
+				iterator_traits		operator++ (int) { return iterator_traits(Super++); }/* * 2 ????????? */ 
+				iterator_traits		operator-- (int) { return  iterator_traits(Super--); }/* * 2 ????????? */ 
+				iterator_traits		operator+ (ptrdiff_t n) const { return iterator_traits(Super + n); }
+				iterator_traits		operator- (ptrdiff_t n) const { return iterator_traits(Super - n); }
 				iterator_traits&	operator+= (ptrdiff_t n) { Super += n; return *this; }
 				iterator_traits&	operator-= (ptrdiff_t n) { Super -= n; return *this; }
-				
+
 				reference	operator*() const { value_type tmp = (Super - 1); return *tmp; };
 				pointer		operator->() const { return *Super; }
 				reference	operator[] (difference_type n) const { return base()[-n -1]; }
@@ -69,27 +70,18 @@ namespace ft {
 
 			public:
 				reverse_iterator() : Super(nullptr) { };
-				explicit reverse_iterator (iterator_type x): Super(x.base()) { };
+				explicit reverse_iterator (iterator_type x): Super(x) { };
 				template< class U >
 					reverse_iterator (const reverse_iterator<U>& other)
 						: Super(other.base()) { };
 				iterator_type	base() const { return iterator_traits<iterator_type>(Super).base(); };
 
+				reverse_iterator&	operator=( const reverse_iterator& rIt ){ Super = rIt.base();}
 
 				reverse_iterator&	operator--() { ++Super; return *this; }
 				reverse_iterator&	operator++() { --Super; return *this; }
-				reverse_iterator	operator-- (int) {
-
-					reverse_iterator old = *this;
-					Super++;
-					return old;
-				}
-				reverse_iterator	operator++ (int) {
-
-					reverse_iterator old = *this;
-					Super--;
-					return old;
-				}
+				reverse_iterator	operator-- (int) { return reverse_iterator(Super++); }
+				reverse_iterator	operator++ (int) { return reverse_iterator(Super--); }
 				reverse_iterator	operator- (ptrdiff_t n) const { return reverse_iterator(base()+n); }
 				reverse_iterator	operator+ (ptrdiff_t n) const { return reverse_iterator(base()-n); }
 				reverse_iterator&	operator-= (ptrdiff_t n) { Super += n; return *this; }
@@ -99,6 +91,19 @@ namespace ft {
 				pointer		operator->() const { return *Super; }
 				reference	operator[] (difference_type n) const { return base()[-n -1]; }
 		};
+
+	template <typename T>
+		bool	operator > (T& a, T& b){ return a.base() > b.base(); }
+	template <typename T>
+		bool	operator >= (T& a, T& b){ return a.base() >= b.base(); }
+	template <typename T>
+		bool	operator < (T& a, T& b){ return a.base() > b.base(); }
+	template <typename T>
+		bool	operator <= (T& a, T& b){ return a.base() <= b.base(); }
+	template <typename T>
+		bool	operator == (T& a, T& b){ return a.base() == b.base(); }
+	template <typename T>
+		bool	operator != (T& a, T& b){ return a.base() != b.base(); }
 
 } /* name space end [ ft ]*/
 

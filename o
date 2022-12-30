@@ -1,0 +1,16 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==12971==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000004 (pc 0x00010a497bff bp 0x7ffee5769420 sp 0x7ffee5768f80 T0)
+==12971==The signal is caused by a READ memory access.
+==12971==Hint: address points to the zero page.
+    #0 0x10a497bfe in main (a.out:x86_64+0x100001bfe)
+    #1 0x7fff58a7b3d4 in start (libdyld.dylib:x86_64+0x163d4)
+
+==12971==Register values:
+rax = 0x0000000000000004  rbx = 0x00007ffee5769220  rcx = 0x0000100000000000  rdx = 0x00001fffdcaed200  
+rdi = 0x00007ffee5769190  rsi = 0x0000100000000000  rbp = 0x00007ffee5769420  rsp = 0x00007ffee5768f80  
+ r8 = 0x378f94705530003f   r9 = 0x00007ffee5768fa8  r10 = 0x00001fffdcaed1f5  r11 = 0xffffffffffffffff  
+r12 = 0x00007ffee57690a0  r13 = 0x00007ffee57690b0  r14 = 0x00007ffee5769080  r15 = 0x00007ffee5769090  
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (a.out:x86_64+0x100001bfe) in main
+==12971==ABORTING
