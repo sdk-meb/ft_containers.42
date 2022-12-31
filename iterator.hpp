@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2022/12/31 12:07:46 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/02 17:00:54 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,42 +18,64 @@
 
 namespace ft {
 
-	
 
 	template< class _Tp>
-		struct iterator_traits {
+		struct iterator_traits { };
 
-			typedef ptrdiff_t					difference_type;
+	template< class _Tp>
+		struct iterator_traits < _Tp*> {
+
 			typedef _Tp							value_type;
 			typedef _Tp*						pointer;
 			typedef _Tp&						reference;
 			// typedef random_access_iterator_tag	iterator_category;
+		};
+
+	template< class _Tp>
+		struct iterator_traits < const _Tp*> {
+
+			typedef _Tp						value_type;
+			typedef const _Tp*				pointer;
+			typedef const _Tp&				reference;
+			// typedef random_access_iterator_tag	iterator_category;
+		};
+
+	template< class _Tp>
+		struct iterator {
+
+			// typedef	iterator_base					iterator;
+    		typedef ft::iterator_traits<_Tp>				traits_type;
+
+			typedef ptrdiff_t								difference_type;
+			typedef typename traits_type::value_type		value_type;
+			typedef typename traits_type::pointer			pointer;
+			typedef typename traits_type::reference			reference;
 
 			private:
-				value_type	Super;
+				_Tp	Super;
 
 			public:
-				iterator_traits() : Super(nullptr) { };
-				explicit iterator_traits (value_type _x): Super(_x) { };
+				iterator() : Super(_Tp()) { };
+				explicit iterator (const _Tp& _x): Super(_x) { };
 				template< class U >
-					iterator_traits (const iterator_traits<U>& other)
-						: Super(other.base()) { };
-				value_type	base() const { return Super; }
+					iterator (const iterator<U>& other)
+						: Super (other.base()) { };
+				_Tp			base() const { return Super; }
 
-				iterator_traits&	operator=( const iterator_traits& rIt ){ Super = rIt.base(); return *this; }
+				iterator&	operator=( const iterator& rIt ){ Super = rIt.base(); return *this; }
 
-				iterator_traits&	operator++() { ++Super; return *this; }
-				iterator_traits&	operator--() { --Super; return *this; }
-				iterator_traits		operator++ (int) { return iterator_traits(Super++); }/* * 2 ????????? */ 
-				iterator_traits		operator-- (int) { return  iterator_traits(Super--); }/* * 2 ????????? */ 
-				iterator_traits		operator+ (ptrdiff_t n) const { return iterator_traits(Super + n); }
-				iterator_traits		operator- (ptrdiff_t n) const { return iterator_traits(Super - n); }
-				iterator_traits&	operator+= (ptrdiff_t n) { Super += n; return *this; }
-				iterator_traits&	operator-= (ptrdiff_t n) { Super -= n; return *this; }
+				iterator&	operator++() { ++Super; return *this; }
+				iterator&	operator--() { --Super; return *this; }
+				iterator	operator++ (int) { return iterator(Super++); }
+				iterator	operator-- (int) { return  iterator(Super--); }
+				iterator	operator+ (ptrdiff_t n) const { return iterator(Super + n); }
+				iterator	operator- (ptrdiff_t n) const { return iterator(Super - n); }
+				iterator&	operator+= (ptrdiff_t n) { Super += n; return *this; }
+				iterator&	operator-= (ptrdiff_t n) { Super -= n; return *this; }
 
-				reference	operator*() const { value_type tmp = (Super - 1); return *tmp; };
-				pointer		operator->() const { return *Super; }
-				reference	operator[] (difference_type n) const { return base()[-n -1]; }
+				reference	operator*() const { return *Super; }
+				pointer		operator->() const { return Super; }
+				reference	operator[] (difference_type n) const { return Super[n]; }
 		};
 
 
@@ -69,12 +91,12 @@ namespace ft {
 				_Iter Super;
 
 			public:
-				reverse_iterator() : Super(nullptr) { };
+				reverse_iterator() : Super(0) { };
 				explicit reverse_iterator (iterator_type x): Super(x) { };
 				template< class U >
 					reverse_iterator (const reverse_iterator<U>& other)
 						: Super(other.base()) { };
-				iterator_type	base() const { return iterator_traits<iterator_type>(Super).base(); };
+				iterator_type	base() const { return iterator<iterator_type>(Super).base(); };
 
 				reverse_iterator&	operator=( const reverse_iterator& rIt ){ Super = rIt.base();}
 
@@ -108,7 +130,7 @@ namespace ft {
 } /* name space end [ ft ]*/
 
 #endif
-
+ 
 
 
 
