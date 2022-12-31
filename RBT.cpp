@@ -148,6 +148,7 @@ template <class T_SHIP>
 					return JU;
 				if (P->R_ch == this)
 					return SE;
+				throw std::logic_error("key ");
 				return NOTHING;
 			}
 			short	WhoIs(const RBT* node) const {

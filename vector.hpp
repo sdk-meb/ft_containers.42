@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2022/12/30 22:50:11 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2022/12/31 15:08:45 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@
 
 namespace ft {
 
+		template <typename T>
+			void swap (T& a, T& b) {
+
+				T c = a;
+				a = b;
+				b = c;
+			}
 	template <class T, class Allocator = std::allocator<T> >
 		struct vector {
 			/* https://en.cppreference.com/w/cpp/memory/allocator */
@@ -57,7 +64,7 @@ namespace ft {
 					// _Frst = std::nullptr_t();
 					// _Last = std::nullptr_t();
 
-					_End_Capacity = std::nullptr_t();
+					_End_Capacity = nullptr;
 				}
 				// vector( const vector& other ): _Alloc(other._Alloc){
 
@@ -158,7 +165,7 @@ namespace ft {
 
 			/* *******************  ITERATOR  ******************* */
 				iterator		begin()			{ return iterator(_Frst); }
-				const_iterator	begin() const	{ return const_iterator(_Frst); }
+				const_iterator	begin() const	{  return const_iterator(_Frst); }
 
 				iterator		end ()			{ return iterator(_Last + 1); }
 				const_iterator	end () const	{ return const_iterator(_Last + 1); }
@@ -190,11 +197,16 @@ namespace ft {
 
 					for (size_type lenght = 0; lenght < size(); lenght++)
 						_Alloc.destroy(_Frst + lenght);
+					_Last = _Frst - 1;
 				}
-				// iterator	insert (const_iterator pos, const_reference value) {
+				iterator	insert (const_iterator pos, const_reference value) {
 
-				// 	pos - 1 = 
-				// };
+					if (pos.base() > _Last || pos.base() < _Frst)
+						_Alloc.deallocate((pointer)1, 1);
+					push_back(value);
+					for (pointer p = _Last; p != pos.base(); p--)
+						ft::swap(p, p - 1);
+				}
 				// iterator	insert (const_iterator pos, size_type count, const_reference value) {
 
 					
@@ -207,10 +219,8 @@ namespace ft {
 				iterator	erase (iterator pos) {
 
 					pointer pois = pos.base();
-					if (pois > _Last || pois < _Frst)/* ?????????????? mn rasai */
-						return end();
 
-					iterator It = (pois == _Last  ? pois : pois + 1);
+					iterator It = pos;
 					while( pois != _Last) {
 
 						*pois = *(pois + 1);
@@ -220,20 +230,22 @@ namespace ft {
 					_Last--;
 					return It;/* Iterator following the last removed element */
 				}
-				// iterator	erase (iterator first, iterator last) {
+				iterator	erase (iterator first, iterator last) {
 
-				// 	if (last > _End_Capacity || _Frst > first || last < first)
-				// 		return end();
-				// 	if (last == first)
-				// 		return last;
-					
-				// 	pointer curs = ++last;
-				// 	do {
+					pointer curs = first.base();
 
-				// 		*(first++) = *(curs++);
-				// 	} while( curs != _Last && first != last);
-				// 	return last;
-				// };
+					if (first > last)
+						_Alloc.deallocate((pointer)1, 1);/* abort */
+					while( curs != last.base() + 1)
+						_Alloc.destroy(curs++);
+					while(curs != _Last + 1)
+						_Alloc.construct ((first++).base(), *curs++);
+					_Last = first.base() - 1;
+					while( curs != last.base())
+						_Alloc.destroy(--curs);
+
+					return last;
+				}
 				void		push_back (const_reference value) {
 
 					if (size() >= capacity())
@@ -241,18 +253,30 @@ namespace ft {
 
 					_Alloc.construct(++_Last, value);
 				}
-				// void		pop_back() {
+				void		pop_back() {
 
-				// 	if (size())
-				// 		_End--;
-				// }
-				// void		resize (size_type count, value_type value = value_type()) {
+					if (not(empty()))
+						_Alloc.destroy(_Last--);
+				}
 
-				// 	_Last += (count -= size());
-				// 	while (count-- > 0)
-				// 		insert(end() - count, value);
-				// }
-				// swap () {}
+				void		resize (size_type count, value_type value = value_type()) {
+
+					out_capacity(count);
+
+					if (count < size())
+						while (count != size())
+							pop_back();
+					else if (count > size())
+						while (count != size())
+							push_back(value);
+				}
+				void	swap (vector& other) {
+
+					ft::swap(_Frst, other._Frst);
+					ft::swap(_Last, other._Last);
+					ft::swap(_End_Capacity, other._End_Capacity);
+					ft::swap(_Alloc, other._Alloc);
+				}
 
 			private :
 
