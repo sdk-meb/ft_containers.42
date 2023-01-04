@@ -3,37 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2022/12/31 15:08:45 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/02 17:16:07 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+	@brief dynamic contiguous array
+*/
 #ifndef VECTOR_HPP
 #	define VECTOR_HPP
-/*         dynamic contiguous array    */
-/*          */
+
+# include<unistd.h>
+
 # include<memory>
 # include"iterator.hpp"
 # include<iterator>
 # include<algorithm>
 # include<cstdlib>
 
-// # undef  ptrdiff_t
-
 namespace ft {
 
-		template <typename T>
-			void swap (T& a, T& b) {
+	template <typename T>
+		void swap (T& a, T& b) {
 
-				T c = a;
-				a = b;
-				b = c;
-			}
+			T c = a;
+			a = b;
+			b = c;
+		}
+	template <typename T>
+		T& remove_const (T& ct){ return ct; };
+	template <typename T>
+		T& remove_const (const T& ct) { dynamic_cast<T>(ct); }
+
+	/*
+		@brief dynamic contiguous array
+	*/
 	template <class T, class Allocator = std::allocator<T> >
 		struct vector {
-			/* https://en.cppreference.com/w/cpp/memory/allocator */
+
 				typedef Allocator									allocator_type;
 				typedef typename allocator_type::value_type			value_type;
 
@@ -45,26 +55,43 @@ namespace ft {
 				typedef typename allocator_type::pointer			pointer;
 				typedef typename allocator_type::const_pointer		const_pointer;
 
-				typedef ft::iterator_traits<pointer>				iterator;
-				typedef ft::iterator_traits<const_pointer>			const_iterator;
+				typedef ft::iterator<pointer>				iterator;
+				typedef ft::iterator<const_pointer>			const_iterator;
 				typedef ft::reverse_iterator<iterator>				reverse_iterator;
 				typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
 			private:
 
+				/* @brief attribute of allocator */
 				allocator_type	_Alloc ;
+				/*
+					@brief pointer to the first vector element
+					indefine if the vector was not initialized
+				*/
 				pointer					_Frst ;
+				/*
+					@brief pointer to the last vector element,
+					in case of empty vecot it is equal to @a _Frst
+				*/
 				pointer					_Last ;
+				/* 
+					@brief pointer to the last case alloceted capacity
+					at that moment, no capacity so @a nullptr is here
+				*/
 				pointer					_End_Capacity ;
 
 			public:
 
+				/* 
+					@category constracter.
+					@brief Default constracter that initialize the Allocator 
+					with default @a template Allocator or other i case of argement find,
+					and inisialize the _End_Capacity with nulptr.
+					@param alloc allocator which the vector use it.
+				*/
 				explicit vector ( const Allocator& alloc = allocator_type() ): _Alloc(alloc){
 
-					// _Frst = std::nullptr_t();
-					// _Last = std::nullptr_t();
-
-					_End_Capacity = nullptr;
+					_End_Capacity = 0;
 				}
 				// vector( const vector& other ): _Alloc(other._Alloc){
 
@@ -130,7 +157,7 @@ namespace ft {
 					return *this;
 				};
 
-			/* *******************   capacity    ******************* */
+			/* *******************   __Capacity__    ******************* */
 				size_type		size (void) const			{ return _End_Capacity ? _Last - _Frst + 1 : 0; }
 				bool			empty (void) const			{ return size() ? false : true; }
 				size_type		max_size (void) const		{ return _Alloc.max_size(); }
@@ -186,7 +213,7 @@ namespace ft {
 				reference 		front()			{ return *_Frst;}
 				const_reference	front() const	{ return *_Frst;}
 
-				reference		back() 			{ return *_Last;}
+				reference		back()			{ return *_Last;}
 				const_reference	back() const	{ return *_Last;}
 
 				pointer			data()			{ return _Frst ;}
@@ -201,11 +228,24 @@ namespace ft {
 				}
 				iterator	insert (const_iterator pos, const_reference value) {
 
-					if (pos.base() > _Last || pos.base() < _Frst)
+					if (not(empty()) && (pos.base() > _Last + 1 || pos.base() < _Frst))
 						_Alloc.deallocate((pointer)1, 1);
-					push_back(value);
-					for (pointer p = _Last; p != pos.base(); p--)
-						ft::swap(p, p - 1);
+
+					iterator it_pos = ft::remove_const(pos);
+					if (it_pos == end())
+						push_back(value);
+					std::cout << it_pos.base() << std::endl<< end().base() << std::endl << it_pos.base() << std::endl<<  *(end() -1).base() << std::endl;
+					if (const_cast<pointer>(it_pos.base()) == _Last)
+						return end() - 1;
+					exit(30);
+					move_range (
+							const_cast<pointer> (it_pos.base()),
+							const_cast<pointer> (end().base() - 2),
+							const_cast<pointer> (it_pos.base() + 1));
+
+					pointer p = const_cast<pointer> (it_pos.base());
+					*p = value;
+					return iterator(p);
 				}
 				// iterator	insert (const_iterator pos, size_type count, const_reference value) {
 
@@ -270,7 +310,7 @@ namespace ft {
 						while (count != size())
 							push_back(value);
 				}
-				void	swap (vector& other) {
+				void		swap (vector& other) {
 
 					ft::swap(_Frst, other._Frst);
 					ft::swap(_Last, other._Last);
@@ -280,11 +320,46 @@ namespace ft {
 
 			private :
 
+				/*
+					@brief move range of contente form range address to start address.
+					@attention most move it dongeer in overlapping case ! so it checked here.
+					@param S ref to start range,
+					@param E ref to end of range (last)
+					@param to refere to the new start range
+				*/
+				void	move_range(pointer S, pointer L, pointer to) {
+
+						if (S == to)
+							return ;
+						if (to < S || L < to)/* @a to outside the range*/{
+
+							while(S != L)
+								*to++ = *S++;
+							*to = *L;
+						}
+						else {
+
+							difference_type _offset1 = to - S + 1;
+							L++;
+							while (--L != S)
+								*(L + _offset1) = *L;
+							exit(20);
+							*to = *S;
+						}
+					}
+				/*
+					@brief throw exeption @if indexe indec case outside vector size
+					@param idx index
+				*/
 				void	out_range( size_type idx ) {
 
 					if (idx >= this->size())
 						throw std::out_of_range( "vector");
 				}
+				/*
+					@brief throw exeption @if count grader than the capacity convenable by allocutor
+					@param count capacity to check
+				*/
 				void	out_capacity( size_type count ) {
 
 					if (count > this->max_size())
