@@ -6,7 +6,7 @@
 /*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/02 17:00:54 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/05 19:57:46 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 # include<cstddef>
 #include<unistd.h>
+
+# include"utility.hpp"
+# include"type_traits.hpp"
 
 namespace ft {
 
@@ -59,7 +62,7 @@ namespace ft {
 				explicit iterator (const _Tp& _x): Super(_x) { };
 				template< class U >
 					iterator (const iterator<U>& other)
-						: Super (other.base()) { };
+						: Super (const_cast< pointer> (other.base())) { };
 				_Tp			base() const { return Super; }
 
 				iterator&	operator=( const iterator& rIt ){ Super = rIt.base(); return *this; }
@@ -95,7 +98,7 @@ namespace ft {
 				explicit reverse_iterator (iterator_type x): Super(x) { };
 				template< class U >
 					reverse_iterator (const reverse_iterator<U>& other)
-						: Super(other.base()) { };
+						: Super((other).base()) { };
 				iterator_type	base() const { return iterator<iterator_type>(Super).base(); };
 
 				reverse_iterator&	operator=( const reverse_iterator& rIt ){ Super = rIt.base();}
@@ -114,18 +117,21 @@ namespace ft {
 				reference	operator[] (difference_type n) const { return base()[-n -1]; }
 		};
 
-	template <typename T>
-		bool	operator > (T& a, T& b){ return a.base() > b.base(); }
-	template <typename T>
-		bool	operator >= (T& a, T& b){ return a.base() >= b.base(); }
-	template <typename T>
-		bool	operator < (T& a, T& b){ return a.base() > b.base(); }
-	template <typename T>
-		bool	operator <= (T& a, T& b){ return a.base() <= b.base(); }
-	template <typename T>
-		bool	operator == (T& a, T& b){ return a.base() == b.base(); }
-	template <typename T>
-		bool	operator != (T& a, T& b){ return a.base() != b.base(); }
+	template < typename Iter>
+		bool	operator > (Iter& a, Iter& b){ return a.base() > b.base(); }
+	template < typename Iter>
+		bool	operator >= (Iter& a, Iter& b){ return a.base() >= b.base(); }
+	template < typename Iter>
+		bool	operator < (Iter& a, Iter& b){ return a.base() > b.base(); }
+	template < typename Iter>
+		bool	operator <= (Iter& a, Iter& b){ return a.base() <= b.base(); }
+
+	template < typename Iter >
+		bool	operator == (Iter& a, Iter& b)
+				{ return(a).base() == (b).base(); }
+
+	template <typename Iter>
+		bool	operator != (Iter& a, Iter& b){ return a.base() != b.base(); }
 
 } /* name space end [ ft ]*/
 
