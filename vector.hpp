@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/05 22:32:20 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/06 12:10:39 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ namespace ft {
 				// 			else
 				// 				this->reserve((first - last) * 2);
 				// 		}
-				// 		catch (const std::exception& exc){
+				// 		catch (const std::exception& exc) {
 
 
 							
@@ -218,34 +218,98 @@ namespace ft {
 				const_pointer	data() const	{ return _Frst ;}
 
 			/* ********************** Modefier  ********************** */
+				/*
+					@brief clear fun, destroy all content of container and make it empty
+				*/
 				void	clear (){
 
 					for (size_type lenght = 0; lenght < size(); lenght++)
 						_Alloc.destroy(_Frst + lenght);
 					_Last = _Frst - 1;
 				}
+				/*
+					@brief insert @ value befor position
+					@param	pos position to put in
+					@param value value to put it
+				*/
 				iterator	insert (const_iterator pos, const_reference value) {
 
 					iterator it_pos (pos);
 
+					if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base()))
+						_Alloc.deallocate((pointer)1, 1);/* abort */
+
 					difference_type _offset = end().base() - pos.base();
-					push_back(value);
 
-					if (_offset++)
-						move_range ( end().base() - _offset, (end().base() - 2), end().base() - _offset + 1);
+					push_back(value);/* IaR */
 
-					it_pos[0] = value;
+					if (_offset++) 
+						move_range ( end().base() - _offset, (end().base() - 2), (end().base() - _offset) + 1);
+					*(end().base() - _offset) = value;
+
 					return pos;
 				}
-				// iterator	insert (const_iterator pos, size_type count, const_reference value) {
+				/*
+					@brief insert @ count number of value befor position
+					@param	pos position to put in
+					@param	count number of the value insertion
+					@param value value to put it
+				*/
+				iterator	insert (const_iterator pos, size_type count, const_reference value) {
 
-					
-				// }
-				// template <class InputIt>
-				// 	iterator	insert (const_iterator pos, InputIt first, InputIt last) {
+					iterator it_pos (pos);
 
-						
-				// 	}
+					if (count == 0)
+						return pos;
+
+					if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base()))
+						_Alloc.deallocate((pointer)1, 1);/* abort */
+
+					difference_type _offset = end().base() - pos.base();
+
+					if (capacity() < size() + count)
+						reserve (size() + count);/* IaR */
+
+					if (_offset)
+						move_range ( end().base() - _offset, (end().base() - 1), (end().base() - _offset) + count);
+
+					it_pos = end() - _offset;
+					_Last += count;
+					while (count--)
+						*(it_pos + count) = value;
+					return pos;
+				}
+				/*
+					@brief insert befor position from first_iter to last_iter
+					@param	pos position to put in start
+					@param	first iterator to start from the adapter values
+					@param	is the last iterator present the range of adapters
+				*/
+				template <class InputIt>
+					typename enable_if<__is_input_iterator<pointer, InputIt>::value, iterator>::type 
+					insert (const_iterator pos, InputIt first, InputIt last) {
+
+						iterator it_pos (pos);
+
+						if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base(git )))
+							_Alloc.deallocate((pointer)1, 1);/* abort */
+
+						difference_type _offset = end().base() - pos.base();
+						difference_type count = last.base() - first.base() + 1;
+
+						if (static_cast<difference_type> (capacity()) < count)
+							reserve (count);/* IaR */
+
+						if (_offset)
+							move_range ( end().base() - _offset, (end().base() - 1), (end().base() - _offset) + count);
+
+						it_pos = end() - _offset;
+						_Last += count;
+						while (count--)
+							*(it_pos++) = *(first++);
+						return pos;
+					}
+
 				iterator	erase (iterator pos) {
 
 					pointer pois = pos.base();
@@ -320,15 +384,13 @@ namespace ft {
 			template < class Tp>
 				void	move_range(Tp S, Tp L, Tp to) {
 
-						std::cout << *S << *L << *to << "\n";
-						exit(2);
 						if (S == to)
 							return ;
 						if (to < S || L < to)/* @a to outside the range*/{
 
 							while(S != L)
 								*to++ = *S++;
-							*to = *L;
+							*to = *S;
 						}
 						else {
 
@@ -336,7 +398,6 @@ namespace ft {
 							L += 1;
 							while (--L != S)
 								*(L + _offset1) = *L;
-							exit(20);
 							*to = *S;
 						}
 					}
@@ -370,3 +431,5 @@ namespace ft {
 
 
 # endif
+
+/* IaR */ /* meaning @attention  iterators are rejected */
