@@ -6,7 +6,7 @@
 /*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/02 17:16:07 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/05 22:32:20 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include<algorithm>
 # include<cstdlib>
 
+# include"utility.hpp"
+
 namespace ft {
 
 	template <typename T>
@@ -33,13 +35,9 @@ namespace ft {
 			a = b;
 			b = c;
 		}
-	template <typename T>
-		T& remove_const (T& ct){ return ct; };
-	template <typename T>
-		T& remove_const (const T& ct) { dynamic_cast<T>(ct); }
 
 	/*
-		@brief dynamic contiguous array
+		@brief dynamic contiguous arrays, encapsulated by sequence container
 	*/
 	template <class T, class Allocator = std::allocator<T> >
 		struct vector {
@@ -228,24 +226,16 @@ namespace ft {
 				}
 				iterator	insert (const_iterator pos, const_reference value) {
 
-					if (not(empty()) && (pos.base() > _Last + 1 || pos.base() < _Frst))
-						_Alloc.deallocate((pointer)1, 1);
+					iterator it_pos (pos);
 
-					iterator it_pos = ft::remove_const(pos);
-					if (it_pos == end())
-						push_back(value);
-					std::cout << it_pos.base() << std::endl<< end().base() << std::endl << it_pos.base() << std::endl<<  *(end() -1).base() << std::endl;
-					if (const_cast<pointer>(it_pos.base()) == _Last)
-						return end() - 1;
-					exit(30);
-					move_range (
-							const_cast<pointer> (it_pos.base()),
-							const_cast<pointer> (end().base() - 2),
-							const_cast<pointer> (it_pos.base() + 1));
+					difference_type _offset = end().base() - pos.base();
+					push_back(value);
 
-					pointer p = const_cast<pointer> (it_pos.base());
-					*p = value;
-					return iterator(p);
+					if (_offset++)
+						move_range ( end().base() - _offset, (end().base() - 2), end().base() - _offset + 1);
+
+					it_pos[0] = value;
+					return pos;
 				}
 				// iterator	insert (const_iterator pos, size_type count, const_reference value) {
 
@@ -327,8 +317,11 @@ namespace ft {
 					@param E ref to end of range (last)
 					@param to refere to the new start range
 				*/
-				void	move_range(pointer S, pointer L, pointer to) {
+			template < class Tp>
+				void	move_range(Tp S, Tp L, Tp to) {
 
+						std::cout << *S << *L << *to << "\n";
+						exit(2);
 						if (S == to)
 							return ;
 						if (to < S || L < to)/* @a to outside the range*/{
@@ -339,8 +332,8 @@ namespace ft {
 						}
 						else {
 
-							difference_type _offset1 = to - S + 1;
-							L++;
+							difference_type _offset1 = to - S;
+							L += 1;
 							while (--L != S)
 								*(L + _offset1) = *L;
 							exit(20);
