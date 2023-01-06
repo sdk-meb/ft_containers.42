@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/03 17:49:27 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/04 09:25:32 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ namespace	ft {
 
 				map(){};
 				explicit map (const Compare& comp,
-              					const Allocator& alloc = Allocator()) : _alloc(alloc) { }
+								const Allocator& alloc = Allocator()) : _alloc(alloc) { }
 				map (const map& other);
 				template< class InputIt >
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Red-Black_tree.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/04 00:28:41 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/04 09:24:55 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,19 @@
 # include<climits>
 # include<memory>
 
-	
 
 template < class T_SHIP >
-	struct RBT {
+	class RBT {
 
-				# define	RED		1
-				# define	BLACK	0
-				# define	NIL		NULL
-				# define	SE		37/* SE_NIOR */
-				# define	JU		13/* JU_NIOR */
-				# define	ROOT	1337
-				# define	NOTHING	33
-				typedef std::allocator<RBT> Allocator; 
+			# define	RED		1
+			# define	BLACK	0
+			# define	NIL		NULL
+			# define	SE		37/* SE_NIOR */
+			# define	JU		13/* JU_NIOR */
+			# define	ROOT	1337
+			# define	NOTHING	33
+			typedef std::allocator<RBT> Allocator;
 
-		// private:
 			T_SHIP			Ship;/* load */
 			bool			Color;
 			bool			Empty;
@@ -126,7 +124,7 @@ template < class T_SHIP >
 					_delete(*indecated);
 			}
 
-		// private:
+		private:
 			RBT(const T_SHIP& ship, RBT& parent): Ship(ship), _Alloc(Allocator()){
 
 				Color	= RED;
@@ -205,7 +203,7 @@ template < class T_SHIP >
 				return *P->P->L_ch;
 			}
 
-		// private:
+		private:
 			void	lr()/* Left Rotation */ {
 
 				if (not(this->R_ch))
@@ -390,7 +388,7 @@ template < class T_SHIP >
 					return ;
 				}
 				if (	vctm->get_S().L_ch && vctm->get_S().R_ch &&
-						vctm->get_S().L_ch->Color != vctm->get_S().R_ch->Color){
+						vctm->get_S().L_ch->Color != vctm->get_S().R_ch->Color) {
 
 					vctm->get_S().L_ch->Color = BLACK;
 					if (WhoIm(vctm) == JU){
@@ -423,8 +421,6 @@ template < class T_SHIP >
 
 				RBT& victim = criminal.best_child();
 
-				// write(1,"go\n",3);
-				// write(1,"en\n",3);
 				Empty = (*this == victim);
 				if (Empty)
 					return ;
@@ -436,10 +432,10 @@ template < class T_SHIP >
 
 							if (ch && ch->Color == RED)
 								ch->recolor();
-							// else
-							// 	delete_fixup(&victim);
+							else
+								delete_fixup(&victim);
 					}
-					catch (...) {}
+					catch (...) { }
 
 				criminal.swap(victim);
 				coler			= criminal.Color;

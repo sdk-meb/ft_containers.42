@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   type_traits.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/03 12:29:10 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/06 11:16:11 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,14 @@ namespace ft {
 		template < >
 			struct is_integral< char>
 				: public true_type { };
-		// template < >
-		// 	struct is_integral< char16_t>
-		// 	: public true_type { };
-		// template < >
-		// 	struct is_integral< char32_t>
-		// 	: public true_type { };
+#ifdef	__APPLE__
+		template < >
+			struct is_integral< char16_t>
+			: public true_type { };
+		template < >
+			struct is_integral< char32_t>
+			: public true_type { };
+# endif
 		template < >
 			struct is_integral< wchar_t>
 				: public true_type { };

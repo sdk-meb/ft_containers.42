@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/05 19:57:46 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/06 12:00:55 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include"type_traits.hpp"
 
 namespace ft {
-
 
 	template< class _Tp>
 		struct iterator_traits { };
@@ -54,7 +53,7 @@ namespace ft {
 			typedef typename traits_type::pointer			pointer;
 			typedef typename traits_type::reference			reference;
 
-			private:
+			protected:
 				_Tp	Super;
 
 			public:
@@ -76,8 +75,8 @@ namespace ft {
 				iterator&	operator+= (ptrdiff_t n) { Super += n; return *this; }
 				iterator&	operator-= (ptrdiff_t n) { Super -= n; return *this; }
 
-				reference	operator*() const { return *Super; }
-				pointer		operator->() const { return Super; }
+				reference	operator*() const	{ return *Super; }
+				pointer		operator->() const	{ return Super; }
 				reference	operator[] (difference_type n) const { return Super[n]; }
 		};
 
@@ -133,7 +132,21 @@ namespace ft {
 	template <typename Iter>
 		bool	operator != (Iter& a, Iter& b){ return a.base() != b.base(); }
 
-} /* name space end [ ft ]*/
+
+	/*
+		@brief check type of typename is it iterator or not, 
+		is a defined behaviour for the enable_if statement
+	*/
+	template < typename _TP, typename Iter>
+		class __is_input_iterator : public false_type { };
+	template < typename _TP >
+		class __is_input_iterator <   _TP, iterator_traits < _TP > > : public true_type { };
+	template <  typename _TP>
+		class __is_input_iterator <   _TP, iterator < _TP > > : public true_type { };
+	template <  typename _TP>
+		class __is_input_iterator <   _TP, reverse_iterator < iterator < _TP > > >: public true_type { };
+
+}/* name space end [ ft ]*/
 
 #endif
  
