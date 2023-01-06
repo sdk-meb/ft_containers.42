@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/04 09:25:32 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/09 12:12:03 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,14 @@
 
 namespace	ft {
 
+	/*
+		@category Associative containers
+		@brief	collection of key-value pairs, storted by keys, evrey key should unique
+		@param	key	indicator
+		@param 	T value type
+		@param	Compare  relational operator or function to use it as comparison method (less = default)
+		@param	Allocator 	typename allocation
+	*/
 	template	< 
 				class key, class T,
 				class Compare = std::less<key>,
@@ -33,7 +41,6 @@ namespace	ft {
 
 			public:
 
-							/* member types */
 				typedef key							key_type;
 				typedef	T							mapped_type;
 				typedef	ft::pair<const key, T>		value_type;
