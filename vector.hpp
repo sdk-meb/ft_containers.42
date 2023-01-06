@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/06 12:10:39 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/06 19:10:28 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,9 +259,6 @@ namespace ft {
 
 					iterator it_pos (pos);
 
-					if (count == 0)
-						return pos;
-
 					if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base()))
 						_Alloc.deallocate((pointer)1, 1);/* abort */
 
@@ -271,13 +268,15 @@ namespace ft {
 						reserve (size() + count);/* IaR */
 
 					if (_offset)
-						move_range ( end().base() - _offset, (end().base() - 1), (end().base() - _offset) + count);
+						move_range (end().base() - _offset,
+									(end().base() - 1),
+									(end().base() - _offset) + count);
 
 					it_pos = end() - _offset;
 					_Last += count;
 					while (count--)
 						*(it_pos + count) = value;
-					return pos;
+					return it_pos;
 				}
 				/*
 					@brief insert befor position from first_iter to last_iter
@@ -287,27 +286,54 @@ namespace ft {
 				*/
 				template <class InputIt>
 					typename enable_if<__is_input_iterator<pointer, InputIt>::value, iterator>::type 
-					insert (const_iterator pos, InputIt first, InputIt last) {
+					insert __Iterator_invalidation (const_iterator pos, InputIt first, InputIt last) {
 
 						iterator it_pos (pos);
 
-						if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base(git )))
+						if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base()))
 							_Alloc.deallocate((pointer)1, 1);/* abort */
 
 						difference_type _offset = end().base() - pos.base();
 						difference_type count = last.base() - first.base() + 1;
+						
+						pointer old_start = 0;
+						size_type new_cap = size() + count;
+						if (capacity() < new_cap) /*reserve (size() + count)*//* IaR */{
 
-						if (static_cast<difference_type> (capacity()) < count)
-							reserve (count);/* IaR */
+							out_capacity(new_cap);
 
+							if (empty()) {
+
+								if (capacity())
+									_Alloc.deallocate(_Frst, capacity());
+								_Frst = _Alloc.allocate(new_cap);
+								_Last = _Frst - 1;
+								_End_Capacity = _Frst + new_cap;
+							}
+							else {
+								old_start = _Frst;
+								pointer old_end = _Last + 1;
+								pointer	curs = _Frst - 1;
+								_Frst = _Alloc.allocate(new_cap);
+								_Last = _Frst - 1;
+								while (++curs != old_end && new_cap--)
+									_Alloc.construct(++_Last, *curs);
+
+							}
+						}
 						if (_offset)
-							move_range ( end().base() - _offset, (end().base() - 1), (end().base() - _offset) + count);
+							move_range (end().base() - _offset,
+										(end().base() - 1),
+										(end().base() - _offset) + count);
 
 						it_pos = end() - _offset;
 						_Last += count;
 						while (count--)
-							*(it_pos++) = *(first++);
-						return pos;
+							*(it_pos + count) = *last--;
+
+						_Alloc.deallocate(old_start, _End_Capacity - old_start);
+						_End_Capacity = _Frst + new_cap;
+						return it_pos;
 					}
 
 				iterator	erase (iterator pos) {

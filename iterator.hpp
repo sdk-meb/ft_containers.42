@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/06 12:00:55 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/06 18:57:18 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 
 # include"utility.hpp"
 # include"type_traits.hpp"
+
+#define __Iterator_invalidation
 
 namespace ft {
 
