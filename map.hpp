@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/09 12:12:03 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/10 12:13:25 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@
 # include<functional>
 # include<memory>
 # include<cstddef>
-# include<map>
 
 # include"Red-Black_tree.hpp"
+
+# include"map_iterato.hpp"
 # include"iterator.hpp"
+
 # include"utility.hpp"
 
 namespace	ft {
@@ -41,12 +43,12 @@ namespace	ft {
 
 			public:
 
-				typedef key							key_type;
-				typedef	T							mapped_type;
-				typedef	ft::pair<const key, T>		value_type;
+				typedef	key									key_type;
+				typedef	T										mapped_type;
+				typedef	ft::pair<const key_type, mapped_type>		value_type;
 
-				typedef	std::size_t				size_type;
-				typedef	std::ptrdiff_t			differance_type;
+				typedef	typename Allocator::size_type				size_type;
+				typedef	typename Allocator::difference_type			differance_type;
 
 				typedef	Compare						key_compare;
 				typedef	Allocator					allocator_type;
@@ -56,8 +58,10 @@ namespace	ft {
 				typedef	typename Allocator::pointer					  pointer;
 				typedef	typename Allocator::const_pointer		const_pointer;
 
-				typedef	iterator_traits<pointer>					  iterator;
-				typedef	iterator_traits<const_pointer>			const_iterator;
+				typedef	_RBtree<value_type>			__tree_;
+
+				typedef	ft::map_iterator<__tree_>					  iterator;
+				typedef	ft::map_iterator<const __tree_>				const_iterator;
 				typedef	ft::reverse_iterator<iterator>				  reverse_iterator;
 				typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -75,33 +79,25 @@ namespace	ft {
 						}
 				};
 
+				map() : tree(__tree_()) { } ;
 
-				map(){};
-				explicit map (const Compare& comp,
-								const Allocator& alloc = Allocator()) : _alloc(alloc) { }
-				map (const map& other);
-				template< class InputIt >
+			/*
+				@category Element access
+			*/
+			/*
+				@brief get mapped value by key scershing
+			*/
+				T&	at (const key_type& key) {
 
-				map (InputIt first, InputIt last,
-					const Compare& comp = Compare(),
-					const Allocator& alloc = Allocator()) {
-
-						
+					const tree* =  tree.search(ft::make_pair<>());
 				}
+				const T& at( const key_type& key ) const {
 
-
-
-
-
-
-
-
-
-
-
-
+					
+				}
 			private:
-				value_compare	_v_cmp(Compare());
+				value_compare	_v_cmp (Compare());
+				__tree_			tree;
 				allocator_type	_alloc;
 		};
 
