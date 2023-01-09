@@ -6,13 +6,13 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/06 11:16:11 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/09 10:03:50 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # ifndef _TYPE_TRAITS_HPP
 # define _TYPE_TRAITS_HPP
-
+#include<iterator>
 
 namespace ft {
 

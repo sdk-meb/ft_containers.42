@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/06 19:10:28 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/09 11:13:18 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,8 @@
 #ifndef VECTOR_HPP
 #	define VECTOR_HPP
 
-# include<unistd.h>
-
 # include<memory>
 # include"iterator.hpp"
-# include<iterator>
-# include<algorithm>
-# include<cstdlib>
 
 # include"utility.hpp"
 
@@ -53,8 +48,8 @@ namespace ft {
 				typedef typename allocator_type::pointer			pointer;
 				typedef typename allocator_type::const_pointer		const_pointer;
 
-				typedef ft::iterator<pointer>				iterator;
-				typedef ft::iterator<const_pointer>			const_iterator;
+				typedef ft::normal_iterator<pointer>				iterator;
+				typedef ft::normal_iterator<const_pointer>			const_iterator;
 				typedef ft::reverse_iterator<iterator>				reverse_iterator;
 				typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
@@ -81,79 +76,96 @@ namespace ft {
 			public:
 
 				/* 
-					@category constracter.
+					@category	Constructor
 					@brief Default constracter that initialize the Allocator 
 					with default @a template Allocator or other i case of argement find,
 					and inisialize the _End_Capacity with nulptr.
 					@param alloc allocator which the vector use it.
 				*/
-				explicit vector ( const Allocator& alloc = allocator_type() ): _Alloc(alloc){
+				explicit vector (const Allocator& alloc = allocator_type()): _Alloc(alloc) {
 
-					_End_Capacity = 0;
+					_End_Capacity = std::nullptr_t();
 				}
-				// vector( const vector& other ): _Alloc(other._Alloc){
+				/*
+					@category copy Counstructor
+					@brief	Needless to define غني عن تعريف
+					@param	other vector to copie from it
+				*/
+				vector( const vector& other ): _Alloc(other._Alloc){
 
-				// 	_Frst	= other._Frst;
-				// 	_End	= other._Last;
+					_Frst	= other._Frst;
+					_Last	= other._Last;
 
-				// 	_End_Capacity = std::nullptr_t();
-				// };
+					_End_Capacity = other._End_Capacity;
+				}
+				/*
+					@category	Constructor
+					@brief		constructs the container with count copies of elements with giting value
+					@param		count number of copies
+					@param		value	value to constructs
+					@param		giving allocator if find, else = default (optional)
+				*/
+				explicit vector (size_type count, const_reference value = value_type(),
+									const Allocator& alloc = allocator_type())
+				: _Alloc(alloc) {
 
-				// explicit vector ( size_type count, const_reference value = value_type(), const Allocator& alloc = Allocator())
-				// : _Alloc(alloc) {
+					_Frst = _Alloc.allocate(count, _Frst);
+					_Last = _Frst - 1;
+					_End_Capacity = _Frst + count;
+					insert(begin(), count, value);
+				}
+				/*
+					@category	Constructor
+					@brief	constructs the container with range contents 
+					@first	first iterator #input of range
+					@last	end of range -> inputiterator
+					@param		giving allocator if find, else = default (optional)
+				*/
+				template < typename InputIt>
+					vector (typename ft::enable_if<ft::__is_input_iterator<pointer, InputIt>::value, InputIt>::type first, 
+							InputIt last, const Allocator& alloc = allocator_type())
+							: _Alloc(alloc) {
 
-				// 	_Frst = _Alloc.allocate(count, _Frst);
-				// 	_Last = _Frst + count * sizeof(pointer);
-				// 	_End_Capacity = _Last;
-				// 	fill(_Frst, _End, value);
-				// };
-				// // template <class InputIt>
-				// // 	vector( InputIt first, InputIt last, const Allocator& alloc = Allocator()){ };
+							_Last = (_Frst = _Alloc.allocate (abs(ft::distance(first, last)))) - 1;
+							_End_Capacity = _Frst + abs(ft::distance(first, last));
+							insert (begin(), first, last);
+					}
+				/*
+					@brief assign the vector with new value of range
+					@param	first	first iterator to the range
+					@param	last	end of range
+				*/
+				template< class InputIt >
+					void assign (
+						typename enable_if<__is_input_iterator<pointer, InputIt>::value, InputIt>::type first,
+						InputIt last) {
 
-				// template< class InputIt >
-				// 	void assign( InputIt first, InputIt last ) {
+						clear();
+						insert (begin(), first, last);
+					}
+				/*
+					@brief assign the vector with count of value 
+					@param	count	number of copies
+					@param	value	value indecate 
+				*/
+				void assign (size_type count, const_reference value) {
 
-				// 		pointer old_start	= _Frst;
-				// 		pointer old_end		= _Last;
-				// 		_Frst	= &first;
-				// 		_End	= &last;
-				// 		try {
-
-				// 			out_capacity(first - last);
-				// 			if ((size_type) (first - last) * 2 > max_size())
-				// 				this->reserve(max_size());
-				// 			else
-				// 				this->reserve((first - last) * 2);
-				// 		}
-				// 		catch (const std::exception& exc) {
-
-
-							
-
-				// 			_Frst	= old_start;
-				// 			_End	= old_Last;
-				// 			throw exc;
-				// 		}
-				// };
-				// void assign( size_type count, const T& value ){
-
-				// 	erase();
-				// 	this->reserve(count);
-				// };
-				allocator_type	get_allocator() const { return _Alloc; };
+					clear();
+					insert (begin(), count, value);
+				}
+				allocator_type	get_allocator() const { return _Alloc; }
 			/* ********************   OPERATOR  ******************** */
 				vector& operator=( const vector& other ){
 
 					// assign(other.begin(), other.end());
-					
-					write(1, "operator= s\n",12 );
+
 					_Last = other._Last;
 					_End_Capacity = other._End_Capacity;
 					_Frst = other._Frst;
 					_Alloc = other,_Alloc;
 					write(1, "operator= f\n",12 );
 					return *this;
-				};
+				}
 
 			/* *******************   __Capacity__    ******************* */
 				size_type		size (void) const			{ return _End_Capacity ? _Last - _Frst + 1 : 0; }
@@ -195,11 +207,11 @@ namespace ft {
 				iterator		end ()			{ return iterator(_Last + 1); }
 				const_iterator	end () const	{ return const_iterator(_Last + 1); }
 
-				reverse_iterator		rbegin()		{ return reverse_iterator(iterator( _Last)); }
-				const_reverse_iterator	rbegin() const	{ return const_reverse_iterator(const_iterator(_Last)); }
+				reverse_iterator		rbegin()		{ return reverse_iterator(end()); }
+				const_reverse_iterator	rbegin() const	{ return const_reverse_iterator(end()); }
 
-				reverse_iterator		rend()			{ return reverse_iterator(iterator(_Frst - 1)); }
-				const_reverse_iterator	rend() const	{ return const_reverse_iterator(const_iterator(_Frst - 1)); }
+				reverse_iterator		rend()			{ return reverse_iterator(begin()); }
+				const_reverse_iterator	rend() const	{ return const_reverse_iterator(begin()); }
 
 			/* *******************  Element access ******************* */
 				reference		operator[] (size_type idx)			{ return *(_Frst + idx);}
@@ -255,12 +267,9 @@ namespace ft {
 					@param	count number of the value insertion
 					@param value value to put it
 				*/
-				iterator	insert (const_iterator pos, size_type count, const_reference value) {
+				iterator  insert __Iterator_invalidation (const_iterator pos, size_type count, const_reference value) {
 
 					iterator it_pos (pos);
-
-					if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base()))
-						_Alloc.deallocate((pointer)1, 1);/* abort */
 
 					difference_type _offset = end().base() - pos.base();
 
@@ -282,20 +291,18 @@ namespace ft {
 					@brief insert befor position from first_iter to last_iter
 					@param	pos position to put in start
 					@param	first iterator to start from the adapter values
-					@param	is the last iterator present the range of adapters
+					@param	is the emd iterator present the range of adapters
 				*/
 				template <class InputIt>
 					typename enable_if<__is_input_iterator<pointer, InputIt>::value, iterator>::type 
-					insert __Iterator_invalidation (const_iterator pos, InputIt first, InputIt last) {
+					insert __Iterator_invalidation (const_iterator pos, InputIt first, InputIt last/*end*/) {
 
 						iterator it_pos (pos);
 
-						if (not(empty()) && (it_pos.base() < begin().base() || end().base() < it_pos.base()))
-							_Alloc.deallocate((pointer)1, 1);/* abort */
 
-						difference_type _offset = end().base() - pos.base();
-						difference_type count = last.base() - first.base() + 1;
-						
+						typename iterator_traits<InputIt>::difference_type _offset = ft::distance(it_pos, end());
+						typename iterator_traits<InputIt>::difference_type count = labs(ft::distance(first, last));
+
 						pointer old_start = 0;
 						size_type new_cap = size() + count;
 						if (capacity() < new_cap) /*reserve (size() + count)*//* IaR */{
@@ -329,7 +336,7 @@ namespace ft {
 						it_pos = end() - _offset;
 						_Last += count;
 						while (count--)
-							*(it_pos + count) = *last--;
+							it_pos[count] = first[count];
 
 						_Alloc.deallocate(old_start, _End_Capacity - old_start);
 						_End_Capacity = _Frst + new_cap;
@@ -354,8 +361,6 @@ namespace ft {
 
 					pointer curs = first.base();
 
-					if (first > last)
-						_Alloc.deallocate((pointer)1, 1);/* abort */
 					while( curs != last.base() + 1)
 						_Alloc.destroy(curs++);
 					while(curs != _Last + 1)
