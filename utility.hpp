@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/10 12:14:01 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 11:26:55 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ namespace   ft {
 	template < class T1, class T2>
 		struct pair {
 
-				typedef T1	first_type;
-				typedef	T2	second_type;
+				typedef  T1	first_type;
+				typedef	 T2	second_type;
 
 				pair() : first ( first_type()), second (second_type()) { }
 				pair (const first_type& _x, const second_type& _y) : first (_x), second (_y) { }

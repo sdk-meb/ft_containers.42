@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/10 12:14:48 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 11:21:47 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,14 @@
 # include<climits>
 # include<memory>
 
+# include"utility.hpp"
+# include"iterator.hpp"
+
+#define _noexcept	true
+
 template < class T_SHIP>
-	class O_RBT {
+	class RBT {
+
 
 			# define	RED		1
 			# define	BLACK	0
@@ -29,6 +35,12 @@ template < class T_SHIP>
 			# define	ROOT	1337
 			# define	NOTHING	33
 
+			typedef		std::allocator<RBT>	 Allocator;
+
+		protected:
+			typedef		typename T_SHIP::first_type		key_type;
+			typedef		typename T_SHIP::second_type 	v_map;
+
 			T_SHIP			Ship;/* load */
 			bool			Color;
 			bool			Empty;
@@ -36,7 +48,7 @@ template < class T_SHIP>
 			RBT*			L_ch;/* left subtree, youngest son*/
 			RBT*			R_ch;/* right subtree, eldest son*/
 
-			std::allocator<RBT>		_Alloc;
+			Allocator		_Alloc;
 
 		public:
 			RBT () {
@@ -61,38 +73,84 @@ template < class T_SHIP>
 				_Alloc	= Allocator();
 			};
 
+			RBT*	get_P()	const	{ return P; }
+			RBT*	get_Lch() const	{ return L_ch; }
+			RBT*	get_Rch() const	{ return R_ch; }
+
+			short	WhoIm() const {
+
+				if (P == NIL)
+					return ROOT;
+				if (P->L_ch == this)
+					return JU;
+				if (P->R_ch == this)
+					return SE;
+				throw std::logic_error("key ");
+				return NOTHING;
+			}
+			short	WhoIm(const RBT* node) const {
+
+				if (node == NIL)
+					return NOTHING;
+				return node->WhoIm();
+			}
+
 			bool	operator== (RBT& tree) const {
 
 				if (Ship == tree.Ship)
 					return true;
 				return false;
 			}
-			void		insert (T_SHIP ship) {
+
+			void		insert (const T_SHIP& ship) {
 
 				if (not(Empty))
 					return insertion(ship, this);
 
-				Ship = ship;
+				Ship	= ship;
 				Color	= BLACK;
 				P		= NIL;
 				L_ch	= NIL;
 				R_ch	= NIL;
 				Empty = false;
 			}
+
 			const RBT*	search (T_SHIP& ship) const/* BST # binary search tree sherching # */{
 
 				/* ????????????   return pointer must be much be dangerous */
 				if (Empty)
 					return NIL;
-				return searching(ship, const_cast<RBT*> (this));
+				return searching(ship.first, const_cast<RBT*> (this));
 			}
-			const RBT*	search (typename T_SHIP::& ship) const/* BST # binary search tree sherching # */{
+			/*
+			 	@brief searsh in tree , exeption be throw if not find 
+			*/
+			v_map&		search (const key_type& key) const {
 
-				/* ????????????   return pointer must be much be dangerous */
-				if (Empty)
-					return NIL;
-				return searching(ship, const_cast<RBT*> (this));
+				RBT* find = NIL;
+
+				if (not(Empty))
+					find = searching(key, const_cast<RBT*> (this));
+
+				if (not(find))
+					throw std::out_of_range ("key search");
+				return find->Ship.second;
 			}
+			/*
+			 	@brief searsh in tree , insert if not find 
+			*/
+			v_map&		search (const key_type& key, bool) throw() {
+
+				RBT* find = NIL;
+
+				if (not(Empty))
+					find = searching(key, const_cast<RBT*> (this));
+
+				if (not(find))
+					return  insert(ft::make_pair (key, v_map())), search(key);
+				return find->Ship.second;
+			}
+
 			void		del (T_SHIP ship) {
 
 				RBT* indecated = const_cast<RBT<T_SHIP>*> (search(ship));
@@ -144,24 +202,6 @@ template < class T_SHIP>
 					Color = BLACK;
 				else
 					Color = RED;
-			}
-
-			short	WhoIm() const {
-
-				if (P == NIL)
-					return ROOT;
-				if (P->L_ch == this)
-					return JU;
-				if (P->R_ch == this)
-					return SE;
-				throw std::logic_error("key ");
-				return NOTHING;
-			}
-			short	WhoIm(const RBT* node) const {
-
-				if (node == NIL)
-					return NOTHING;
-				return node->WhoIm();
 			}
 
 		protected:
@@ -282,7 +322,7 @@ template < class T_SHIP>
 			
 				if (subtree == NIL)/* It will never come true */
 					return ;
-				if (ship < subtree->Ship) {
+				if (ship.first < subtree->Ship.first) {
 
 					if (subtree->L_ch)
 						subtree = subtree->L_ch;
@@ -294,7 +334,7 @@ template < class T_SHIP>
 						return subtree->L_ch->adjustment();
 					}
 				}
-				else if (ship > subtree->Ship){
+				else if (ship.first > subtree->Ship.first){
 
 					if (subtree->R_ch)
 						subtree = subtree->R_ch;
@@ -311,17 +351,17 @@ template < class T_SHIP>
 				return insertion(ship, subtree);
 			}
 
-			const RBT*	searching(T_SHIP ship, RBT* subtree) const/* BST # binary search tree searching # */{
+			RBT*	searching(const key_type& key, RBT* subtree) const/* BST # binary search tree searching # */{
 			
-				if (subtree == NIL)
+				if (not(subtree))
 					return NIL;
-				if (ship < subtree->Ship)
+				if (key < subtree->Ship.first)
 						subtree = subtree->L_ch;
-				else if (ship > subtree->Ship)
+				else if (key > subtree->Ship.first)
 						subtree = subtree->R_ch;
 				else
 					return  subtree;
-				return searching(ship, subtree);
+				return searching(key, subtree);
 			}
 
 			RBT&		best_child() {
@@ -455,66 +495,114 @@ template < class T_SHIP>
 			}
 	};
 
+
 template < class Pr>
-	class tree_helper {
+	class IterTree { 
+
+
+			typedef		RBT<Pr>		__node;
+			typedef		__node&		ref_node;
+			typedef		__node*		ptr_node;
+
+			ptr_node		ItR;
+			ptrdiff_t		Out;
+
+			ref_node	next() {
+
+				ptr_node	rch = ItR->get_Rch();
+
+				if (Out && Out + 1)
+					return Out++, throw std::error_condition(), *rch;
+				if (not(rch)) {
+
+					rch = ItR->get_P();
+					while (ItR->WhoIm(rch) == SE)
+						rch = rch->get_P();
+					if (not(rch) or not(rch->get_P()))
+						return Out++, throw std::error_condition(), *rch;
+					return *rch->get_P();
+				}
+				while (rch->get_Lch())
+					rch = rch->get_Lch();
+				return *rch;
+			}
+			ref_node	prev() {
+
+				ptr_node	lch = ItR->get_Lch();
+
+				if (Out && Out - 1)
+					return Out--, throw std::error_condition(), *lch;
+				if (not(lch)) {
+
+					lch = ItR->get_P();
+					while (ItR->WhoIm(lch) == JU)
+						lch = lch->get_P();
+					if (not(lch) or not(lch->get_P()))
+						return Out--, throw std::error_condition(), *lch;
+					return *lch->get_P();
+				}
+				while (lch->get_Rch())
+					lch = lch->get_Rch();
+				return *lch;
+			}
 
 		public:
-			iter_helper () out_next(1); out_prev(0) { }
+			IterTree() { };
+			IterTree (ref_node tree): ItR(&tree) { }
+			IterTree (const IterTree& tree) { *this = tree; }
+	
+			IterTree&	operator++() {
+			
+				try { ItR = &next(); } catch(...) {};
+				return *this;
+			}
+			IterTree	operator++(int) {
+			
+				IterTree old = *this;
+				try { ItR = &next(); } catch(...) {};
+				return old;
+			}
+			IterTree&	operator--() {
 
-		protected:
-			RBT*	Last;
-			size_t	Out_next;
-			RBT*	Frst;
-			size_t	Out_prev;
-			size_t	Size;
+				try { ItR = &prev(); } catch(...) {};
+				return *this;
+			}
+			IterTree	operator--(int) {
+
+				IterTree old = *this;
+				try { ItR = &prev(); } catch(...) {};
+				return old;
+			}
 
 	};
 
-template < class Pr, class Allocator= std::allocator<tree_helper<Pr> > >
-	class _RBtree : public O_RBT<Pr> {
+template < class Pr, class Allocator = std::allocator<Pr> >
+	class _RBtree : public RBT<Pr> {
 
-			typedef	typename pr:second_type	 mapped_type;
-			tree_helper	__treeIt;
-			const O_RBT	Tree();
+			typedef		RBT<Pr>				__base;
+			typedef	typename __base::v_map			v_map;
+			typedef	typename __base::key_type			key_type;
+			typedef	typename Allocator::size_type			size_type;
+
+			__base*		Frst;
+			__base*		Last;
+			size_type			Size;
 
 		public:
-			_RBtree () { }
 
+			_RBtree():__base(), Size(0) { };
+			bool		empty() const { return this->Empty; }
+			size_type	size() const { return  this->Size; }
 
-		private: 
-			O_RBT&	next() const	{
+			IterTree<Pr>	get_first() const	{ return IterTree<Pr>(*this->Frst); };
+			IterTree<Pr>	get_last() const	{ return IterTree<Pr>(*this->Last); };
 
-				RBT*	rch = R_ch;
-				
-				if (not(rch)) {
+			void		destroy() {
 
-					rch = P;
-					while (whoIm(rch) == SE)
-						rch = rch->P;
-					if (not(rch) or not(rch->P)
-						__treeIt;/*begine()--*/
-					return *rch->P;
-				}
-				while (rch->L_ch)
-					rch = rch->L_ch;
-				return *rch;
-			}
-			O_RBT&	prev() const	{
-
-				RBT*	lch = L_ch;
-
-				if (not(lch)) {
-
-					lch = P;
-					while (whoIm(lch) == JU)
-						lch = lch->P;
-					if (not(lch) or not(lch->P)
-						return 0;/*begine()--*/
-					return *lch->P;
-				}
-				while (lch->R_ch)
-					lch = lch->R_ch;
-				return *lch;
+				this->_Alloc.deallocate(this->L_ch, 1);
+				this->_Alloc.deallocate(this->R_ch, 1);
+				this->Empty = true;
+				this->Size = not(true);
 			}
 
 	};
