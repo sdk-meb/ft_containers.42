@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/09 12:02:29 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/10 10:32:49 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,16 +76,15 @@ namespace ft {
 			typedef random_access_iterator_tag	iterator_category;
 		};
 
-	template< class _Tp>
-		struct normal_iterator {
+	template< class _Tp, class Iter_traits= iterator_traits<_Tp> >
+		class normal_iterator {
 
-			// typedef	iterator_base					iterator;
-    		typedef ft::iterator_traits<_Tp>				Iter_traits;
-
-			typedef typename Iter_traits::difference_type	difference_type;
-			typedef typename Iter_traits::value_type		value_type;
-			typedef typename Iter_traits::pointer			pointer;
-			typedef typename Iter_traits::reference			reference;
+			public:
+				typedef typename Iter_traits::difference_type	difference_type;
+				typedef typename Iter_traits::value_type		value_type;
+				typedef typename Iter_traits::pointer			pointer;
+				typedef typename Iter_traits::reference			reference;
+				typedef typename Iter_traits::iterator_category			iterator_category;
 
 			protected:
 				_Tp	Super;

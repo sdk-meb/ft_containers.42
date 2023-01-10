@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/03 12:45:51 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/10 12:14:01 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ namespace   ft {
 		@brief functor create pair of objects
 	*/
 	template < class T1, class T2>	
-		ft::pair< T1, T2>	make_pair (T1 t, T2 u){
+		ft::pair< T1, T2>	make_pair (T1 t, T2 u) {
 
 			return ft::pair< T1, T2>(t, u);
 		}

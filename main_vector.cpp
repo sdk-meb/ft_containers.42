@@ -8,18 +8,71 @@
 #include <vector>
 
 
-using namespace std;
+// # define FT
 
-#if true
-   namespace _ft = std;
+#ifdef FT 
+   using namespace ft;
 #else
-   namespace _ft = ft;
+   using namespace std;
 #endif
-
 
 int main( )
 {
-   _ft::vector<string> v0;
-   
+   std::vector <int> v2;
+   ft::vector <int> v3;
+
+
+   v3.push_back(10);
+   v3.push_back(20);
+   v3.push_back(30);
+   v3.push_back(40);
+   v3.push_back(50);
+
+   v2.push_back(10);
+   v2.push_back(20);
+   v2.push_back(30);
+   v2.push_back(40);
+   v2.push_back(50);
+
+   v2.insert(v2.end() , 99);
+   v3.insert(v3.end() , 99);
+
+   v2.insert(v2.end() ,v2.begin(), v2.end() -1);
+
+   v3.insert(v3.end() ,v3.begin(), v3.end() -1);
+
+   v2.insert(v2.end() ,1, 0);
+
+   v3.insert(v3.end() ,1,0);
+
+   ft::vector<int>::iterator iter3 = v3.begin() -= 0;
+   std::vector<int>::iterator iter2 = v2.begin() -= 0;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+   std::cout <<  *(iter3++).base() << std::endl;
+   std::cout <<  *(iter2++).base() << std::endl;
+
+
 }
 

@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/09 14:59:03 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/10 12:14:48 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include<memory>
 
 template < class T_SHIP>
-	class RBT {
+	class O_RBT {
 
 			# define	RED		1
 			# define	BLACK	0
@@ -28,7 +28,6 @@ template < class T_SHIP>
 			# define	JU		13/* JU_NIOR */
 			# define	ROOT	1337
 			# define	NOTHING	33
-			typedef std::allocator<RBT> Allocator;
 
 			T_SHIP			Ship;/* load */
 			bool			Color;
@@ -37,7 +36,7 @@ template < class T_SHIP>
 			RBT*			L_ch;/* left subtree, youngest son*/
 			RBT*			R_ch;/* right subtree, eldest son*/
 
-			Allocator		_Alloc;
+			std::allocator<RBT>		_Alloc;
 
 		public:
 			RBT () {
@@ -81,6 +80,13 @@ template < class T_SHIP>
 				Empty = false;
 			}
 			const RBT*	search (T_SHIP& ship) const/* BST # binary search tree sherching # */{
+
+				/* ????????????   return pointer must be much be dangerous */
+				if (Empty)
+					return NIL;
+				return searching(ship, const_cast<RBT*> (this));
+			}
+			const RBT*	search (typename T_SHIP::& ship) const/* BST # binary search tree sherching # */{
 
 				/* ????????????   return pointer must be much be dangerous */
 				if (Empty)
@@ -448,5 +454,72 @@ template < class T_SHIP>
 				_Alloc.deallocate (L_ch, 1);
 			}
 	};
+
+template < class Pr>
+	class tree_helper {
+
+		public:
+			iter_helper () out_next(1); out_prev(0) { }
+
+		protected:
+			RBT*	Last;
+			size_t	Out_next;
+			RBT*	Frst;
+			size_t	Out_prev;
+			size_t	Size;
+
+	};
+
+template < class Pr, class Allocator= std::allocator<tree_helper<Pr> > >
+	class _RBtree : public O_RBT<Pr> {
+
+			typedef	typename pr:second_type	 mapped_type;
+			tree_helper	__treeIt;
+			const O_RBT	Tree();
+
+		public:
+			_RBtree () { }
+
+
+		private: 
+			O_RBT&	next() const	{
+
+				RBT*	rch = R_ch;
+				
+				if (not(rch)) {
+
+					rch = P;
+					while (whoIm(rch) == SE)
+						rch = rch->P;
+					if (not(rch) or not(rch->P)
+						__treeIt;/*begine()--*/
+					return *rch->P;
+				}
+				while (rch->L_ch)
+					rch = rch->L_ch;
+				return *rch;
+			}
+			O_RBT&	prev() const	{
+
+				RBT*	lch = L_ch;
+
+				if (not(lch)) {
+
+					lch = P;
+					while (whoIm(lch) == JU)
+						lch = lch->P;
+					if (not(lch) or not(lch->P)
+						return 0;/*begine()--*/
+					return *lch->P;
+				}
+				while (lch->R_ch)
+					lch = lch->R_ch;
+				return *lch;
+			}
+
+	};
+
+
+
 
 # endif
