@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_vector.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 08:00:13 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/11 08:13:12 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 14:46:00 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ int main( )
    ft::vector<string> vft;
    vector<string> vstd;
 
-   vft.assign(3,"sdk-meb");
-   vft.assign(vft.begin(), vft.end());
+   // vft.assign(3,"sdk-meb");
+   // vft.assign(vft.begin(), vft.end());
    vft.data();
 
    vft.size() == vstd.size() ? ok : ko ;
