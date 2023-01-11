@@ -1,5 +1,14 @@
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_vector.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/11 08:00:13 by mes-sadk          #+#    #+#             */
+/*   Updated: 2023/01/11 08:13:12 by mes-sadk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 
 #include <iostream>
@@ -8,71 +17,35 @@
 #include <vector>
 
 
-// # define FT
+using namespace std;
 
-#ifdef FT 
-   using namespace ft;
-#else
-   using namespace std;
-#endif
+int test(1);
+
+#define ko  std::cerr << "\e[0;32m[ OK ]("<<  test++ <<")\e[0;0" << std::endl
+#define ok  std::cerr << "\e[0;32m[ KO ]("<<  test++ <<")\e[0;0" << std::endl
+
 
 int main( )
 {
-   std::vector <int> v2;
-   ft::vector <int> v3;
 
+   ft::vector<string> vft;
+   vector<string> vstd;
 
-   v3.push_back(10);
-   v3.push_back(20);
-   v3.push_back(30);
-   v3.push_back(40);
-   v3.push_back(50);
+   vft.assign(3,"sdk-meb");
+   vft.assign(vft.begin(), vft.end());
+   vft.data();
 
-   v2.push_back(10);
-   v2.push_back(20);
-   v2.push_back(30);
-   v2.push_back(40);
-   v2.push_back(50);
-
-   v2.insert(v2.end() , 99);
-   v3.insert(v3.end() , 99);
-
-   v2.insert(v2.end() ,v2.begin(), v2.end() -1);
-
-   v3.insert(v3.end() ,v3.begin(), v3.end() -1);
-
-   v2.insert(v2.end() ,1, 0);
-
-   v3.insert(v3.end() ,1,0);
-
-   ft::vector<int>::iterator iter3 = v3.begin() -= 0;
-   std::vector<int>::iterator iter2 = v2.begin() -= 0;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
-   std::cout <<  *(iter3++).base() << std::endl;
-   std::cout <<  *(iter2++).base() << std::endl;
-
+   vft.size() == vstd.size() ? ok : ko ;
+   vft.capacity() == vstd.capacity() ? ok : ko ;
+ 
+   try { std::cout << vft.at(0) << std::endl; std::cout << vstd.at(0) << std::endl; ok; }
+   catch (...) { 
+      try {  std::cout << vstd.at(0) << std::endl; ko; }
+      catch (...) {
+         try {  std::cout << vft.at(0) << std::endl; ko; }
+         catch (...) { ok; }
+      }  }
+   
 
 }
 

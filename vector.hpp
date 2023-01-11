@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/09 11:13:18 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 08:11:54 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,8 +217,8 @@ namespace ft {
 				reference		operator[] (size_type idx)			{ return *(_Frst + idx);}
 				const_reference	operator[] (size_type idx) const	{ return *(_Frst + idx);}
 
-				reference		at (size_type pos)			{ out_range(pos); return *this[pos]; }
-				const_reference	at (size_type pos) const	{ out_range(pos); return *this[pos]; }
+				reference		at (size_type idx)			{ out_range(idx); return (*this)[idx]; }
+				const_reference	at (size_type idx) const	{ out_range(idx); return (*this)[idx]; }
 
 				reference 		front()			{ return *_Frst;}
 				const_reference	front() const	{ return *_Frst;}

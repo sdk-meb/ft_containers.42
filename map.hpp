@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/10 12:13:25 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 11:14:31 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 # include"utility.hpp"
 
+
 namespace	ft {
 
 	/*
@@ -35,17 +36,17 @@ namespace	ft {
 		@param	Allocator 	typename allocation
 	*/
 	template	< 
-				class key, class T,
-				class Compare = std::less<key>,
-				class Allocator = std::allocator<ft::pair<const key, T> >
+				class __key, class T,
+				class Compare = std::less<__key>,
+				class Allocator = std::allocator<ft::pair<const __key, T> >
 				>
 		class map {
 
 			public:
 
-				typedef	key									key_type;
+				typedef	__key									key_type;
 				typedef	T										mapped_type;
-				typedef	ft::pair<const key_type, mapped_type>		value_type;
+				typedef	ft::pair< key_type, mapped_type>		value_type;
 
 				typedef	typename Allocator::size_type				size_type;
 				typedef	typename Allocator::difference_type			differance_type;
@@ -59,10 +60,11 @@ namespace	ft {
 				typedef	typename Allocator::const_pointer		const_pointer;
 
 				typedef	_RBtree<value_type>			__tree_;
+				typedef	IterTree<value_type>			Itree;
 
-				typedef	ft::map_iterator<__tree_>					  iterator;
-				typedef	ft::map_iterator<const __tree_>				const_iterator;
-				typedef	ft::reverse_iterator<iterator>				  reverse_iterator;
+				typedef ft::map_iterator< Itree>			iterator;
+				typedef	ft::map_iterator<const Itree>			const_iterator;
+				typedef	ft::reverse_iterator<iterator>			reverse_iterator;
 				typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 				class	value_compare {
@@ -82,23 +84,49 @@ namespace	ft {
 				map() : tree(__tree_()) { } ;
 
 			/*
-				@category Element access
+				@category __  Element access  __
 			*/
 			/*
 				@brief get mapped value by key scershing
+				@param	key	the descriptor of the shipment
 			*/
-				T&	at (const key_type& key) {
+				T&			at (const key_type& key)		{ return tree.search(key); }
+				const T&	at (const key_type& key) const	{ return tree.search(key); }
+				T&	operator[] (const key_type& key)		{ return tree.search(key, _noexcept); }
 
-					const tree* =  tree.search(ft::make_pair<>());
-				}
-				const T& at( const key_type& key ) const {
+			/*
+				@category	__  Capacity  __
+			*/
+				bool		empty() const		{ return tree.empty(); }
+				size_type	size() const		{ return tree.size(); }
+				size_type	max_size() const	{ return _Alloc.max_size(); }
 
-					
-				}
+			/*
+				@category	__  Modifiers  __
+			*/
+				void	clear() { tree.destroy(); }
+
+			/*
+				@category	__  Iterators  __
+			*/
+				iterator		begin() 		{ return iterator 		(tree.get_first()); }
+				const_iterator	begin() const	{ return const_iterator (tree.Frst); }
+				iterator		end()			{ return iterator		(++tree.get_last()); }
+				const_iterator	end() const		{ return const_iterator (++tree.get_last()); }
+				reverse_iterator		rbegin()		{ return reverse_iterator(end()); }
+				const_reverse_iterator	rbegin() const	{ return const_reverse_iterator(end()); }
+				reverse_iterator		rend()			{ return reverse_iterator(begin()); }
+				const_reverse_iterator	rend() const	{ return onst_reverse_iterator(begin()); }
+
+			/*
+				@category	__  Lookup  __
+			*/
+			
+		
 			private:
 				value_compare	_v_cmp (Compare());
-				__tree_			tree;
-				allocator_type	_alloc;
+				__tree_		tree;
+				allocator_type	_Alloc;
 		};
 
 

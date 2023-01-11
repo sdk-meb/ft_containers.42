@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/10 10:32:49 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 11:23:44 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,17 +116,17 @@ namespace ft {
 	template <class _Iter>
 		struct reverse_iterator {
 
-			typedef _Iter						iterator_type;
-			typedef ptrdiff_t					difference_type;
-			typedef typename _Iter::pointer				pointer;
+			typedef _Iter							iterator_type;
+			typedef typename _Iter::difference_type		difference_type;
+			typedef typename _Iter::pointer			pointer;
 			typedef typename _Iter::reference			reference;
-			typedef input_iterator_tag			iterator_category;
+			typedef input_iterator_tag				iterator_category;
 
 			private:
-				_Iter Super;
+				iterator_type Super;
 
 			public:
-				reverse_iterator() : Super() { };
+				// reverse_iterator() : Super() { };
 				explicit reverse_iterator (iterator_type x): Super(x) { };
 				template< class U >
 					reverse_iterator (const reverse_iterator<U>& other)
@@ -138,8 +138,9 @@ namespace ft {
 
 				reverse_iterator&	operator--() { ++Super; return *this; }
 				reverse_iterator&	operator++() { --Super; return *this; }
-				reverse_iterator	operator-- (int) { return reverse_iterator (Super++); }
-				reverse_iterator	operator++ (int) { return reverse_iterator (Super--); }
+				reverse_iterator	operator-- (int) { reverse_iterator old(Super); Super++; return old; }
+				/*reverse_iterator	operator-- (int) { return reverse_iterator (Super++); } ???????? itertree*/
+				reverse_iterator	operator++ (int) { reverse_iterator old(Super); --Super; return old; }
 				reverse_iterator	operator- (ptrdiff_t n) const { return reverse_iterator (Super + n); }
 				reverse_iterator	operator+ (ptrdiff_t n) const { return reverse_iterator (Super - n); }
 				reverse_iterator&	operator-= (ptrdiff_t n) { Super += n; return *this; }
