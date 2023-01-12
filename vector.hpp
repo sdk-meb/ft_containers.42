@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/11 08:11:54 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 15:18:14 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 
 # include<memory>
 # include"iterator.hpp"
+
+#ifdef __linux
+	#define labs(x) ( x > 0 ? x : -1 * x)
+#endif
 
 # include"utility.hpp"
 
@@ -84,7 +88,7 @@ namespace ft {
 				*/
 				explicit vector (const Allocator& alloc = allocator_type()): _Alloc(alloc) {
 
-					_End_Capacity = std::nullptr_t();
+					_End_Capacity = NULL;//std::nullptr_t();
 				}
 				/*
 					@category copy Counstructor

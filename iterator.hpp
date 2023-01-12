@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/11 11:23:44 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/11 19:11:12 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ namespace ft {
 			typedef random_access_iterator_tag	iterator_category;
 		};
 
-	template< class _Tp, class Iter_traits= iterator_traits<_Tp> >
+	template< class _Tp, class Iter_traits = iterator_traits<_Tp> >
 		class normal_iterator {
 
 			public:
@@ -99,12 +99,12 @@ namespace ft {
 
 				normal_iterator&	operator=( const normal_iterator& rIt ){ Super = rIt.base(); return *this; }
 
-				normal_iterator&	operator++() { ++Super; return *this; }
-				normal_iterator&	operator--() { --Super; return *this; }
-				normal_iterator	operator++ (int) { return normal_iterator(Super++); }
-				normal_iterator	operator-- (int) { return  normal_iterator(Super--); }
-				normal_iterator	operator+ (ptrdiff_t n) const { return normal_iterator(Super + n); }
-				normal_iterator	operator- (ptrdiff_t n) const { return normal_iterator(Super - n); }
+				normal_iterator&	operator++ ()  { ++Super; return *this; }
+				normal_iterator&	operator-- ()  { --Super; return *this; }
+				normal_iterator		operator++ (int)  { normal_iterator old(Super); ++Super; return old; }
+				normal_iterator		operator-- (int)  { normal_iterator old(Super); --Super; return old; }
+				normal_iterator		operator+  (ptrdiff_t n) const	{ return normal_iterator(Super + n); }
+				normal_iterator		operator-  (ptrdiff_t n) const	{ return normal_iterator(Super - n); }
 				normal_iterator&	operator+= (ptrdiff_t n) { Super += n; return *this; }
 				normal_iterator&	operator-= (ptrdiff_t n) { Super -= n; return *this; }
 
@@ -138,8 +138,7 @@ namespace ft {
 
 				reverse_iterator&	operator--() { ++Super; return *this; }
 				reverse_iterator&	operator++() { --Super; return *this; }
-				reverse_iterator	operator-- (int) { reverse_iterator old(Super); Super++; return old; }
-				/*reverse_iterator	operator-- (int) { return reverse_iterator (Super++); } ???????? itertree*/
+				reverse_iterator	operator-- (int) { reverse_iterator old(Super); ++Super; return old; }
 				reverse_iterator	operator++ (int) { reverse_iterator old(Super); --Super; return old; }
 				reverse_iterator	operator- (ptrdiff_t n) const { return reverse_iterator (Super + n); }
 				reverse_iterator	operator+ (ptrdiff_t n) const { return reverse_iterator (Super - n); }
@@ -154,6 +153,7 @@ namespace ft {
 #define __binary_operator
 
 #define __relational_operator __binary_operator
+
 		template < typename Iter1, typename Iter2>
 			__relational_operator
 			bool	operator> (Iter1& a, Iter2& b)	{ return a.base() > b.base(); }
@@ -174,6 +174,7 @@ namespace ft {
 			bool	operator!= (Iter1& a, Iter2& b)	{ return a.base() != b.base(); }
 
 #define __assignment_operator __binary_operator
+
 		template < typename Iter1, typename Iter2>
 			__assignment_operator
 			typename Iter1::difference_type	operator- (Iter1 a, Iter2 b)	{ return a.base() - b.base(); }
