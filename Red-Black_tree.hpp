@@ -6,7 +6,7 @@
 /*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/12 10:57:33 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/13 12:20:07 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,12 @@
 # include"utility.hpp"
 # include"iterator.hpp"
 
-#define _noexcept	false
 
+
+/*************************************************************************************************************
+*	@brief	base Red _ Black _ tree
+*	@param	T_SHIP	Shipment to stor
+*************************************************************************************************************/	
 template < class T_SHIP>
 	class RBT {
 
@@ -31,10 +35,11 @@ template < class T_SHIP>
 			# define	NIL		NULL
 			# define	SE		37/* SE_NIOR */
 			# define	JU		13/* JU_NIOR */
-			# define	ROOT	1337
-			# define	NOTHING	33
+			# define	ROOT	33
+			# define	NOTHING	7331
 
 			typedef		std::allocator<RBT>	 Allocator;
+			typedef 	typename Allocator::size_type size_type;
 
 		protected:
 			typedef		typename T_SHIP::first_type		key_type;
@@ -43,6 +48,7 @@ template < class T_SHIP>
 			T_SHIP*			Ship;/* load */
 			bool			Color;
 			bool			Empty;
+			size_type		Size;
 			RBT*			P;/* root of subtree(parent), NIL if node has root */
 			RBT*			L_ch;/* left subtree, youngest son */
 			RBT*			R_ch;/* right subtree, eldest son */
@@ -50,7 +56,10 @@ template < class T_SHIP>
 			Allocator		_Alloc;
 
 		public:
-			RBT (): Ship(NIL) {
+/***************************  @category	 __  constructor  __  ***********************************************/
+
+
+			RBT (): Ship(NIL), Size(0) {
 
 				Color	= BLACK;
 				P		= NIL;
@@ -62,7 +71,7 @@ template < class T_SHIP>
 				_Alloc	= Allocator();
 			}
 			RBT (const RBT& tree) { *this = tree; }
-			RBT (const T_SHIP& ship): Ship(&ship) {
+			RBT (const T_SHIP& ship): Ship(&ship), Size(1) {
 
 				/* case 0 */
 				Color	= BLACK;
@@ -74,10 +83,33 @@ template < class T_SHIP>
 				_Alloc	= Allocator();
 			};
 
+
+
+/***************************  @category	 __  encapsulation getters  __  *************************************/
+
+
+	/*********************************************************************************************************
+	*	@return		pointer parent node
+	*********************************************************************************************************/
 			RBT*	get_P()	const		{ return P;    }
+
+	/*********************************************************************************************************
+	*	@return		pointer left child node
+	*********************************************************************************************************/
 			RBT*	get_Lch() const		{ return L_ch; }
+
+	/*********************************************************************************************************
+	*	@return		pointer rigth child node
+	*********************************************************************************************************/
 			RBT*	get_Rch() const		{ return R_ch; }
-			T_SHIP& get_Ship()  	{ return Ship ? *Ship : throw "", *Ship ; }
+
+	/*********************************************************************************************************
+	*	@return		shipment reference
+	*********************************************************************************************************/		
+			T_SHIP&		get_Ship() const { return Ship ? *Ship : throw std::logic_error("Ship geter") , *Ship ; }
+
+
+
 
 			short	WhoIm() const {
 
@@ -97,6 +129,7 @@ template < class T_SHIP>
 				return node->WhoIm();
 			}
 
+
 			bool	operator== (const RBT& tree) const {
 
 				if (Ship && Ship->first == tree.Ship->first)
@@ -104,7 +137,16 @@ template < class T_SHIP>
 				return false;
 			}
 
-			void		insert (T_SHIP& ship) {
+
+
+/***************************  @category	 __  BST # tree intertion  __  **************************************/
+
+
+	/*********************************************************************************************************
+	*	@brief insert Ship (pair) inside the tree, exacption in case of duplicate key in tree
+	*	@param ship shipment to insert
+ 	*********************************************************************************************************/
+		void		insert (T_SHIP& ship) {
 
 				if (not(Empty))
 					return insertion(ship, this);
@@ -115,55 +157,91 @@ template < class T_SHIP>
 				L_ch	= NIL;
 				R_ch	= NIL;
 				Empty = false;
+
+				++Size;
 			}
 
-			/* BST # binary search tree sherching # */
-			/*
-			 	@brief searsh in tree , NIl if not find
-			*/
-			const RBT*	search (key_type& key) const{
-
-				if (Empty)
-					return NIL;
-				return searching(key, const_cast<RBT*> (this));
-			}
-			/*
-			 	@brief searsh in tree ,
-				@param flag exeception or insirtion if not find
-			*/
-			v_map&		search (key_type& key, bool ex) throw() {
-
-				RBT* find = NIL;
+	/*********************************************************************************************************
+	*	@brief insert  node inside the tree, exacption in case of duplicate key in tree
+	*	@param ship shipment to insert
+ 	*********************************************************************************************************/
+		void		insert (RBT& _node) {
 
 				if (not(Empty))
-					find = searching(key, const_cast<RBT*> (this));
+					return insertion(_node, this);
 
-				if (find)
-					return find->Ship->second;
-				if (ex)
-					throw std::out_of_range ("key search");
+				Ship	= _node.Ship;
+				Color	= BLACK;
+				P		= NIL;
+				L_ch	= NIL;
+				R_ch	= NIL;
+				Empty = false;
 
-				T_SHIP pair = ft::make_pair (key, v_map());
-				return  insert(pair), search(key, _noexcept);
+				++Size;
 			}
-			/*
-				@brief delete a shipment from the tree
-				@param	key his unique
-			*/
-			bool		del (key_type& key) throw() {
 
-				RBT* indecated = const_cast<RBT<T_SHIP>*> (search(key));
 
-				if (indecated)
-					_delete(*indecated);
-				else
-					return false;
-				return true;
-			}
-			void		del (T_SHIP& ship) throw() { del (ship.first); }
+/***************************  @category	 __  BST # binary search tree  __  **********************************/
+
+	/*********************************************************************************************************
+	*	@return  node of the key, NIL if not find
+ 	*********************************************************************************************************/
+		RBT*	search (key_type& key) const throw() {
+
+			if (Empty)
+				return NIL;
+			return searching(key, const_cast<RBT*> (this));
+		}
+
+	/*********************************************************************************************************
+	*	@return  node of the key, NIL if not find
+	*	@param flag exeception or insirtion if not find
+ 	*********************************************************************************************************/
+		v_map&		search (key_type& key, bool ex) {
+
+			RBT* find = NIL;
+
+			if (not(Empty))
+				find = searching(key, const_cast<RBT*> (this));
+
+			if (find)
+				return find->Ship->second;
+			if (ex)
+				throw std::out_of_range ("key search");
+
+			T_SHIP pair = ft::make_pair <key_type, v_map>(key, v_map());
+			return  insert(pair), search(key, not(__EXCEPTIONS));
+		}
+
+
+
+/***************************  @category	 __  BST #  node deletion tree  __  *********************************/
+
+	/*********************************************************************************************************
+	*	@param 	key
+	*	@return exictence true/false
+	*********************************************************************************************************/
+		bool		del (key_type& key) throw() {
+
+			RBT* indecated = const_cast<RBT<T_SHIP>*> (search(key));
+
+			if (indecated)
+				_delete(*indecated);
+			else
+				return false;
+			return true;
+		}
+
+	/*********************************************************************************************************
+	*	@overload (2)
+	*	@param 	Shipment (pair)
+	*********************************************************************************************************/
+		void		del (T_SHIP& ship) throw() { del (ship.first); }	
+
+
 
 		private:
-			RBT(const RBT& tree,  bool): Ship(tree.Ship) {
+			RBT (const RBT& tree,  bool): Ship(tree.Ship) {
 
 				/* the copy assignment constructor here is dangerous, because the 
 					destroying of an object have a role in killing all his child */
@@ -175,7 +253,7 @@ template < class T_SHIP>
 
 				_Alloc	= tree._Alloc;
 			}
-			RBT ( T_SHIP& ship, const RBT& parent): Ship(&ship), _Alloc(Allocator()) {
+			RBT (T_SHIP& ship, const RBT& parent): Ship(&ship), _Alloc(Allocator()) {
 
 				Color	= RED;
 				*P		= parent;
@@ -235,6 +313,8 @@ template < class T_SHIP>
 				return *P->P->L_ch;
 			}
 
+			RBT* 	this_RBT() { return this; }
+
 		private:
 			void	lr()/* Left  Rotation */ {
 
@@ -283,7 +363,7 @@ template < class T_SHIP>
 				try {/* violate the properties of RBT */
 
 					if (get_U().Color == BLACK)/* throw in case no uncle */
-						throw "";
+						throw "goto internal catch";
 
 					{/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
 
@@ -333,6 +413,8 @@ template < class T_SHIP>
 						subtree->L_ch = _Alloc.allocate( 1);
 						_Alloc.construct(subtree->L_ch, RBT(ship, *subtree));
 
+
+						++Size;
 						return subtree->L_ch->adjustment();
 					}
 				}
@@ -345,12 +427,46 @@ template < class T_SHIP>
 						subtree->R_ch = _Alloc.allocate( 1);
 						_Alloc.construct(subtree->R_ch, RBT(ship, *subtree));
 
+
+						++Size;
 						return subtree->R_ch->adjustment();
 					}
 				}
 				else
 					throw "similar shipment violates the property of red-black tree" ;
 				return insertion(ship, subtree);
+			}
+			void		insertion(RBT& _node, RBT* subtree) {
+			
+				if (subtree == NIL)/* It will never come true */
+					return ;
+				if (_node.ship.first < subtree->Ship->first) {
+
+					if (subtree->L_ch)
+						subtree = subtree->L_ch;
+					else {
+
+						subtree->L_ch = &_node;
+						_node.P = subtree;
+
+						return subtree->L_ch->adjustment();
+					}
+				}
+				else if (_node.ship.first > subtree->Ship->first){
+
+					if (subtree->R_ch)
+						subtree = subtree->R_ch;
+					else {
+
+						subtree->R_ch = &_node;
+						_node.P = subtree;
+
+						return subtree->R_ch->adjustment();
+					}
+				}
+				else
+					throw "similar shipment violates the property of red-black tree" ;
+				return insertion(_node, subtree);
 			}
 
 			RBT*	searching(key_type& key, RBT* subtree) const/* BST # binary search tree searching # */{
@@ -488,7 +604,9 @@ template < class T_SHIP>
 				victim.P	= NIL;
 
 				// _Alloc.deallocate (&victim, 1);
+
 				delete &victim;
+				--Size;
 				/* end of history */
 			}
 
@@ -504,11 +622,13 @@ template < class Pr>
 	class IterTree { 
 
 
-			typedef		RBT<Pr>		__node;
-			typedef		__node&		ref_node;
-			typedef		__node*		ptr_node;
+			typedef		RBT<Pr>			__node;
+			typedef		__node&				ref_node;
+			typedef		__node*					ptr_node;
+			typedef	typename Pr::first_type		key_type;
 
 			ptr_node		ItR;
+			/** @brief indecate the (de/in)_crementation address of the node which not have (Left/Rigth) (-/+)*/
 			ptrdiff_t		Out;
 
 			ref_node	next() {
@@ -551,8 +671,10 @@ template < class Pr>
 			}
 
 		public:
-			IterTree() { };
+			IterTree() { }
+
 			IterTree (ref_node tree): ItR(&tree) { }
+			IterTree (ptr_node tree): ItR(tree) { }
 			IterTree (const IterTree& tree) { *this = tree; }
 
 			Pr&	get_pair()  { return ItR->get_Ship(); }
@@ -580,30 +702,132 @@ template < class Pr>
 				return old;
 			}
 
+			IterTree&		operator<< (key_type& key) {
+
+				// if (Out > 0)
+				// 	Out = 1;
+				// while (Out < 0)
+				// 	++Out;
+
+				if (ItR->get_Ship().first < key)
+					while (ItR->get_P() && ItR->get_P()->get_Ship().first < key)
+						ItR = ItR->get_P();
+				if (ItR->get_P() && ItR->get_P()->get_Ship().first == key)
+					return ItR = ItR->get_P(), *this;
+
+				if (not(ItR->get_Rch()))
+					goto CEND;
+
+				while (1) {
+					while (ItR->get_Rch() && ItR->get_Rch()->get_Ship().first < key)
+						ItR = ItR->get_Rch();
+					if (ItR->get_Lch()) {
+
+						ItR = ItR->get_Lch();
+						continue ;
+					}
+					if (ItR->get_Rch())
+						return ItR = ItR->get_Rch(), *this;
+					goto CEND;
+				}
+				if (0) {
+
+/* convention end () */	
+			CEND:	while (ItR->get_P())
+						ItR = ItR->get_P();
+					while (ItR->get_Rch())
+						ItR = ItR->get_Rch();
+					Out = 1;
+					++ItR;/* must be the next address after last node ( last key )*/
+				}
+				return *this;
+			}
+			IterTree&		operator>> (key_type& key) {
+
+				// if (Out > 0)
+				// 	Out = 1;
+				// while (Out < 0)
+				// 	++Out;
+
+				if (ItR->get_Ship().first < key)
+					while (ItR->get_P() && ItR->get_P()->get_Ship().first < key)
+						ItR = ItR->get_P();
+				if (ItR->get_P() && ItR->get_P()->get_Ship().first == key)
+					return ItR = ItR->get_P(), *this;
+
+				if (not(ItR->get_Rch()))
+					goto CEND;
+
+				while (1) {
+					while (ItR->get_Rch() && ItR->get_Rch()->get_Ship().first < key)
+						ItR = ItR->get_Rch();
+					if (ItR->get_Lch()) {
+
+						ItR = ItR->get_Lch();
+						continue ;
+					}
+					if (ItR->get_Rch())
+						return ItR = ItR->get_Rch(), *this;
+					goto CEND;
+				}
+				if (0) {
+
+/* convention end () */	
+			CEND:	while (ItR->get_P())
+						ItR = ItR->get_P();
+					while (ItR->get_Rch())
+						ItR = ItR->get_Rch();
+					Out = 1;
+					++ItR;/* must be the next address after last node ( last key )*/
+				}
+				return *this;
+			}
 			bool	operator!= (const IterTree& pIt) { return pIt.ItR == ItR ? false : true; }
 			bool	operator== (const IterTree& pIt) { return not(*this == pIt); }
 	};
 
+
+/*************************************************************************************************************
+*	@brief	drived Red _ Black _ tree 
+*	@param	Pr	pair to stored it (Shipment)
+*	@param	Allocator to allocate the @a Pr
+*************************************************************************************************************/	
 template < class Pr, class Allocator = std::allocator<Pr> >
 	class _RBtree : public RBT<Pr> {
 
-			typedef		RBT<Pr>				__base;
-			typedef	typename __base::v_map			v_map;
-			typedef	typename __base::key_type			key_type;
+
+			typedef		RBT<Pr>				__Base;
+			typedef	typename __Base::v_map			v_map;
+			typedef	typename __Base::key_type			key_type;
 			typedef	typename Allocator::size_type			size_type;
 
-			__base*		Frst;
-			__base*		Last;
-			size_type			Size;
-
 		public:
+			typedef		RBT<Pr>				__base;
 
-			_RBtree():__base(), Size(0) { };
+			_RBtree():__base() { }
+
+
 			bool		empty() const { return this->Empty; }
 			size_type	size() const { return  this->Size; }
 
-			IterTree<Pr>	get_first() const	{ return IterTree<Pr>(*this->Frst); };
-			IterTree<Pr>	get_last() const	{ return IterTree<Pr>(*this->Last); };
+			IterTree<Pr>	get_last() 	{
+
+				__Base*  Last = this->this_RBT();
+				
+				while (Last->get_Lch())
+					Last = Last->get_Lch();
+				return size() ? IterTree<Pr>(Last) : IterTree<Pr>(NIL);
+			}
+			IterTree<Pr>	get_first() {
+
+				__Base*  Frst = this->this_RBT();
+				
+				while (Frst->get_Rch())
+					Frst = Frst->get_Rch();
+				return size() ? IterTree<Pr>(Frst) : IterTree<Pr>(NIL);
+			}
+			IterTree<Pr>	get_Root() 	{ return size() ? IterTree<Pr>(this->this_RBT()) : IterTree<Pr>(NIL); }
+
 
 			void		destroy() {
 
