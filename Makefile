@@ -6,10 +6,10 @@ RED = \033[0;31m
 GREEN = \033[0;32m
 NO_COLOR = \033[0m
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
 
 
-SRC_FILES = test.cpp
+SRC_FILES = main_map.cpp
 
 OBJ_FILES = $(SRC_FILES:.cpp=.opp)
 
@@ -21,9 +21,10 @@ ORDR = a
 
 all: ${NAME}
 
-$(NAME): ${OBJ_FILES}
-	@${CC} ${CFLAGS} ${OBJ_FILES} -o ${NAME} 
-	@echo "${GREEN} • Now you can run the exucitable file ./${NAME}${NO_COLOR}"
+$(NAME):
+	@${CC} main_map.cpp ${CFLAGS} 2> re
+	@time ./${NAME}
+	@echo exit status 
 
 clean:
 	@rm -rf ${OBJ_FILES}

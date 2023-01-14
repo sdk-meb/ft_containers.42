@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/14 12:11:27 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/15 23:44:12 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,55 +27,40 @@ namespace ft {
 		typedef integral_constant< bool, false>	false_type;
 
 		template <typename>
-			struct is_integral
-				: public false_type { };
+			struct is_integral : public false_type { };
+
 		template < >
-			struct is_integral< bool>
-				: public true_type { };
+			struct is_integral< bool> : public true_type { };
 		template < >
-			struct is_integral< char>
-				: public true_type { };
+			struct is_integral< char> : public true_type { };
 #ifdef	__APPLE__
 		template < >
-			struct is_integral< char16_t>
-			: public true_type { };
+			struct is_integral< char16_t> : public true_type { };
 		template < >
-			struct is_integral< char32_t>
-			: public true_type { };
+			struct is_integral< char32_t> : public true_type { };
 # endif
 		template < >
-			struct is_integral< wchar_t>
-				: public true_type { };
+			struct is_integral< wchar_t> : public true_type { };
 		template < >
-			struct is_integral< signed char>
-				: public true_type { };
+			struct is_integral< signed char> : public true_type { };
 		template < >
-			struct is_integral< unsigned char>
-				: public true_type { };
+			struct is_integral< unsigned char> : public true_type { };
 		template < >
-			struct is_integral< short int>
-				: public true_type { };
+			struct is_integral< short int> : public true_type { };
 		template < >
-			struct is_integral< int>
-				: public true_type { };
+			struct is_integral< int> : public true_type { };
 		template < >
-			struct is_integral< long int>
-				: public true_type { };
+			struct is_integral< long int> : public true_type { };
 		template < >
-			struct is_integral< long long int>
-				: public true_type { };
+			struct is_integral< long long int> : public true_type { };
 		template < >
-			struct is_integral< unsigned short int>
-				: public true_type { };
+			struct is_integral< unsigned short int> : public true_type { };
 		template < >
-			struct is_integral< unsigned int>
-				: public true_type { };
+			struct is_integral< unsigned int> : public true_type { };
 		template < >
-			struct is_integral< unsigned long int>
-					: public true_type { };
+			struct is_integral< unsigned long int> : public true_type { };
 		template < >
-			struct is_integral< unsigned long long int>
-					: public true_type { };
+			struct is_integral< unsigned long long int> : public true_type { };
 	}
 
 	namespace __Enable_if {
@@ -89,57 +74,16 @@ namespace ft {
 		*/
 		template < bool Cond, class T = void>
 			struct enable_if { };
-		
+
   		// Partial specialization for true.
 		template < class T>
 			struct enable_if<true, T> { typedef T type; };
 	}
 
-	namespace equivalence {
-
-
-		template <class InputIt1, class InputIt2>
-			bool	equal(InputIt1 frst1, InputIt1 last1, InputIt2 frst2){
-
-				for (; frst1 != last1; ++frst1, ++frst2)
-        			if (*frst1 != *frst2)
-            			return false;
-    			return true;
-			}
-		
-		template < class InputIt1, class InputIt2>
-			bool	lexicographical_compare( InputIt1 frst1, InputIt1 last1, InputIt2 frst2, InputIt2 last2 ) {
-
-				for (; (frst1 != last1) && (frst2 != last2); ++frst1, (void) ++frst2) {
-
-					if (*frst1 < *frst2)
-						return true;
-					if (*frst2 < *frst1)
-						return false;
-				}
-			
-				return (frst1 == last1) && (frst2 != last2);
-			}
-		template < class InputIt1, class InputIt2, class Compare>
-			bool lexicographical_compare( InputIt1 frst1, InputIt1 last1, InputIt2 frst2, InputIt2 last2, Compare comp ) {
-
-			    for (; (frst1 != last1) && (frst2 != last2); ++frst1, (void) ++frst2) {
-
-			        if (comp(*frst1, *frst2))
-           		 		return true;
-        			if (comp(*frst2, *frst1))
-           				 return false;
-    			}
-    			return (frst1 == last1) && (frst2 != last2);
-			}
-
-	
-	}
 
 
 	using namespace __Fundamental_Integral_Types;
 	using namespace __Enable_if;
-	using namespace	equivalence;
 
 
 }/* END of namesp ft */

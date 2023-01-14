@@ -20,28 +20,27 @@
 
 # include"Red-Black_tree.hpp"
 
-# include"map_iterato.hpp"
-# include"iterator.hpp"
+# include"map_iterator.hpp"
 
 # include"utility.hpp"
 
 
 namespace	ft {
 
-	/*********************************************************************************************************
-	*	@category Associative containers
-	*	@brief	collection of key-value pairs, storted by keys, evrey key should unique
-	*	@param	key	indicator
-	*	@param 	T value type
-	*	@param	Compare  relational operator or function to use it as comparison method (less = default)
-	*	@param	Allocator 	typename allocation
-	*********************************************************************************************************/
-	template	< 
-				class __key, class _T,
-				class Compare = std::less <__key>,
-				class Allocator = std::allocator <ft::pair <const __key, _T> >
-				>
-		class map {
+/*************************************************************************************************************
+*	@category Associative containers
+*	@brief	collection of key-value pairs, storted by keys, evrey key should unique
+*	@param	key	indicator
+*	@param 	T value type
+*	@param	Compare  relational operator or function to use it as comparison method (less = default)
+*	@param	Allocator 	typename allocation
+*************************************************************************************************************/
+template	< 
+			class __key, class _T,
+			class Compare = std::less <__key>,
+			class Allocator = std::allocator <ft::pair <const __key, _T> >
+			>
+	class map {
 
 
 		public:
@@ -78,8 +77,8 @@ namespace	ft {
 	/*********************************************************************************************************
 	*	@param	iterator 
 	*********************************************************************************************************/
-				typedef	ft::reverse_iterator <iterator>			reverse_iterator;
-				typedef	ft::reverse_iterator <const_iterator>	const_reverse_iterator;
+				typedef	ft::reverse_map_iterator <iterator>			reverse_iterator;
+				typedef	ft::reverse_map_iterator <const_iterator>	const_reverse_iterator;
 
 
 /***************************  @category	 __  Iterator Member Types __  **************************************/
@@ -109,10 +108,30 @@ namespace	ft {
 
 
 /***************************  @category	 __  Constuctors  __  ***********************************************/
-			map() : tree(__tree_()), _v_cmp(Compare()) { }
-			explicit map (const Compare& comp, const Allocator& alloc = Allocator());
 
+			map() : tree(__tree_()), _v_cmp(Compare()), _Alloc(Allocator()) { }
 
+			explicit map (const Compare& comp, const Allocator& alloc = Allocator())
+				: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { }
+
+			template< class InputIt >
+				map (InputIt first,
+					typename ft::enable_if <
+					__is_input_iter<typename InputIt::iterator_category>::value, InputIt>::type last,
+					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
+					: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { insert (first, last); }
+
+			map (const map& other): _v_cmp(other._v_cmp){ *this = other; }
+
+			map&			operator= (const map& other) {
+
+				tree	= other.tree;
+				_Alloc	= other.get_allocator();
+				_v_cmp	= other._v_cmp;
+				return *this;
+			}
+
+			allocator_type	get_allocator() const { return _Alloc; }
 
 
 /***************************  @category	 __  Element access  __  ********************************************/
@@ -147,13 +166,19 @@ namespace	ft {
 /***************************  @category	 __  Modifiers  __  *************************************************/
 
 	/*********************************************************************************************************
-	*	@brief value type insertion
+	*	@brief	value type insertion
+	*	@return	pait of iterator and true if and only if 
 	*********************************************************************************************************/
 			ft::pair<iterator, bool>
 				insert (const value_type& value) {
 
-					ft::pair<iterator, bool> tmpr 
-						= ft::make_pair(iterator (Itree(tree.insert (const_cast<value_type&>(value)))), true);
+					ft::pair<iterator, bool> tmpr;
+
+					try { tmpr = ft::make_pair (
+							iterator (Itree(tree.insert (const_cast<value_type&>(value)))), true); }
+					catch(...) { tmpr = ft::make_pair (
+							iterator (Itree(tree.search (value.first))), false); }
+
 					return tmpr;
 			}
 
@@ -171,8 +196,21 @@ namespace	ft {
 				return pos;
 			}
 
+	/*********************************************************************************************************
+	*	@overload (3) template
+	*	@param		InputIt  template parameter sfinae in case of not input iterator
+	*	@param		first_last	range [F, L] to insert it value 
+	*********************************************************************************************************/
 		template< class InputIt >
-			void	insert (InputIt first, InputIt last) ;
+			typename ft::enable_if<__is_input_iter<typename InputIt::iterator_category>::value, void>::type	
+			insert (InputIt first, InputIt last) {
+
+				while (&(*first) != &(*last)) {
+
+					insert(*first);
+					++first;
+				}
+			}
 
 
 	/*********************************************************************************************************
@@ -334,6 +372,41 @@ namespace	ft {
 				allocator_type	_Alloc ;
 
 		};
+
+
+template <class key, class T, class Comp, class Alloc>
+	bool operator== (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return not (lhs not_eq rhs);
+	}
+template <class key, class T, class Comp, class Alloc>
+	bool operator!= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return (lhs.size() not_eq rhs.size()) or (not ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+template <class key, class T, class Comp, class Alloc>
+	bool operator< (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+template <class key, class T, class Comp, class Alloc>
+	bool operator>= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return not (lhs < rhs);
+	}
+
+template <class key, class T, class Comp, class Alloc>
+	bool operator> (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return rhs < lhs;
+	}
+template <class key, class T, class Comp, class Alloc>
+	bool operator<= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return not (rhs < lhs);
+	}
+
 
 
 }

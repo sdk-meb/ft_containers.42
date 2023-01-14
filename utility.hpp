@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/11 11:26:55 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/19 13:51:52 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 namespace   ft {
 
-	/*
+	/**
 		@brief struct holding tow object of arbitrary type
 
 		@param T1 type of first object 
@@ -43,7 +43,7 @@ namespace   ft {
 
 		};
 	
-	/*
+	/**
 		@brief functor create pair of objects
 	*/
 	template < class T1, class T2>	
@@ -51,6 +51,48 @@ namespace   ft {
 
 			return ft::pair< T1, T2>(t, u);
 		}
+
+
+
+	template <class InputIt1, class InputIt2>
+		bool	equal (InputIt1 frst1, InputIt1 last1, InputIt2 frst2){
+
+			for (; frst1 not_eq last1; ++frst1, ++frst2)
+				if (*frst1 not_eq *frst1)
+					return false;
+			return true;
+		}
+
+	template < class InputIt1, class InputIt2>
+		bool	lexicographical_compare (InputIt1 frst1, InputIt1 last1, InputIt2 frst2, InputIt2 last2 ) {
+
+			for (; (frst1 not_eq last1) and (frst2 not_eq last2); ++frst1, (void) ++frst2) {
+
+				if (*frst1 < *frst2)
+					return true;
+				if (*frst2 < *frst1)
+					return false;
+			}
+		
+			return (frst1 == last1) and (frst2 not_eq last2);
+		}
+	template < class InputIt1, class InputIt2, class Compare>
+		bool lexicographical_compare (InputIt1 frst1, InputIt1 last1, InputIt2 frst2, InputIt2 last2, Compare comp ) {
+
+			for (; (frst1 not_eq last1) and (frst2 not_eq last2); ++frst1, (void) ++frst2) {
+
+				if (comp(*frst1, *frst2))
+					return true;
+				if (comp(*frst2, *frst1))
+						return false;
+			}
+			return (frst1 == last1) and (frst2 not_eq last2);
+		}
+
+		template <typename T>
+			struct remove_c { typedef T type; };
+		template <typename T>
+			struct remove_c <const T>{ typedef T type; };
 
 };
 

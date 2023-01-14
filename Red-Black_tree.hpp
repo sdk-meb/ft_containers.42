@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/14 21:42:56 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/16 02:27:24 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			/* the original allocator for this instance */	
 			typedef typename Allocator::template rebind<__road_>::other	SAllocator;
 			typedef	T_SHIP		value_type;
-	
+
 
 			SAllocator*			_SAlloc;
 			Allocator			_Alloc;
@@ -368,6 +368,29 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 				_node->P = x;
 			}
 
+	/*********************************************************************************************************
+	*	@return	 youngest of this subtree
+	*********************************************************************************************************/	
+			__road_&	youngest()  throw() {
+
+				__road_* tmp = this;
+
+				while (tmp && tmp->L_ch) tmp = tmp->L_ch;
+					 
+				return *tmp;
+			}
+
+	/*********************************************************************************************************
+	*	@return	eldest of this subtree
+	*********************************************************************************************************/	
+			__road_&	eldest()  throw() {
+
+				__road_* tmp = this;
+
+				while (tmp && tmp->R_ch) tmp = tmp->R_ch;
+
+				return *tmp;
+			}
 
 
 		public:
@@ -422,12 +445,14 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	/*********************************************************************************************************
 	*	@brief insert  node inside the tree, exacption in case of duplicate key in tree
 	*	@param ship shipment to insert
+	*	@param	ex exeption true = default
+	*	@exception permitted by order
  	*********************************************************************************************************/
-		__road&		insert (__road _node) {
+		__road&		insert (__road _node, bool ex = true) {
 
 				_node.copy_ship = true;
 				if (seed)
-					return insertion(_node, seed);
+					return insertion(_node, seed, ex);
 
 				seed = _SAlloc.allocate ( 1);
 
@@ -450,8 +475,10 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*	@brief insert key with default (pair) inside the tree, exacption in case of duplicate key in tree
 	*	@param key indecator shipment to insert
 	*	@overload	(2)
+	*	@param	ex exeption true = default
+	*	@exception permitted by order
  	*********************************************************************************************************/
-		__road&		insert (key_type& key) { return insert (__road (key, _SAlloc)); }
+		__road&		insert (key_type& key, bool ex = true) { return insert (__road (key, _SAlloc), ex); }
 
 
 
@@ -512,14 +539,19 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		void		del (__road& _node) throw() { _delete (&_node); }
 		void		del (__road* _node) throw() { _delete (_node); }
 
+
+
+
 	private:
 
 	/*********************************************************************************************************
 	*	@brief	binary tree insertion, that call @a adjustment that remove the violated rules of rb-tree
 	*	@param	_node	indicator to being rotated
 	*	@param	sub	indicator in last after recursions, the parent of the new child
+	*	@param	ex exeption true = default
+	*	@exception permitted by order
 	*********************************************************************************************************/
-			__road&		insertion(__road& _node, __road* sub) {
+			__road&		insertion(__road& _node, __road* sub, bool ex = true) {
 
 				if (_node.Ship->first < sub->Ship->first) {
 
@@ -545,17 +577,19 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 						return *sub->R_ch;
 					}
 				}
-				else
+				else if (ex)
 					throw "similar shipment violates the property of map rules" ;
-				return insertion(_node, sub);
+				else
+					return _node;
+				return insertion(_node, sub, ex);
 			}
 
 	/*********************************************************************************************************
-	*	@brief	binary tree searching
-	*	@param	key	indicator to being rotated
-	*	@param	sub	indicator for recursion place
+	*	@brief	binary tree searching, NIL in case of non existence
+	*	@param	key	 searching indicator 
+	*	@param	sub	indicator for start recursion place
 	*********************************************************************************************************/
-			__road*		searching(key_type& key, __road* sub) const {
+			__road*		searching(key_type& key, __road* sub) const throw() {
 
 				if (not(sub))
 					return NIL;
@@ -635,8 +669,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 template < class Pr, class Allocator >
 	struct __IterTree {
 
-
-
+				
 			typedef	Pr							value_type;
 			typedef	__road_<value_type, Allocator>		__node;
 			typedef	__node&									ref_node;
@@ -644,46 +677,48 @@ template < class Pr, class Allocator >
 			typedef	typename Pr::first_type			key_type;
 
 			/** @brief indecate the (de/in)_crementation address of the node which not have (Left/Rigth) (-/+)*/
-			ptrdiff_t		Out;
+			bool		Out;
 
-			ref_node	next() {
 
-				ptr_node	rch = ItR->R_ch;
 
-				if (Out && Out + 1)
-					return Out++, throw "std::error_condition()", *rch;
-				if (not(rch)) {
+	/*********************************************************************************************************
+	*	@return	next node in tree contine the next sequence key
+	*********************************************************************************************************/	
+			ref_node	next() const {
 
-					rch = ItR->P;
-					while (rch->WhoIm() == SE)
-						rch = rch->P;
-					if (not(rch) or not(rch->P))
-						return Out++, throw "std::error_condition()", *rch;
-					return *rch->P;
-				}
-				while (rch->L_ch)
-					rch = rch->L_ch;
-				return *rch;
+				if (not ItR)
+					throw std::error_condition();
+				if (ItR->R_ch)
+					return ItR->R_ch->youngest();
+
+				ptr_node	tmp = ItR;
+
+				while (tmp->WhoIm() == SE)
+					tmp = tmp->P;
+				if (tmp->WhoIm() == ROOT)
+					return *ItR;/* no next */
+				return tmp->P->R_ch ? tmp->P->R_ch->youngest() : *tmp->P;
 			}
-			ref_node	prev() {
 
-				ptr_node	lch = ItR->L_ch;
+	/*********************************************************************************************************
+	*	@return	previous node in tree contine the first less of sequence key
+	*********************************************************************************************************/	
+			ref_node	prev() const {
 
-				if (Out && Out - 1)
-					return Out--, throw "std::error_condition()", *lch;
-				if (not(lch)) {
+				if (not ItR)
+					throw std::error_condition();
+				if (ItR->L_ch)
+					return ItR->L_ch->eldest();
 
-					lch = ItR->P;
-					while (lch->WhoIm() == JU)
-						lch = lch->P;
-					if (not(lch) or not(lch->P))
-						return Out--, throw "std::error_condition()", *lch;
-					return *lch->P;
-				}
-				while (lch->R_ch)
-					lch = lch->R_ch;
-				return *lch;
+				ptr_node	tmp = ItR;
+
+				while (tmp->WhoIm() == JU)
+					tmp = tmp->P;
+				if (tmp->WhoIm() == ROOT)
+					return *ItR;/* no next */
+				return tmp->P->L_ch ? tmp->P->L_ch->youngest() : *tmp->P;
 			}
+
 
 			ptr_node		ItR;
 			__IterTree() { }
@@ -825,22 +860,8 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 			bool		empty() const { return this->Empty; }
 			size_type	size() const { return  this->Size; }
 
-			IterTree	get_last() 	{
-
-				__base*  Last = this->seed;
-
-				while (Last && Last->L_ch)
-					Last = Last->L_ch;
-				return  IterTree(Last);
-			}
-			IterTree	get_first() {
-
-				__base*  Frst = this->seed;
-
-				while (Frst && Frst->R_ch)
-					Frst = Frst->R_ch;
-				return IterTree(Frst);
-			}
+			IterTree	get_last() 	{ return IterTree(&this->seed->eldest()); }
+			IterTree	get_first() { return IterTree(&this->seed->youngest()); }
 			IterTree	get_Root() 	{ return IterTree(this->seed); }
 
 
