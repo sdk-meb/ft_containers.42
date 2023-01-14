@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/13 17:24:30 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/14 20:18:48 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,61 @@
 namespace ft {
 
 
+
+	/*********************************************************************************************************
+	*	@brief	just an interface, that manipulates the permission of the iterator
+	*	@note	iterator category
+	*********************************************************************************************************/
 	struct input_iterator_tag { };/* LagacyInputIterator */
 	struct output_iterator_tag { };/* LagacyOutputIterator */
 	struct forward_iterator_tag : public input_iterator_tag { };/* LagacyForwardIterator */
 	struct bidirectional_iterator_tag : public forward_iterator_tag { };/* LagcyBiderectionalIterator */
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };/* LagacyRondamAccessIter */
 
+
+
+	/*********************************************************************************************************
+	*	@brief	check if is a random access iterator,, else false value
+	*********************************************************************************************************/
+	template < typename Iter_Category>
+		class __is_random_access_iter : public false_type { };
+	template < >
+		class __is_random_access_iter <random_access_iterator_tag> : public true_type { };
+
+	/*********************************************************************************************************
+	*	@brief	check if bidirectional iterator here, else false value
+	*********************************************************************************************************/
+	template < typename Iter_Category>
+		class __is_bidirectional_iter : public __is_random_access_iter <Iter_Category> { };
+	template < >
+		class __is_bidirectional_iter <bidirectional_iterator_tag> : public true_type { };
+
+	/*********************************************************************************************************
+	*	@brief	check if forward iterator here, else false value
+	*********************************************************************************************************/
+	template < typename Iter_Category>
+		class __is_forward_iter : public __is_bidirectional_iter <Iter_Category> { };
+	template < >
+		class __is_forward_iter <forward_iterator_tag> : public true_type { };
+
+	/*********************************************************************************************************
+	*	@brief	check if input iterator here, else false value 
+	*********************************************************************************************************/
+	template < typename Iter_Category>
+		class __is_input_iter : public __is_forward_iter <Iter_Category> { };
+	template < >
+		class __is_input_iter <input_iterator_tag> : public true_type { };
+
+
+
+/*************************************************************************************************************
+*	@brief	prepare the interface of iterator
+*	@param	_Category	category of iterator
+*	@param	_Tp			type to mange it
+*	@param	_Distance	ptrdiff_t = default
+*	@param	_Pointer	( _TP * ) default and mostly usage
+*	@param	_Reference	( _TP & ) default and mostly usage
+*************************************************************************************************************/
 	template <class _Category, class _Tp, class _Distance = ptrdiff_t,
 			class _Pointer = _Tp*, class _Reference = _Tp&>
 		struct iterator {
@@ -46,36 +95,29 @@ namespace ft {
 				typedef _Category				iterator_category;
 		};
 
-	template< class _Tp>
-		struct iterator_traits {
-
-			typedef ptrdiff_t					difference_type;
-			typedef _Tp							value_type;
-			typedef _Tp*						pointer;
-			typedef _Tp&						reference;
-			typedef random_access_iterator_tag	iterator_category;
-		};
 
 	template< class _Tp>
-		struct iterator_traits < _Tp*> {
+		struct iterator_traits : public iterator <random_access_iterator_tag, _Tp > { };
 
-			typedef ptrdiff_t					difference_type;
-			typedef _Tp							value_type;
-			typedef _Tp*						pointer;
-			typedef _Tp&						reference;
-			typedef random_access_iterator_tag	iterator_category;
-		};
-
+	/*********************************************************************************************************
+	*	@brief	that remove the pointer of type
+	*********************************************************************************************************/
 	template< class _Tp>
-		struct iterator_traits < const _Tp*> {
+		struct iterator_traits < _Tp*> : public iterator <random_access_iterator_tag, _Tp> { };
 
-			typedef ptrdiff_t					difference_type;
-			typedef _Tp							value_type;
-			typedef const _Tp*					pointer;
-			typedef const _Tp&					reference;
-			typedef random_access_iterator_tag	iterator_category;
-		};
+	/*********************************************************************************************************
+	*	@brief	that remove the const pointer of type
+	*********************************************************************************************************/
+	template< class _Tp>
+		struct iterator_traits < const _Tp*> : public iterator <random_access_iterator_tag, _Tp> { };
 
+
+
+/*************************************************************************************************************
+*	@brief	class of terator managments
+*	@param	_TP	type to mange it
+*	@param	Iter_traits iterator interface
+*************************************************************************************************************/
 	template< class _Tp, class Iter_traits = iterator_traits<_Tp> >
 		class normal_iterator {
 
@@ -95,6 +137,7 @@ namespace ft {
 				template< class U >
 					normal_iterator (const normal_iterator<U>& other)
 						: Super (const_cast< pointer> (other.base())) { };
+
 				_Tp			base() const { return Super; }
 
 				normal_iterator&	operator=( const normal_iterator& rIt ){ Super = rIt.base(); return *this; }
@@ -103,6 +146,7 @@ namespace ft {
 				normal_iterator&	operator-- ()  { --Super; return *this; }
 				normal_iterator		operator++ (int)  { normal_iterator old(Super); ++Super; return old; }
 				normal_iterator		operator-- (int)  { normal_iterator old(Super); --Super; return old; }
+
 				normal_iterator		operator+  (ptrdiff_t n) const	{ return normal_iterator(Super + n); }
 				normal_iterator		operator-  (ptrdiff_t n) const	{ return normal_iterator(Super - n); }
 				normal_iterator&	operator+= (ptrdiff_t n) { Super += n; return *this; }
@@ -110,8 +154,12 @@ namespace ft {
 
 				reference	operator*() const	{ return *Super; }
 				pointer		operator->() const	{ return Super; }
+
 				reference	operator[] (difference_type n) const { return Super[n]; }
+				
 		};
+
+
 
 	template <class _Iter>
 		struct reverse_iterator {
@@ -150,9 +198,12 @@ namespace ft {
 				reference	operator[] (difference_type n) const { return *(*this + n); }
 		};
 
+
 #define __binary_operator
 
+
 #define __relational_operator __binary_operator
+
 
 		template < typename Iter1, typename Iter2>
 			__relational_operator
@@ -169,9 +220,12 @@ namespace ft {
 		template < typename Iter1, typename Iter2>
 			__relational_operator
 			bool	operator== (Iter1& a, Iter2& b)	{ return a.base() == b.base(); }
-		template < typename Iter1, typename Iter2>
+
+		template < typename Iter1, typename Iter2> 
 			__relational_operator
 			bool	operator!= (Iter1& a, Iter2& b)	{ return a.base() != b.base(); }
+
+		
 
 #define __assignment_operator __binary_operator
 
@@ -192,6 +246,8 @@ namespace ft {
 		@brief check type of typename is it iterator or not, 
 		is a defined behaviour for the enable_if statement
 	*/
+
+
 	template < typename _TP, typename Iter>
 		class __is_input_iterator : public false_type { };
 	template < typename _TP >

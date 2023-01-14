@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/14 03:19:08 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/14 21:42:56 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include<climits>
 # include<memory>
 
+# include"type_traits.hpp"
 # include"utility.hpp"
 # include"iterator.hpp"
 
@@ -35,41 +36,83 @@
 *	@brief	data base of tree shipment
 *	@param	T_SHIP	Shipment to stor
 *************************************************************************************************************/
-template < class T_SHIP>
+template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	struct __road_ {
 
-		__road_	(T_SHIP& ship): Ship(ship) {
+			/* the original allocator for this instance */	
+			typedef typename Allocator::template rebind<__road_>::other	SAllocator;
+			typedef	T_SHIP		value_type;
+	
+
+			SAllocator*			_SAlloc;
+			Allocator			_Alloc;
+
+		__road_	(T_SHIP ship, SAllocator& _salloc)
+			: _SAlloc(&_salloc), _Alloc(Allocator()) {
+
+			Ship =  _Alloc.allocate(1);
+			_Alloc.construct(Ship, ship);
 
 			Color	= RED;
 
 			P		= NIL;
 			L_ch	= NIL;
 			R_ch	= NIL;
+			copy_ship = false;
 		}
-		__road_	(typename T_SHIP::first_type& key)
-			: Ship (ft::make_pair
+		__road_	(T_SHIP& ship, SAllocator& _salloc, Allocator& alloc)
+			: _SAlloc(&_salloc), Ship(&ship), _Alloc(alloc) {
+
+			Color	= RED;
+
+			P		= NIL;
+			L_ch	= NIL;
+			R_ch	= NIL;
+
+			copy_ship = false;
+		}
+		__road_	(T_SHIP* ship, SAllocator& _salloc, Allocator& alloc)
+			: _SAlloc(&_salloc), Ship(ship), _Alloc(alloc) {
+
+			if (not(Ship))
+				throw "null to ship";
+			Color	= RED;
+
+			P		= NIL;
+			L_ch	= NIL;
+			R_ch	= NIL;
+
+			copy_ship = false;
+		}
+		__road_	(typename T_SHIP::first_type& key, SAllocator& _salloc)
+			: _SAlloc(&_salloc), _Alloc(Allocator()) {
+
+			Ship =  _Alloc.allocate(1);
+			_Alloc.construct(Ship, ft::make_pair
 				<typename T_SHIP::first_type, typename T_SHIP::second_type>
-					(key, typename T_SHIP::second_type())) {
+					(key, typename T_SHIP::second_type()));
 
 			Color	= RED;
 
 			P		= NIL;
 			L_ch	= NIL;
 			R_ch	= NIL;
+
+			copy_ship = false;
 		}
 
-		T_SHIP			Ship;/* load */
+		T_SHIP*			Ship;/* load */
 		bool			Color;
+		bool			copy_ship;
 
 		__road_*			P;/* root of subtree(parent), NIL if node has root */
 		__road_*			L_ch;/* left subtree, youngest son */
 		__road_*			R_ch;/* right subtree, eldest son */
-	
-	public:
+
+
 	/*********************************************************************************************************
 	*	@brief		swap any two ndoes, 
 	*	@param		other	node in __road_
-	*	@attention	the addresses keeps their shipment
 	*********************************************************************************************************/
 		void	swap (__road_& other) {
 
@@ -85,10 +128,7 @@ template < class T_SHIP>
 			if (other.L_ch) other.L_ch->P = this;
 			if (other.R_ch) other.R_ch->P = this;
 
-			std::swap(P, other.P);
-			std::swap(R_ch, other.R_ch);
-			std::swap(L_ch, other.L_ch);
-			std::swap(Color, other.Color);
+			std::swap(*this, other);
 		}
 
 	/*********************************************************************************************************
@@ -179,14 +219,14 @@ template < class T_SHIP>
 						P->P->adjustment();
 				}
 			}
-			catch(...){
+			catch(...) {
 
 				if (WhoIm() == JU && P->WhoIm() == SE)/* case 3.2.2 */{
 
 					rr(P);/* I'M ju to SE */
 					goto C321;/* case 3.2.1 */
 				}
-				else if(WhoIm() == SE && P->WhoIm() == JU)/* case 3.2.4 */{
+				else if (WhoIm() == SE && P->WhoIm() == JU)/* case 3.2.4 */{
 
 					lr(P);/* I'M SU to ju */
 					goto C323;/* case 3.2.3 */
@@ -196,7 +236,7 @@ template < class T_SHIP>
 				else if (WhoIm() == JU && P->WhoIm() == JU)/* case 3.2.3 */
 	C323:			rr(P->P);
 
-				try{ get_S().Color = RED;}
+				try { get_S().Color = RED;}
 					catch(...){};
 
 				P->recolor();
@@ -275,13 +315,7 @@ template < class T_SHIP>
 			return *lch;
 		}
 
-		~__road_ () {
 
-			delete L_ch;
-			delete R_ch;
-		}
-
-		private:
 	/*********************************************************************************************************
 	*	@brief	Left  Rotation
 	*	@param	_node	indicator to being rotated
@@ -334,8 +368,18 @@ template < class T_SHIP>
 				_node->P = x;
 			}
 
-	};
 
+
+		public:
+			~__road_ () {
+
+				if (not(copy_ship))
+					_Alloc.deallocate (Ship, 1);
+				_SAlloc->deallocate (L_ch, 1);
+				_SAlloc->deallocate (R_ch, 1);
+			}
+
+	};
 
 
 
@@ -345,19 +389,23 @@ template < class T_SHIP>
 *	@brief	base Red _ Black _ tree
 *	@param	T_SHIP	Shipment to stor
 *************************************************************************************************************/
-template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
+template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	class RBT {
+
 
 		protected:
 			typedef 	typename Allocator::size_type	size_type;
 			typedef		typename T_SHIP::first_type		key_type;
 			typedef		typename T_SHIP::second_type 	v_map;
-			typedef		__road_<T_SHIP>					__road;
+			typedef		__road_<T_SHIP, Allocator>					__road;
+
+			typedef typename Allocator::template rebind<__road>::other	SAllocator;
 
 			Allocator			_Alloc;
 			bool				Empty;
 			size_type			Size;
 			__road*				seed;
+			SAllocator			_SAlloc;
 
 
 		public:
@@ -365,7 +413,7 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 
 
 			RBT (Allocator alloc = Allocator())
-				: _Alloc (alloc), Empty(true), Size(0), seed(NIL) { }
+				: _Alloc (alloc), Empty(true), Size(0), seed(NIL), _SAlloc(SAllocator()) { }
 
 
 /***************************  @category	 __  BST # tree intertion  __  **************************************/
@@ -375,26 +423,35 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 	*	@brief insert  node inside the tree, exacption in case of duplicate key in tree
 	*	@param ship shipment to insert
  	*********************************************************************************************************/
-		void		insert (__road _node) {
+		__road&		insert (__road _node) {
 
+				_node.copy_ship = true;
 				if (seed)
 					return insertion(_node, seed);
 
-				seed = _Alloc.allocate ( 1);
+				seed = _SAlloc.allocate ( 1);
 
-				_Alloc.construct (seed, _node);
+				_SAlloc.construct (seed, _node);
 				seed->Color	= BLACK;
 
 				Empty = false;
 				++Size;
+				return *seed;
 		}
+
+	/*********************************************************************************************************
+	*	@brief insert  pair  inside the tree, exacption in case of duplicate key in tree
+	*			, and thas not dealocated in destruction
+	*	@param ship shipment to insert
+ 	*********************************************************************************************************/
+		__road&		insert (T_SHIP& pair) { return insert (__road (pair, _SAlloc)); }
 
 	/*********************************************************************************************************
 	*	@brief insert key with default (pair) inside the tree, exacption in case of duplicate key in tree
 	*	@param key indecator shipment to insert
 	*	@overload	(2)
  	*********************************************************************************************************/
-		void		insert (key_type& key) { insert (__road (key)); }
+		__road&		insert (key_type& key) { return insert (__road (key, _SAlloc)); }
 
 
 
@@ -422,13 +479,11 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 				find = searching(key, seed);
 
 			if (find)
-				return find->Ship.second;
+				return find->Ship->second;
 			if (ex)
 				throw std::out_of_range ("key search");
-			__road*  _new = _Alloc.allocate(1);
-			_Alloc.construct(_new, __road(key));
 
-			return  insert(*_new), search(key, ex /* ex = not __EXCEPTIONS)*/);
+			return  insert(key) .Ship->second;
 		}
 
 
@@ -464,30 +519,30 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 	*	@param	_node	indicator to being rotated
 	*	@param	sub	indicator in last after recursions, the parent of the new child
 	*********************************************************************************************************/
-			void		insertion(__road _node, __road* sub) {
+			__road&		insertion(__road& _node, __road* sub) {
 
-				if (_node.Ship.first < sub->Ship.first) {
+				if (_node.Ship->first < sub->Ship->first) {
 
 					if (sub->L_ch) sub = sub->L_ch;
 					else {
 
-						sub->L_ch = _Alloc.allocate(1);
-						_Alloc.construct (sub->L_ch, _node);
+						sub->L_ch = _SAlloc.allocate(1);
+						_SAlloc.construct (sub->L_ch, _node);
 						sub->L_ch->P = sub;
-
-						return sub->L_ch->adjustment();
+						// sub->L_ch->adjustment();
+						return *sub->L_ch;
 					}
 				}
-				else if (_node.Ship.first > sub->Ship.first) {
+				else if (_node.Ship->first > sub->Ship->first) {
 
 					if (sub->R_ch) sub = sub->R_ch;
 					else {
 
-						sub->R_ch = _Alloc.allocate(1);
-						_Alloc.construct (sub->R_ch, _node);
+						sub->R_ch = _SAlloc.allocate(1);
+						_SAlloc.construct (sub->R_ch, _node);
 						sub->R_ch->P = sub;
-
-						return sub->R_ch->adjustment();
+						// sub->R_ch->adjustment();
+						return *sub->R_ch;
 					}
 				}
 				else
@@ -500,13 +555,14 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 	*	@param	key	indicator to being rotated
 	*	@param	sub	indicator for recursion place
 	*********************************************************************************************************/
-			__road*	searching(key_type& key, __road* sub) const {
+			__road*		searching(key_type& key, __road* sub) const {
 
 				if (not(sub))
 					return NIL;
-				if (key < sub->Ship.first)
+
+				if (key < sub->Ship->first)
 						sub = sub->L_ch;
-				else if (key > sub->Ship.first)
+				else if (key > sub->Ship->first)
 						sub = sub->R_ch;
 				else
 					return  sub;
@@ -524,10 +580,10 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 					return ;
 				__road* victim = &criminal->redemption();
 
-				Empty = (seed->Ship.first == victim->Ship.first);
+				Empty = (seed->Ship->first == victim->Ship->first);
 				if (Empty) {
 
-					_Alloc.deallocate(seed, 1);
+					_SAlloc.deallocate(seed, 1);
 					seed = NIL;
 					return ;
 				}
@@ -558,14 +614,14 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 				victim->R_ch	= NIL;
 				victim->P	= NIL;
 
-				_Alloc.deallocate (victim, 1);
+				_SAlloc.deallocate (victim, 1);
 
 				--Size;
 				/* end of history */
 			}
 
 		public:
-			~RBT() { _Alloc.deallocate (seed, 1); }
+			~RBT() { _SAlloc.deallocate (seed, 1); }
 	};
 
 
@@ -576,14 +632,16 @@ template < class T_SHIP, class Allocator = std::allocator<__road_<T_SHIP> > >
 *	@brief	iterator helper, manage pointing tree
 *	@param	Pr	pair(Shipment) to iterate it 
 *************************************************************************************************************/	
-template < class Pr>
-	class IterTree {
+template < class Pr, class Allocator >
+	struct __IterTree {
 
 
-			typedef		__road_<Pr>			__node;
-			typedef		__node&				ref_node;
-			typedef		__node*					ptr_node;
-			typedef	typename Pr::first_type		key_type;
+
+			typedef	Pr							value_type;
+			typedef	__road_<value_type, Allocator>		__node;
+			typedef	__node&									ref_node;
+			typedef	__node*								ptr_node;
+			typedef	typename Pr::first_type			key_type;
 
 			/** @brief indecate the (de/in)_crementation address of the node which not have (Left/Rigth) (-/+)*/
 			ptrdiff_t		Out;
@@ -627,55 +685,54 @@ template < class Pr>
 				return *lch;
 			}
 
-		public:
 			ptr_node		ItR;
-			IterTree() { }
+			__IterTree() { }
 
-			IterTree (ref_node tree): ItR(&tree) { }
-			IterTree (ptr_node tree): ItR(tree) { }
-			IterTree (const IterTree& tree) { *this = tree; }
+			__IterTree (ref_node tree): ItR(&tree) { }
+			__IterTree (ptr_node tree): ItR(tree) { }
+			__IterTree (const __IterTree& tree) { *this = tree; }
 
-			IterTree&	operator++() {
+			__IterTree&	operator++() {
 
 				try { ItR = &next(); } catch(...) {};
 				return *this;
 			}
-			IterTree	operator++(int) {
+			__IterTree	operator++(int) {
 
-				IterTree old = *this;
+				__IterTree old = *this;
 				try { ItR = &next(); } catch(...) {};
 				return old;
 			}
-			IterTree&	operator--() {
+			__IterTree&	operator--() {
 
 				try { ItR = &prev(); } catch(...) {};
 				return *this;
 			}
-			IterTree	operator--(int) {
+			__IterTree	operator--(int) {
 
-				IterTree old = *this;
+				__IterTree old = *this;
 				try { ItR = &prev(); } catch(...) {};
 				return old;
 			}
 
-			IterTree&		operator<< (key_type& key) {
+			__IterTree&		operator<< (key_type& key) {
 
 				// if (Out > 0)
 				// 	Out = 1;
 				// while (Out < 0)
 				// 	++Out;
 
-				if (ItR->Ship.first < key)
-					while (ItR->P && ItR->P->Ship.first < key)
+				if (ItR->Ship->first < key)
+					while (ItR->P && ItR->P->Ship->first < key)
 						ItR = ItR->P;
-				if (ItR->P && ItR->P->Ship.first == key)
+				if (ItR->P && ItR->P->Ship->first == key)
 					return ItR = ItR->P, *this;
 
 				if (not(ItR->R_ch))
 					goto CEND;
 
 				while (1) {
-					while (ItR->R_ch && ItR->R_ch->Ship.first < key)
+					while (ItR->R_ch && ItR->R_ch->Ship->first < key)
 						ItR = ItR->R_ch;
 					if (ItR->L_ch) {
 
@@ -698,24 +755,24 @@ template < class Pr>
 				}
 				return *this;
 			}
-			IterTree&		operator>> (key_type& key) {
+			__IterTree&		operator>> (key_type& key) {
 
 				// if (Out > 0)
 				// 	Out = 1;
 				// while (Out < 0)
 				// 	++Out;
 
-				if (ItR->Ship.first < key)
-					while (ItR->P && ItR->P->Ship.first < key)
+				if (ItR->Ship->first < key)
+					while (ItR->P && ItR->P->Ship->first < key)
 						ItR = ItR->P;
-				if (ItR->P && ItR->P->Ship.first == key)
+				if (ItR->P && ItR->P->Ship->first == key)
 					return ItR = ItR->P, *this;
 
 				if (not(ItR->R_ch))
 					goto CEND;
 
 				while (1) {
-					while (ItR->R_ch && ItR->R_ch->Ship.first < key)
+					while (ItR->R_ch && ItR->R_ch->Ship->first < key)
 						ItR = ItR->R_ch;
 					if (ItR->L_ch) {
 
@@ -738,8 +795,9 @@ template < class Pr>
 				}
 				return *this;
 			}
-			bool	operator!= (const IterTree& pIt) { return pIt.ItR == ItR ? false : true; }
-			bool	operator== (const IterTree& pIt) { return not(*this == pIt); }
+
+			bool	operator!= (const __IterTree& pIt) { return pIt.ItR == ItR ? false : true; }
+			bool	operator== (const __IterTree& pIt) { return not(*this == pIt); }
 	};
 
 
@@ -748,14 +806,15 @@ template < class Pr>
 *	@param	Pr	pair to stored it (Shipment)
 *	@param	Allocator to allocate the @a Pr
 *************************************************************************************************************/	
-template < class Pr, class Allocator = std::allocator<__road_<Pr> > >
+template < class Pr, class Allocator = std::allocator<Pr > >
 	class _RBtree : public RBT<Pr, Allocator> {
 
 
-			typedef		RBT<Pr, Allocator>			__Base;
-			typedef	typename __Base::v_map			v_map;
+			typedef	RBT<Pr, Allocator>					__Base;
+			typedef	typename __Base::v_map				v_map;
 			typedef	typename __Base::key_type			key_type;
-			typedef	typename Allocator::size_type			size_type;
+			typedef	typename Allocator::size_type		size_type;
+			typedef	__IterTree<Pr, Allocator>			IterTree;
 
 		public:
 			typedef	typename __Base::__road				__base;
@@ -766,28 +825,29 @@ template < class Pr, class Allocator = std::allocator<__road_<Pr> > >
 			bool		empty() const { return this->Empty; }
 			size_type	size() const { return  this->Size; }
 
-			IterTree<Pr>	get_last() 	{
+			IterTree	get_last() 	{
 
 				__base*  Last = this->seed;
 
 				while (Last && Last->L_ch)
 					Last = Last->L_ch;
-				return  IterTree<Pr>(Last);
+				return  IterTree(Last);
 			}
-			IterTree<Pr>	get_first() {
+			IterTree	get_first() {
 
 				__base*  Frst = this->seed;
 
 				while (Frst && Frst->R_ch)
 					Frst = Frst->R_ch;
-				return IterTree<Pr>(Frst);
+				return IterTree(Frst);
 			}
-			IterTree<Pr>	get_Root() 	{ return IterTree<Pr>(this->seed); }
+			IterTree	get_Root() 	{ return IterTree(this->seed); }
 
 
 			void		destroy() {
 
-				this->_Alloc.deallocate(this->seed, 1);
+				this->_SAlloc.deallocate(this->seed, 1);
+				this->seed = NIL;
 				this->Empty = true;
 				this->Size = 0;
 			}
