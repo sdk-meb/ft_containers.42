@@ -124,7 +124,7 @@ namespace	ft {
 	*	@brief	get mapped value by key scershing, ifnot endefined behavier
 	*	@param	key
 	*********************************************************************************************************/
-			mapped_type&	operator[] (const key_type& key)	{ return tree.search(key, not(__EXCEPTIONS)); }
+			mapped_type&	operator[] (const key_type& key)   { return tree.search(key, not(__EXCEPTIONS)); }
 
 
 
@@ -167,12 +167,18 @@ namespace	ft {
 	*	@brief remove all contents in the map
 	*********************************************************************************************************/
 			void	clear() { tree.destroy(); }
+	/*********************************************************************************************************
+	*	@brief remove element inside range 
+	*	@overload (2)
+	*	@param key key of the shipment (pair)
+	*********************************************************************************************************/
+			size_type	erase (const key_type& key) { return tree.del(key); }
 
 	/*********************************************************************************************************
 	*	@brief remove element in position 
 	*	@param pos iterator position
 	*********************************************************************************************************/
-			void	erase (iterator pos) { tree.del(pos.base().get_pair()); }
+			void	erase (iterator pos) { tree.del(pos.base().ItR); }
 
 	/*********************************************************************************************************
 	*	@brief remove element inside range 
@@ -190,13 +196,6 @@ namespace	ft {
 					del = first;
 				}
 			}
-
-	/*********************************************************************************************************
-	*	@brief remove element inside range 
-	*	@overload (2)
-	*	@param key key of the shipment (pair)
-	*********************************************************************************************************/
-			size_type	erase (const key_type& key) { return tree.del(key); }
 
 	/*********************************************************************************************************
 	*	@attention swwwwwwwwwwap
