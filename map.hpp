@@ -38,13 +38,13 @@ namespace	ft {
 	*********************************************************************************************************/
 	template	< 
 				class __key, class _T,
-				class Compare = std::less<__key>,
-				class Allocator = std::allocator<ft::pair<const __key, _T> >
+				class Compare = std::less <__key>,
+				class Allocator = std::allocator <ft::pair <const __key, _T> >
 				>
 		class map {
 
-			public:
 
+		public:
 				typedef	__key									key_type;
 				typedef	_T										mapped_type;
 				typedef	ft::pair<const key_type, mapped_type>		value_type;
@@ -60,31 +60,32 @@ namespace	ft {
 				typedef	typename Allocator::pointer					  pointer;
 				typedef	typename Allocator::const_pointer		const_pointer;
 
-
-
-				typedef	_RBtree<value_type>			__tree_;
+		private:
+				typedef	_RBtree <value_type, Allocator>			__tree_;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
 	*********************************************************************************************************/
-				typedef	IterTree<value_type>			Itree;
+				typedef	__IterTree <value_type, Allocator>			Itree;
 
+		public:
+	/*********************************************************************************************************
+	*	@param	Itree tree iterator
+	*********************************************************************************************************/
+				typedef ft::map_iterator <Itree>			iterator;
+				typedef	ft::map_iterator <const Itree>		const_iterator;
+
+	/*********************************************************************************************************
+	*	@param	iterator 
+	*********************************************************************************************************/
+				typedef	ft::reverse_iterator <iterator>			reverse_iterator;
+				typedef	ft::reverse_iterator <const_iterator>	const_reverse_iterator;
 
 
 /***************************  @category	 __  Iterator Member Types __  **************************************/
 
 
-	/*********************************************************************************************************
-	*	@param	Itree tree iterator
-	*********************************************************************************************************/
-				typedef ft::map_iterator< Itree>			iterator;
-				typedef	ft::map_iterator<const Itree>		const_iterator;
 
-	/*********************************************************************************************************
-	*	@param	iterator 
-	*********************************************************************************************************/
-				typedef	ft::reverse_iterator<iterator>			reverse_iterator;
-				typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	/*********************************************************************************************************
 	*	@note	[functor] that compar the first components of the pairs (in map, the key of @a value_type)
@@ -106,8 +107,12 @@ namespace	ft {
 				};
 
 
+
 /***************************  @category	 __  Constuctors  __  ***********************************************/
 			map() : tree(__tree_()), _v_cmp(Compare()) { }
+			explicit map (const Compare& comp, const Allocator& alloc = Allocator());
+
+
 
 
 /***************************  @category	 __  Element access  __  ********************************************/
@@ -128,11 +133,14 @@ namespace	ft {
 
 
 
+
+
 /***************************  @category	 __  Capacity  __  **************************************************/
 
 			bool		empty() const		{ return tree.empty(); }
 			size_type	size() const		{ return tree.size(); }
 			size_type	max_size() const	{ return _Alloc.max_size(); }
+
 
 
 
@@ -144,11 +152,9 @@ namespace	ft {
 			ft::pair<iterator, bool>
 				insert (const value_type& value) {
 
-				try {
-
-					tree.insert (value);
-				}
-				catch (...) {}
+					ft::pair<iterator, bool> tmpr 
+						= ft::make_pair(iterator (Itree(tree.insert (const_cast<value_type&>(value)))), true);
+					return tmpr;
 			}
 
 	/*********************************************************************************************************
@@ -157,7 +163,13 @@ namespace	ft {
 	*	@param		pos hint position
 	*	@param		value	value to insert
 	*********************************************************************************************************/
-			iterator	insert (iterator pos, const value_type& value);
+			iterator	insert (iterator pos, const value_type& value) {
+
+				if (pos->first != value.first) 
+					return insert (value).first;
+				pos->second = value.second;
+				return pos;
+			}
 
 		template< class InputIt >
 			void	insert (InputIt first, InputIt last) ;
@@ -178,7 +190,7 @@ namespace	ft {
 	*	@brief remove element in position 
 	*	@param pos iterator position
 	*********************************************************************************************************/
-			void	erase (iterator pos) { tree.del(pos.base().ItR); }
+			void	erase (iterator pos) { tree.del(pos.Super.ItR); }
 
 	/*********************************************************************************************************
 	*	@brief remove element inside range 
@@ -189,7 +201,7 @@ namespace	ft {
 			void		erase (iterator first, iterator last) {
 
 				iterator del = first;
-				while (first != last) {
+				while (&(*first) != &(*last)) {
 
 					erase(del);
 					++first;
@@ -202,9 +214,9 @@ namespace	ft {
 	*********************************************************************************************************/		
 			void		swap (map& other) {
 
-				// std::swap(tree, other.tree);
+				std::swap(tree, other.tree);
 				std::swap(_Alloc, other._Alloc);
-				// std::swap(_v_cmp, other._v_cmp);
+				std::swap(_v_cmp, other._v_cmp);
 			}
 
 
@@ -254,7 +266,7 @@ namespace	ft {
 				typename __tree_::__base* tmp = tree.search(key);
 
 				if (tmp)
-					return iterator(IterTree<value_type>(*tmp));
+					return iterator(Itree(*tmp));
 
 				return end();
 			}
@@ -263,7 +275,7 @@ namespace	ft {
 				typename __tree_::__base* tmp = tree.search(key);
 
 				if (tmp)
-					return const_iterator(IterTree<value_type>(*tmp));
+					return const_iterator(Itree(*tmp));
 
 				return end();
 			}
