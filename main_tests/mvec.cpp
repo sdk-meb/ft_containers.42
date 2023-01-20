@@ -3,15 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   mvec.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 15:54:39 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/20 20:11:22 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/21 10:10:33 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include<iostream>
 
+#ifndef LEET
+	#define LEET 1337
+#endif
 
 #if LEET != 1337
 	# include<vector>
@@ -400,14 +403,13 @@ std::cout	<< std::endl << "*************************** < eraes > ***************
 			std::cout << "\t" << *i;
 		std::cout << std::endl;
 
-		std::cout << "\t" << *(v.end()) << std::endl;
+		std::cout << "\t" << *(v.end()-1) << std::endl;
 
 		v.erase(v.begin() + 2, v.begin() + 5);
 		for (CCLIB::vector<int>::iterator i = v.begin(); i < v.end(); i++)
 			std::cout << "\t" << *i;
 		std::cout << std::endl;
-
-		std::cout << "\t" << *(v.end()) << std::endl;
+		std::cout << "\t" << *(v.end()-1) << std::endl;
 	}
 	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 }
@@ -476,7 +478,7 @@ std::cout	<< std::endl << "*************************** < clear > ***************
 		std::cout << std::endl;
 		std::cout << "size = " << v.size() << std::endl;
 		std::cout << "capacity = " << v.capacity() << std::endl;
-		std::cout << "end = " << *v.end() << std::endl;
+		std::cout << "end = " << *(v.end()-1) << std::endl;
 	}
 	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 }
