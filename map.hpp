@@ -18,10 +18,8 @@
 # include<algorithm>
 # include<cstddef>
 
-# include"Red-Black_tree.hpp"
-
+# include"rb_tree.hpp"
 # include"map_iterator.hpp"
-
 # include"utility.hpp"
 
 
@@ -148,9 +146,7 @@ template	<
 	*	@brief	get mapped value by key scershing, ifnot endefined behavier
 	*	@param	key
 	*********************************************************************************************************/
-			mapped_type&	operator[] (const key_type& key)   { return tree.search(key, not(__EXCEPTIONS)); }
-
-
+			mapped_type&	operator[] (const key_type& key)   { return tree.search (key, not(__EXCEPTIONS)); }
 
 
 
@@ -169,18 +165,17 @@ template	<
 	*	@brief	value type insertion
 	*	@return	pait of iterator and true if and only if 
 	*********************************************************************************************************/
-			ft::pair<iterator, bool>
-				insert (const value_type& value) {
+		ft::pair<iterator, bool> insert (const value_type& value) {
 
-					ft::pair<iterator, bool> tmpr;
+				ft::pair<iterator, bool> tmpr;
 
-					try { tmpr = ft::make_pair (
-							iterator (Itree(tree.insert (const_cast<value_type&>(value)))), true); }
-					catch(...) { tmpr = ft::make_pair (
-							iterator (Itree(tree.search (value.first))), false); }
+				try { tmpr = ft::make_pair (
+						iterator (Itree(tree.insert (const_cast<value_type&>(value)))), true); }
+				catch(...) { tmpr = ft::make_pair (
+						iterator (Itree(tree.search (value.first))), false); }
 
-					return tmpr;
-			}
+				return tmpr;
+		}
 
 	/*********************************************************************************************************
 	*	@overload (2)
@@ -188,13 +183,13 @@ template	<
 	*	@param		pos hint position
 	*	@param		value	value to insert
 	*********************************************************************************************************/
-			iterator	insert (iterator pos, const value_type& value) {
+		iterator	insert (iterator pos, const value_type& value) {
 
-				if (pos->first != value.first) 
-					return insert (value).first;
-				pos->second = value.second;
-				return pos;
-			}
+			if (pos->first != value.first) 
+				return insert (value).first;
+			pos->second = value.second;
+			return pos;
+		}
 
 	/*********************************************************************************************************
 	*	@overload (3) template
@@ -205,6 +200,7 @@ template	<
 			typename ft::enable_if<__is_input_iter<typename InputIt::iterator_category>::value, void>::type	
 			insert (InputIt first, InputIt last) {
 
+				exit(9);
 				while (&(*first) != &(*last)) {
 
 					insert(*first);
@@ -282,14 +278,8 @@ template	<
 	*********************************************************************************************************/
 			size_type		count (const key_type& key) {
 
-					try {
-
-						tree.search(key, __EXCEPTIONS);
-					}
-					catch (...) {
-
-						return false ;
-					}
+					try { tree.search(key, __EXCEPTIONS); }
+					catch (...) { return false ; }
 
 					return true;
 				}
@@ -303,8 +293,7 @@ template	<
 
 				typename __tree_::__base* tmp = tree.search(key);
 
-				if (tmp)
-					return iterator(Itree(*tmp));
+				if (tmp) return iterator(Itree(*tmp));
 
 				return end();
 			}
@@ -312,8 +301,7 @@ template	<
 
 				typename __tree_::__base* tmp = tree.search(key);
 
-				if (tmp)
-					return const_iterator(Itree(*tmp));
+				if (tmp) return const_iterator(Itree(*tmp));
 
 				return end();
 			}
@@ -348,7 +336,6 @@ template	<
 
 				return iterator (tree.get_first() >> key);
 			}
-
 
 
 
