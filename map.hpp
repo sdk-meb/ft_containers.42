@@ -200,8 +200,7 @@ template	<
 			typename ft::enable_if<__is_input_iter<typename InputIt::iterator_category>::value, void>::type	
 			insert (InputIt first, InputIt last) {
 
-				exit(9);
-				while (&(*first) != &(*last)) {
+				while (first not_eq last) {
 
 					insert(*first);
 					++first;
@@ -259,8 +258,8 @@ template	<
 
 			iterator			begin() 		{ return iterator 		(tree.get_first()); }
 			const_iterator		begin() const	{ return const_iterator (tree.get_first()); }
-			iterator			end()			{ return iterator		(++tree.get_last()); }
-			const_iterator		end() const		{ return const_iterator (++tree.get_last()); }
+			iterator			end()			{ return iterator		(tree.get_last()); }
+			const_iterator		end() const		{ return const_iterator (tree.get_last()); }
 			reverse_iterator		rbegin()		{ return reverse_iterator 		(end()); }
 			const_reverse_iterator	rbegin() const	{ return const_reverse_iterator (end()); }
 			reverse_iterator		rend()			{ return reverse_iterator 		(begin()); }
@@ -278,11 +277,11 @@ template	<
 	*********************************************************************************************************/
 			size_type		count (const key_type& key) {
 
-					try { tree.search(key, __EXCEPTIONS); }
-					catch (...) { return false ; }
+				try { tree.search(key, __EXCEPTIONS); }
+				catch (...) { return false ; }
 
-					return true;
-				}
+				return true;
+			}
 
 	/*********************************************************************************************************
 	*	@brief		searching tree

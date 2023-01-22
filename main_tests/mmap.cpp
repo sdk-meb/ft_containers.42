@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/21 23:33:35 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/24 12:27:23 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,14 @@
 int main() {
 
 goto T;
-T:
+
 std::cout << std::endl << "\033[36m" << "****************** < constructors , iterators > ************************** " << "\033[0m" << std::endl; {
 
 
     try {
-
         CCLIB::map<std::string, int> m1;
+
         CCLIB::map<std::string, int> m2(m1.begin(), m1.end());
-exit(7);
         CCLIB::map<std::string, int> m3(m1);
 
         std::cout << "*********** m1 < normal > ************" << std::endl;
@@ -71,8 +70,8 @@ exit(7);
     }
     catch (const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-exit(99);
-std::cout << std::endl << "\033[36m" << "****************** < empty , size , max_size >  ************************** " << "\033[0m" << std::endl; {
+
+std::cout << std::endl << "\033[36m" << "****************** < empty , size >  ************************** " << "\033[0m" << std::endl; {
 
 
     try {
@@ -93,14 +92,10 @@ std::cout << std::endl << "\033[36m" << "****************** < empty , size , max
         m1["d"] = 4;
         std::cout << "m1 size : " << m1.size() << std::endl;
 
-        std::cout << "m1 max_size : " << m1.max_size() << std::endl;
-        std::cout << "m2 max_size : " << m2.max_size() << std::endl;
-        std::cout << "m3 max_size : " << m3.max_size() << std::endl;
-
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-
+T:
 std::cout << std::endl << "\033[36m" << "************************** < insert > ************************************ " << "\033[0m" << std::endl; {
 
 
@@ -109,37 +104,36 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
         CCLIB::map<std::string, int> m1;
         CCLIB::pair<CCLIB::map<std::string, int>::iterator, bool> p;
 
-        p = m1.insert(CCLIB::make_pair("a", 1));
+        p = m1.insert(CCLIB::make_pair("m", 1));
         std::cout << std::boolalpha;
-        std::cout << "insert a : " << "[ " << p.first->first << " , " << p.first->second << " ] | Added : "<< p.second << std::endl;
-        p = m1.insert(CCLIB::make_pair("a", 1));
-        std::cout << "insert a : " << "[ " << p.first->first << " , " << p.first->second << " ] | Added : "<< p.second << std::endl;
+        std::cout << "insert m : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : "<< p.second << std::endl;
+        p = m1.insert(CCLIB::make_pair("e", 1));
+        std::cout << "insert e : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : "<< p.second << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
 
-        p = m1.insert(CCLIB::make_pair("b", 2));
-        std::cout << "insert b : " << "[ " << p.first->first << " , " << p.first->second << " ] | Added : " << p.second << std::endl;
-        p = m1.insert(CCLIB::make_pair("b", 2));
-        std::cout << "insert b : " << "[ " << p.first->first << " , " << p.first->second << " ] | Added : " << p.second << std::endl;
+        p = m1.insert(CCLIB::make_pair("s", 2));
+        std::cout << "insert s : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : " << p.second << std::endl;
+        p = m1.insert(CCLIB::make_pair("-", 2));
+        std::cout << "insert - : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : " << p.second << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
 
         CCLIB::map<std::string, int> m2;
         CCLIB::map<std::string, int>::iterator it;
-        m2["a"] = 1;
-        m2["b"] = 2;
-        m2["d"] = 4;
-        m2["e"] = 5;
-        m2["f"] = 6;
-        m2["g"] = 7;
-        m2["h"] = 8;
+        m2["m"] = 1;
+        m2["e"] = 2;
+        m2["s"] = 3;
+        m2["-"] = 4;
+        m2["a"] = 5;
+        m2["d"] = 6;
+        m2["k"] = 7;
         std::cout << "*********** m2 before ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m2.begin() ; it2 != m2.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
-
         it = m2.insert(m2.begin(), CCLIB::make_pair("c", 3));
         std::cout << "*********** m2 after ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m2.begin() ; it2 != m2.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "insert c : " << "[ " << it->first << " , " << it->second << " ]" << std::endl;
         std::cout << "m2 size : " << m2.size() << std::endl;
@@ -154,16 +148,19 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
         std::cout << std::endl;
         std::cout << "m3 size : " << m3.size() << std::endl;
 
+exit(5);
         m3.insert(m2.begin(), m2.end());
         std::cout << "*********** m3 after ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m3.begin() ; it2 != m3.end(); it2++)
             std::cout << "\n" << it2->first << "\t" << it2->second;
         std::cout << std::endl;
+
         std::cout << "m3 size : " << m3.size() << std::endl;
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
+exit(99);
 std::cout << std::endl << "\033[36m" << "************************** < erase > ************************************* " << "\033[0m" << std::endl; {
 
 

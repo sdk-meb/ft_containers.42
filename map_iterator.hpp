@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_iterator.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/22 00:13:38 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/24 11:45:02 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,17 +86,13 @@ template <class _Iter>
 
 
 	template < typename Iter>
-		typename ft::enable_if <
-			ft::__is_bidirectional_iter<typename Iter::iterator_category>::value and 
-			not	ft::__is_random_access_iter<typename Iter::iterator_category>::value,
-			bool >::type 
-				operator== (const Iter& a, const Iter& b)	{ return a->first == b->first; }
+		bool operator== (const Iter& a, const Iter& b)	{ return not (a not_eq b); }
 	template < typename Iter> 
 		typename ft::enable_if <
 			ft::__is_bidirectional_iter<typename Iter::iterator_category>::value and 
 			not	ft::__is_random_access_iter<typename Iter::iterator_category>::value,
 			bool >::type 
-				operator!= (const Iter& a, const Iter& b)	{ return not (a == b); }
+				operator!= (const Iter& a, const Iter& b)	{ return &(*a) not_eq &(*b); }
 
 
 }
