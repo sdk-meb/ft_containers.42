@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/24 11:45:02 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 09:19:13 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft {
 				typedef typename INTERFACE::iterator_category		iterator_category;
 
 				map_iterator() {}
-				explicit map_iterator(const treeiter& _x): Super(_x) { }
+				explicit map_iterator(const treeiter& _x):Super(_x)  { }
 				template< class U >
 					map_iterator (map_iterator<U> other)
 						: Super (other.Super) { };

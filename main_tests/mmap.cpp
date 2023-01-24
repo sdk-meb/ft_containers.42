@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/24 12:27:23 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 12:32:21 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ std::cout << std::endl << "\033[36m" << "****************** < empty , size >  **
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-T:
+
 std::cout << std::endl << "\033[36m" << "************************** < insert > ************************************ " << "\033[0m" << std::endl; {
 
 
@@ -148,7 +148,6 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
         std::cout << std::endl;
         std::cout << "m3 size : " << m3.size() << std::endl;
 
-exit(5);
         m3.insert(m2.begin(), m2.end());
         std::cout << "*********** m3 after ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m3.begin() ; it2 != m3.end(); it2++)
@@ -160,7 +159,6 @@ exit(5);
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-exit(99);
 std::cout << std::endl << "\033[36m" << "************************** < erase > ************************************* " << "\033[0m" << std::endl; {
 
 
@@ -168,14 +166,14 @@ std::cout << std::endl << "\033[36m" << "************************** < erase > **
 
         CCLIB::map<std::string, int> m1;
 
+        m1["d"] = 4;
         m1["a"] = 1;
         m1["b"] = 2;
-        m1["c"] = 3;
-        m1["d"] = 4;
         m1["e"] = 5;
+        m1["c"] = 3;
         m1["f"] = 6;
         std::cout << "*********** m1 before ************" << std::endl;
-        for (CCLIB::map<std::string, int>::iterator it2 = m1.begin() ; it2 != m1.end(); it2++)
+        for (CCLIB::map<std::string, int>::iterator it2 = m1.begin() ; it2 != m1.end(); ++it2 )
             std::cout << "\n" << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
@@ -202,6 +200,7 @@ std::cout << std::endl << "\033[36m" << "************************** < erase > **
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
+T:
 
 std::cout << std::endl << "\033[36m" << "************************** < swap > ************************************** " << "\033[0m" << std::endl; {
 
@@ -242,7 +241,7 @@ std::cout << std::endl << "\033[36m" << "************************** < swap > ***
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-
+exit(99);
 std::cout << std::endl << "\033[36m" << "************************* < clear > ************************************** " << "\033[0m" << std::endl; {
 
 
