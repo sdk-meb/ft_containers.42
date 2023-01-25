@@ -119,7 +119,12 @@ template	<
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
 					: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { insert (first, last); }
 
-			map (const map& other): _v_cmp(other._v_cmp){ *this = other; }
+			map (const map& other): _v_cmp(other._v_cmp) {
+
+				tree	= other.tree;
+				_v_cmp	= other._v_cmp;
+				_Alloc	= other._Alloc;
+			}
 
 			map&			operator= (const map& other) {
 
@@ -245,11 +250,10 @@ template	<
 	*********************************************************************************************************/		
 			void		swap (map& other) {
 
-				std::swap(tree, other.tree);
-				std::swap(_Alloc, other._Alloc);
-				std::swap(_v_cmp, other._v_cmp);
+				std::swap (_v_cmp, other._v_cmp);
+				std::swap (tree, other.tree);
+				std::swap (_Alloc, other._Alloc);
 			}
-
 
 
 /***************************  @category	 __  Iterators  __  *************************************************/
@@ -351,7 +355,7 @@ template	<
 
 			private :
 
-				__tree_		tree ;
+				__tree_			tree;
 				value_compare	_v_cmp ;
 				allocator_type	_Alloc ;
 

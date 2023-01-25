@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 12:32:21 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 18:57:23 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include<iostream>
+#include <cstdlib>
 
 #ifndef LEET
 	#define LEET 1337
@@ -200,14 +201,13 @@ std::cout << std::endl << "\033[36m" << "************************** < erase > **
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-T:
 
 std::cout << std::endl << "\033[36m" << "************************** < swap > ************************************** " << "\033[0m" << std::endl; {
 
 
     try {
 
-        CCLIB::map<char,int> foo,bar;
+        CCLIB::map<char,int> foo, bar;
 
         foo['x']=100;
         foo['y']=200;
@@ -224,7 +224,7 @@ std::cout << std::endl << "\033[36m" << "************************** < swap > ***
         std::cout << "bar contains:\n";
         for (CCLIB::map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
             std::cout << it->first << " => " << it->second << '\n';
-        std::cout << "bar size : " << bar.size() << std::endl;
+        // std::cout << "bar size : " << bar.size() << std::endl;
 
         foo.swap(bar);
 
@@ -241,7 +241,7 @@ std::cout << std::endl << "\033[36m" << "************************** < swap > ***
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-exit(99);
+
 std::cout << std::endl << "\033[36m" << "************************* < clear > ************************************** " << "\033[0m" << std::endl; {
 
 
@@ -275,7 +275,7 @@ std::cout << std::endl << "\033[36m" << "************************* < clear > ***
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-
+T:
 std::cout << std::endl << "\033[36m" << "****************** < key_comp , value_comp > **************************** " << "\033[0m" << std::endl; {
 
 
@@ -322,7 +322,7 @@ std::cout << std::endl << "\033[36m" << "****************** < key_comp , value_c
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-
+exit(99);
 std::cout << std::endl << "\033[36m" << "************************* < find > ************************************** " << "\033[0m" << std::endl; {
 
 
