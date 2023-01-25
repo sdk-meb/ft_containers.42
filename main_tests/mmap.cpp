@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 22:36:26 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/26 11:21:52 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 int main() {
 
-goto T;
+// goto T;
 
 std::cout << std::endl << "\033[36m" << "****************** < constructors , iterators > ************************** " << "\033[0m" << std::endl; {
 
@@ -373,7 +373,7 @@ std::cout << std::endl << "\033[36m" << "************************* < count > ***
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
-T:
+
 std::cout << std::endl << "\033[36m" << "************ < lower_bound , upper_bound , equal_range > *************** " << "\033[0m" << std::endl; {
 
 
@@ -388,14 +388,14 @@ std::cout << std::endl << "\033[36m" << "************ < lower_bound , upper_boun
         m1['d']=80;
         m1['e']=100;
 
-        low = m1.lower_bound ('b');
-        up = m1.upper_bound ('b');
+        low = m1.lower_bound ('a');
+        up = m1.upper_bound ('a');
 
         std::cout << "low : " << low->first << '\n';
         std::cout << "up : " << up->first << '\n';
     
-        low = m1.lower_bound ('f');
-        up = m1.upper_bound ('f');
+        low = m1.lower_bound ('c');
+        up = m1.upper_bound ('e');
 
         std::cout << "low : " << low->first << '\n';
         std::cout << "up : " << up->first << '\n';
@@ -421,7 +421,6 @@ std::cout << std::endl << "\033[36m" << "************ < lower_bound , upper_boun
 
         std::cout << "upper bound points to: ";
         std::cout << ret.second->first << " => " << ret.second->second << '\n';
-
         ret = m2.equal_range('c');
 
 
