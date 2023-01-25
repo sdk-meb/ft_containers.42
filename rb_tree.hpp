@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rb_tree.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 12:31:21 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 18:56:43 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,10 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 		__road_ (const __road_& other) {
 
-			_SAlloc	= other._SAlloc;
-			_Alloc	= other._Alloc;
-			Ship	= other.Ship;
+			_SAlloc		= NIL;
+			_Alloc		= other._Alloc;
+			Ship		= other.Ship;
+			copy_ship	= true;
 			Color	= other.Color;
 			P		= other.P;
 			L_ch	= other.L_ch;
@@ -103,8 +104,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		__road_	(T_SHIP* ship, SAllocator& _salloc, Allocator& alloc)
 			: _SAlloc(&_salloc), Ship(ship), _Alloc(alloc) {
 
-			if (not(Ship))
-				throw "null to ship";
+			if (not Ship)
+				std::__throw_bad_function_call ();
 			Color	= RED;
 
 			P		= NIL;
@@ -412,10 +413,11 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		}
 		~__road_ () {
 
-			if (not copy_ship) _Alloc.deallocate (Ship, 1);
-			if (not _SAlloc) return ;
-			_SAlloc->deallocate (L_ch, 1);
-			_SAlloc->deallocate (R_ch, 1);
+			// if (not copy_ship) _Alloc.deallocate (Ship, 1);
+			// if (not _SAlloc) return ;
+
+			// _SAlloc->deallocate (L_ch, 1);
+			// _SAlloc->deallocate (R_ch, 1);
 		}
 
 };
@@ -561,7 +563,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 				else {
 
 					sub->L_ch = _SAlloc.allocate(1);
-					
+
 					_SAlloc.construct (sub->L_ch, _node);
 					sub->L_ch->P = sub;
 					// sub->L_ch->adjustment();
@@ -651,7 +653,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		}
 
 	public:
-		~RBT() { _SAlloc.deallocate (seed, 1); }
+		~RBT() {}//_SAlloc.destroy(seed); _SAlloc.deallocate (seed, 1);exit(9); }
 };
 
 
@@ -844,8 +846,8 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 
 		_RBtree():__Base() { }
 
-		bool		empty() const { return size() ? false : true; }
 		size_type	size() const { return  this->Size; }
+		bool		empty() const { return size() ? false : true; }
 
 		IterTree	get_Root() 	{ return this->seed ? IterTree(this->seed) : IterTree(); }
 		IterTree	get_last() 	{ return this->seed ? IterTree(this->seed->eldest(), false): IterTree(); }
@@ -853,10 +855,12 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 
 		void		destroy() {
 
-			this->_SAlloc.deallocate(this->seed, 1);
+			// this->_SAlloc.deallocate(this->seed, 1);
 			this->seed = NIL;
 			this->Size = 0;
 		}
+
+		
 
 	};
 
