@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/20 09:21:21 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 21:24:51 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,11 +168,11 @@ template <class _Iter>
 			explicit reverse_iterator (iterator_type x): Super(x) { };
 			template< class U >
 				reverse_iterator (const reverse_iterator<U>& other)
-					: Super(other.base()) { };
+					: Super(other.Super) { };
 
 			iterator_type	base() const { return Super; };
 
-			reverse_iterator&	operator=( const reverse_iterator& rIt ){ Super = rIt.base();}
+			reverse_iterator&	operator=( const reverse_iterator& rIt ){ Super = rIt.Super;}
 
 			reverse_iterator&	operator--() { ++Super; return *this; }
 			reverse_iterator&	operator++() { --Super; return *this; }
@@ -183,8 +183,8 @@ template <class _Iter>
 			reverse_iterator&	operator-= (ptrdiff_t n) { Super += n; return *this; }
 			reverse_iterator&	operator+= (ptrdiff_t n) { Super -= n; return *this; }
 
-			reference	operator*() const { iterator_type It = Super ; return *(--It); }
-			pointer		operator->() const { return Super; }
+			reference	operator*() const { iterator_type org (Super); return *(--org); }
+			pointer		operator->() const { iterator_type org (Super); return (--org).operator->(); }
 			reference	operator[] (difference_type n) const { return *(*this + n); }
 	};
 
