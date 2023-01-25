@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/24 12:23:33 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 12:31:21 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,16 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			Allocator			_Alloc;
 			static	T_SHIP		nul_;
 
+		__road_ (const __road_& other) {
+
+			_SAlloc	= other._SAlloc;
+			_Alloc	= other._Alloc;
+			Ship	= other.Ship;
+			Color	= other.Color;
+			P		= other.P;
+			L_ch	= other.L_ch;
+			R_ch	= other.R_ch;
+		}
 		/** @brief constructor for nul node */
 		__road_ (__road_* const _P=NIL) {
 
@@ -130,27 +140,6 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 
 	/*********************************************************************************************************
-	*	@brief		swap any two ndoes, 
-	*	@param		other	node in __road_
-	*********************************************************************************************************/
-		void	swap (__road_& other) {
-
-			if (WhoIm() == JU)	P->L_ch = &other;
-			else if (WhoIm() == SE)	P->R_ch = &other;
-
-			if (other.WhoIm() == JU)	other.P->L_ch = this;
-			else if (other.WhoIm() == SE)	other.P->R_ch = this;
-
-			if (L_ch) L_ch->P = &other;
-			if (R_ch) R_ch->P = &other;
-
-			if (other.L_ch) other.L_ch->P = this;
-			if (other.R_ch) other.R_ch->P = this;
-
-			std::swap(*this, other);
-		}
-
-	/*********************************************************************************************************
 	*	@return		JUNIOR in case of the node is left child of his parent
 	*	@return		SENIOR in case of the node is the rigth child of his parent
 	*	@return		otherwise	ROOT
@@ -215,7 +204,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	/*********************************************************************************************************
 	*	@brief		red black tree adjustment, for for violating the properties(rules)
 	*********************************************************************************************************/
-		void		adjustment() {
+		void		adjustment() throw() {
 
 			if (P->Color == BLACK)
 				return ;
@@ -316,19 +305,11 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	/*********************************************************************************************************
 	*	@return	a node which can replace the caller node, without violating the binary search tree rules
 	*********************************************************************************************************/
-		__road_&	redemption() {
+		__road_&	redemption() throw() {
 
-			__road_*	rch = this->R_ch;
-			__road_*	lch = this->L_ch;
-
-			if (not(lch) && not(rch))
-				return *this;
-
-			while (rch && rch->L_ch) rch = rch->L_ch;
-			if (rch) return *rch;
-	
-			while (lch && lch->R_ch) lch = lch->R_ch;
-			return *lch;
+			if (this->L_ch) return this->L_ch->eldest();
+			// if (this->R_ch) return this->R_ch->youngest();
+			return *this;
 		}
 
 
@@ -438,8 +419,9 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		}
 
 };
+
 template < class T_SHIP, class Allocator>
-	T_SHIP	__road_<T_SHIP, Allocator>::nul_ = T_SHIP();
+	T_SHIP	__road_<T_SHIP, Allocator>::nul_;
 
 
 
@@ -517,7 +499,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	/*********************************************************************************************************
 	*	@return  node indecated by the key, NIL if not find
  	*********************************************************************************************************/
-		__road*	search (key_type& key) const throw() {
+		__road*		search (key_type& key) const throw() {
 
 			if (not(seed)) return NIL;
 			return searching(key, seed);
@@ -579,6 +561,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 				else {
 
 					sub->L_ch = _SAlloc.allocate(1);
+					
 					_SAlloc.construct (sub->L_ch, _node);
 					sub->L_ch->P = sub;
 					// sub->L_ch->adjustment();
@@ -631,22 +614,22 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void		_delete(__road* criminal) {
 
-			if (not(criminal))
+			if (not criminal)
 				return ;
 			__road* victim = &criminal->redemption();
 
-			criminal->swap (*victim);
-			std::swap (criminal->Color, victim->Color);
+			if (seed == victim)
+				seed = victim->R_ch;
+			std::swap (victim->Ship, criminal->Ship);
 
 			__road* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
-
 			if (victim->Color == BLACK)
 				try {
 
 					if (ch && ch->Color == RED)
 						ch->recolor();
-					else
-						victim->delete_fixup();
+					// else
+						// victim->delete_fixup();
 				}
 				catch (...) { }
 
@@ -695,7 +678,12 @@ template < class Pr, class Allocator >
 		__IterTree (ref_node _P, bool) { nul_.P = &_P; ItR = &nul_; }
 		__IterTree (ref_node tree): ItR(&tree) { }
 		__IterTree (ptr_node tree): ItR(tree) { }
-		__IterTree (const __IterTree& tree) { ItR = tree.ItR; }
+		__IterTree (const __IterTree& tree) {
+
+			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
+			else ItR = tree.ItR;
+		
+		}
 
 	/*********************************************************************************************************
 	*	@return	next node in tree contine the next sequence key

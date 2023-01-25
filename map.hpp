@@ -168,10 +168,9 @@ template	<
 		ft::pair<iterator, bool> insert (const value_type& value) {
 
 				ft::pair<iterator, bool> tmpr;
-
 				try { tmpr = ft::make_pair (
-						iterator (Itree(tree.insert (const_cast<value_type&>(value)))), true); }
-				catch(...) { tmpr = ft::make_pair (
+						iterator (Itree (tree.insert (const_cast<value_type&>(value)))), true); }
+				catch (const std::overflow_error&) { tmpr = ft::make_pair (
 						iterator (Itree(tree.search (value.first))), false); }
 
 				return tmpr;
@@ -233,12 +232,11 @@ template	<
 	*********************************************************************************************************/
 			void		erase (iterator first, iterator last) {
 
-				iterator del = first;
-				while (&(*first) != &(*last)) {
+				iterator del;
+				while (first not_eq last) {
 
+					del = first++;
 					erase(del);
-					++first;
-					del = first;
 				}
 			}
 
