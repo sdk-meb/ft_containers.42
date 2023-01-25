@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rb_tree.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 18:56:43 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/25 22:48:29 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -753,73 +753,29 @@ template < class Pr, class Allocator >
 			return old;
 		}
 
-		__IterTree&		operator<< (key_type& key) {
-
-			if (ItR->Ship->first < key)
-				while (ItR->P && ItR->P->Ship->first < key)
-					ItR = ItR->P;
-			if (ItR->P && ItR->P->Ship->first == key)
-				return ItR = ItR->P, *this;
-
-			if (not(ItR->R_ch))
-				goto CEND;
-
-			while (1) {
-				while (ItR->R_ch && ItR->R_ch->Ship->first < key)
-					ItR = ItR->R_ch;
-				if (ItR->L_ch) {
-
-					ItR = ItR->L_ch;
-					continue ;
-				}
-				if (ItR->R_ch)
-					return ItR = ItR->R_ch, *this;
-				goto CEND;
-			}
-			if (0) {
-
-/* convention end () */	
-		CEND:	while (ItR->P)
-					ItR = ItR->P;
-				while (ItR->R_ch)
-					ItR = ItR->R_ch;
-				// Out = 1;
-				++ItR;/* must be the next address after last node ( last key )*/
-			}
-			return *this;
-		}
 		__IterTree&		operator>> (key_type& key) {
 
-			if (ItR->Ship->first < key)
-				while (ItR->P && ItR->P->Ship->first < key)
-					ItR = ItR->P;
-			if (ItR->P && ItR->P->Ship->first == key)
-				return ItR = ItR->P, *this;
+			try { while (ItR->Ship->first < key) ItR = &next();}
+			catch (const std::range_error&) { }
+			try {
 
-			if (not(ItR->R_ch))
-				goto CEND;
+				while (ItR->Ship->first > key) {
 
-			while (1) {
-				while (ItR->R_ch && ItR->R_ch->Ship->first < key)
-					ItR = ItR->R_ch;
-				if (ItR->L_ch) {
-
-					ItR = ItR->L_ch;
-					continue ;
+					ptr_node tmp = &prev();
+					if (tmp->Ship->first <= key)
+						break ;
+					ItR = tmp;
 				}
-				if (ItR->R_ch)
-					return ItR = ItR->R_ch, *this;
-				goto CEND;
 			}
-			if (0) {
+			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NIL; }
+			return *this;
+		}
+		__IterTree&		operator<< (key_type& key) {
 
-		CEND:	while (ItR->P)
-					ItR = ItR->P;
-				while (ItR->R_ch)
-					ItR = ItR->R_ch;
-				// Out = 1;
-				++ItR;/* must be the next address after last node ( last key )*/
-			}
+			try { while (ItR->Ship->first > key) ItR = &prev(); }
+			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NIL; }
+			try { while (ItR->Ship->first <= key) ItR = &next(); }
+			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NIL; }
 			return *this;
 		}
 

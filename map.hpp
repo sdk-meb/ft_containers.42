@@ -75,8 +75,8 @@ template	<
 	/*********************************************************************************************************
 	*	@param	iterator 
 	*********************************************************************************************************/
-				typedef	ft::reverse_map_iterator <iterator>			reverse_iterator;
-				typedef	ft::reverse_map_iterator <const_iterator>	const_reverse_iterator;
+				typedef	ft::reverse_iterator <iterator>			reverse_iterator;
+				typedef	ft::reverse_iterator <const_iterator>	const_reverse_iterator;
 
 
 /***************************  @category	 __  Iterator Member Types __  **************************************/
@@ -326,7 +326,7 @@ template	<
 	*********************************************************************************************************/	
 			iterator	lower_bound (const key_type& key) {
 
-				return iterator (tree.get_first() << key);
+				return iterator (tree.get_Root() >> key);
 			}
 
 	/*********************************************************************************************************
@@ -335,7 +335,7 @@ template	<
 	*********************************************************************************************************/
 			iterator	upper_bound (const key_type& key) {
 
-				return iterator (tree.get_first() >> key);
+				return iterator (tree.get_Root() << key);
 			}
 
 

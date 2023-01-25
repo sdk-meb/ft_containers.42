@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 09:19:13 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/25 21:25:13 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,41 +48,6 @@ namespace ft {
 			private:
 				treeiter	Super;
 		};
-
-/*************************************************************************************************************
-*	@brief	class that manage map iterator in reverse order
-*	@param	_Iter iterator 
-*************************************************************************************************************/
-template <class _Iter>
-	struct reverse_map_iterator {
-
-			typedef _Iter									iterator_type;
-			typedef typename _Iter::difference_type			difference_type;
-			typedef typename _Iter::pointer					pointer;
-			typedef typename _Iter::reference				reference;
-			typedef typename _Iter::iterator_category		iterator_category;
-
-		private:
-			iterator_type Super;
-
-		public:
-			reverse_map_iterator() : Super() { };
-			explicit reverse_map_iterator (iterator_type x): Super(x) { };
-			template< class U >
-				reverse_map_iterator (const reverse_map_iterator<U>& other)
-					: Super(other.Super) { };
-
-
-			reverse_map_iterator&	operator=( const reverse_map_iterator& rIt ){ Super = rIt.base();}
-
-			reverse_map_iterator&	operator--() { ++Super; return *this; }
-			reverse_map_iterator&	operator++() { --Super; return *this; }
-			reverse_map_iterator	operator-- (int) { reverse_map_iterator old(Super); ++Super; return old; }
-			reverse_map_iterator	operator++ (int) { reverse_map_iterator old(Super); --Super; return old; }
-
-			reference		operator*() const { return *Super; }
-			pointer			operator->() const { return &(*Super); }
-	};
 
 
 	template < typename Iter>
