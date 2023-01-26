@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 15:45:10 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/26 19:25:21 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,26 +56,20 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 		__road_ (const __road_& other) {
 
-			_SAlloc		= NIL;
-			_Alloc		= other._Alloc;
-			Ship		= other.Ship;
-			copy_ship	= true;
-			Color	= other.Color;
-			P		= other.P;
-			L_ch	= other.L_ch;
-			R_ch	= other.R_ch;
+			*this = other;
 		}
 		/** @brief constructor for nul node */
 		__road_ (__road_* const _P=NIL) {
 
-			Ship = &nul_;
+			Ship		= &nul_;
 
-			Color = BLACK;
-			P = _P;
-			L_ch = NIL;
-			R_ch = NIL;
-			copy_ship = true;
-			_SAlloc = NIL;
+			Color		= BLACK;
+			P			= _P;
+			L_ch		= NIL;
+			R_ch		= NIL;
+
+			copy_ship	= true;
+			_SAlloc		= NIL;
 		}
 		__road_	(T_SHIP ship, SAllocator& _salloc)
 			: _SAlloc(&_salloc), _Alloc(Allocator()) {
@@ -84,7 +78,6 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			_Alloc.construct(Ship, ship);
 
 			Color	= RED;
-
 			P		= NIL;
 			L_ch	= NIL;
 			R_ch	= NIL;
@@ -160,20 +153,19 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 /***************************  @category	 __   getters alogo __  *********************************************/
 
-	/**	@exception  all @fn return reference */
 
 	/*********************************************************************************************************
 	*	@return		Sibling (reference)
 	*********************************************************************************************************/
 		__road_&	get_S() const {
 
-				if (WhoIm() == ROOT || not(P->R_ch) || not(P->L_ch))
-					throw std::logic_error("spiling doesn't");
+			if (WhoIm() == ROOT || not(P->R_ch) || not(P->L_ch))
+				throw std::logic_error("spiling doesn't");
 
-				if (WhoIm() == JU)
-					return *P->R_ch;
-				return *P->L_ch;
-			}
+			if (WhoIm() == JU)
+				return *P->R_ch;
+			return *P->L_ch;
+		}
 
 	/*********************************************************************************************************
 	*	@return		GrandParent (reference)
@@ -309,7 +301,6 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		__road_&	redemption() throw() {
 
 			if (this->L_ch) return this->L_ch->eldest();
-			// if (this->R_ch) return this->R_ch->youngest();
 			return *this;
 		}
 
@@ -320,8 +311,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void	lr (__road_* _node=NIL) {
 
-			if (not(_node))
-				_node = this;
+			if (not(_node)) _node = this;
 			if (not(_node->R_ch))
 				throw std::logic_error("unqualified left rotation!");
 
@@ -346,8 +336,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void	rr (__road_* _node=NIL) {
 
-			if (not(_node))
-				_node = this; 
+			if (not(_node)) _node = this; 
 			if (not(_node->L_ch))
 				throw std::logic_error("unqualified left rotation!");
 
@@ -393,37 +382,60 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 
 	public:
+
+	/********************************************************************************************************* 
+	* @overload	(1) ref param (save the copyrigth)  (2) ptr param (move the copyrigth)
+	* @brief copy assignment operator, shallow copy type, that make @a original( @a other) unthreatened by this
+	* @param other  reference
+	* @attention destroctor that deallocate yhe shipment and all branche of node, so (!)
+	*********************************************************************************************************/
 		void	operator= (const __road_& other) {
 
-				this->Color = other.Color;
-				this->_Alloc = other._Alloc;
-				this->Ship = other.Ship;
-				this->L_ch = other.L_ch;
-				this->R_ch = other.R_ch;
-				this->P = other.P;
+			this->Color = other.Color;
+			this->_Alloc = other._Alloc;
+			this->Ship = other.Ship;
+			this->L_ch = other.L_ch;
+			this->R_ch = other.R_ch;
+			this->P = other.P;
 
-				this->_SAlloc = NIL;
-				this->copy_ship = true;
-			}
-		bool	operator== (const __road_& other) {
-
-			return 
-					other.Color == this->Color
-					and other.Ship == this->Ship;
+			this->_SAlloc = NIL;
+			this->copy_ship = true;
 		}
+		
+	/*********************************************************************************************************
+	* @attention i can't use it for an lvalue because she gets a pointer in the parameter
+	* @brief copy assignment operator, shallow copy type, that make @a this unthreatened by original( @a other)
+	* @param other  pointer
+	*********************************************************************************************************/
+		void	operator= (const __road_* other) {
+
+			this->Color = other->Color;
+			this->_Alloc = other->_Alloc;
+			this->Ship = other->Ship;
+			this->L_ch = other->L_ch;
+			this->R_ch = other->R_ch;
+			this->P = other->P;
+
+			this->_SAlloc = other->_SAlloc;
+			this->copy_ship = other->copy_ship;
+			other->_SAlloc = NIL;
+			other->copy_ship = true;
+		}
+
 		~__road_ () {
 
-			// if (not copy_ship) _Alloc.deallocate (Ship, 1);
-			// if (not _SAlloc) return ;
+			if (not copy_ship) _Alloc.deallocate (Ship, 1);
+			if (not _SAlloc) return ;
 
-			// _SAlloc->deallocate (L_ch, 1);
-			// _SAlloc->deallocate (R_ch, 1);
+			_SAlloc->deallocate (L_ch, 1);
+			_SAlloc->deallocate (R_ch, 1);
 		}
 
 };
 
 template < class T_SHIP, class Allocator>
 	T_SHIP	__road_<T_SHIP, Allocator>::nul_;
+
 
 
 
@@ -464,9 +476,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*	@param	ex exeption true = default
 	*	@exception permitted by order
  	*********************************************************************************************************/
-		__road&		insert (__road _node, bool ex=true) {
+		__road&		insert (const __road& _node, bool ex=true) {
 
-				_node.copy_ship = true;
 				if (seed) return insertion(_node, seed, ex);
 
 				seed = _SAlloc.allocate ( 1);
@@ -483,7 +494,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*			, and thas not dealocated in destruction
 	*	@param ship shipment to insert
  	*********************************************************************************************************/
-		__road&		insert (T_SHIP& pair) { return insert (__road (pair, _SAlloc)); }
+		__road&		insert (const T_SHIP& pair) { return insert (__road (pair, _SAlloc)); }
 
 	/*********************************************************************************************************
 	*	@brief insert key with default (pair) inside the tree, exacption in case of duplicate key in tree
@@ -492,7 +503,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*	@param	ex exeption true = default
 	*	@exception permitted by order
  	*********************************************************************************************************/
-		__road&		insert (key_type& key, bool ex=true) { return insert (__road (key, _SAlloc), ex); }
+		__road&		insert (const key_type& key, bool ex=true) { return insert (__road (key, _SAlloc), ex); }
 
 
 
@@ -503,7 +514,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
  	*********************************************************************************************************/
 		__road*		search (key_type& key) const throw() {
 
-			if (not(seed)) return NIL;
+			if (not seed) return seed;
 			return searching(key, seed);
 		}
 
@@ -555,7 +566,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*	@param	ex exeption true = default
 	*	@exception permitted by order
 	*********************************************************************************************************/
-		__road&		insertion(__road& _node, __road* sub, bool ex=true) {
+		__road&		insertion(const __road& _node, __road* sub, bool ex=true) {
 
 			if (_node.Ship->first < sub->Ship->first) {
 
@@ -577,6 +588,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 				else {
 
 					sub->R_ch = _SAlloc.allocate(1);
+
 					_SAlloc.construct (sub->R_ch, _node);
 					sub->R_ch->P = sub;
 					// sub->R_ch->adjustment();
@@ -587,7 +599,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			else if (ex)
 				throw std::overflow_error ("similar shipment violates the property of map rules") ;
 			else
-				return _node;
+				return *sub;
 			return insertion(_node, sub, ex);
 		}
 
@@ -653,7 +665,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		}
 
 	public:
-		~RBT() {}//_SAlloc.destroy(seed); _SAlloc.deallocate (seed, 1);exit(9); }
+		~RBT() { _SAlloc.destroy(seed); _SAlloc.deallocate (seed, 1); }
 };
 
 
@@ -740,7 +752,7 @@ template < class Pr, class Allocator >
 
 		__IterTree&	operator--() {
 
-			if (ItR == &nul_) { nul_.P = NIL; return *this; }
+			if (ItR == &nul_) { ItR = (nul_.P ? nul_.P : &nul_); nul_.P = NIL; return *this; }
 			try { ItR = &prev(); }
 			catch (const error_condition&) { }
 			catch (const std::range_error&) { nul_.P = NIL; }
@@ -802,7 +814,7 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 
 		void		destroy() {
 
-			// this->_SAlloc.deallocate(this->seed, 1);
+			this->_SAlloc.deallocate(this->seed, 1);
 			this->seed = NIL;
 			this->Size = 0;
 		}

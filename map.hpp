@@ -174,7 +174,7 @@ template	<
 
 				ft::pair<iterator, bool> tmpr;
 				try { tmpr = ft::make_pair (
-						iterator (Itree (tree.insert (const_cast<value_type&>(value)))), true); }
+						iterator (Itree (tree.insert (value))), true); }
 				catch (const std::overflow_error&) { tmpr = ft::make_pair (
 						iterator (Itree(tree.search (value.first))), false); }
 
@@ -362,7 +362,7 @@ template	<
 				value_compare	_v_cmp ;
 				allocator_type	_Alloc ;
 
-		};
+};
 
 
 template <class key, class T, class Comp, class Alloc>
