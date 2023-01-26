@@ -237,12 +237,7 @@ template	<
 	*********************************************************************************************************/
 			void		erase (iterator first, iterator last) {
 
-				iterator del;
-				while (first not_eq last) {
-
-					del = first++;
-					erase(del);
-				}
+				while (first not_eq last) erase (first++);
 			}
 
 	/*********************************************************************************************************
@@ -326,16 +321,24 @@ template	<
 	*********************************************************************************************************/	
 			iterator	lower_bound (const key_type& key) {
 
-				return iterator (tree.get_Root() >> key);
+				return iterator (tree.get_Root() << key);
+			}
+			const_iterator	lower_bound (const key_type& key) const {
+
+				return const_iterator (tree.get_Root() << key);
 			}
 
 	/*********************************************************************************************************
 	*	@return	as iterator shipment have the key or the first greater than it, if not then end() return
 	*	@param	key
 	*********************************************************************************************************/
-			iterator	upper_bound (const key_type& key) {
+			iterator		upper_bound (const key_type& key) {
 
-				return iterator (tree.get_Root() << key);
+				return iterator (tree.get_Root() >> key);
+			}
+			const_iterator	upper_bound (const key_type& key) const{
+
+				return const_iterator (tree.get_Root() >> key);
 			}
 
 

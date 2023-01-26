@@ -1,17 +1,19 @@
 
 # include<iostream>
 # include<stack>
+# include<vector>
 
-# include<Stack.hpp>
+# include"../stack.hpp"
 
 int main() {
-    std::cout << std::endl << "\033[36m" << "************************************ test 1 < empty > ************************************ " << "\033[0m" << std::endl;
-    {
+
+
+std::cout << std::endl << "\033[36m" << "********************* < empty > ********************** " << "\033[0m" << std::endl;{
         
         
         std::cout << "\033[32m" << "----------------------- ORIGINAL -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2;
             ft::vector<int> v3 (3, 100);          
@@ -28,13 +30,10 @@ int main() {
             std:: cout << "s3 is empty ? " << s3.empty() << std::endl;
             std:: cout << "s4 is empty ? " << s4.empty() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
         std::cout << "\033[33m" << "----------------------- RECREATED -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2;
             ft::vector<int> v3 (3, 100);          
@@ -51,17 +50,13 @@ int main() {
             std:: cout << "s3 is empty ? " << s3.empty() << std::endl;
             std:: cout << "s4 is empty ? " << s4.empty() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
     }
 
-    std::cout << std::endl << "\033[36m" << "************************************ test 2 < size > ************************************ " << "\033[0m" << std::endl;
-    {
+std::cout << std::endl << "\033[36m" << "********************* < size > ********************** " << "\033[0m" << std::endl;{
         std::cout << "\033[32m" << "----------------------- ORIGINAL -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
             ft::vector<int> v3 (3, 100);          
@@ -77,13 +72,10 @@ int main() {
             std:: cout << "s3 size = " << s3.size() << std::endl;
             std:: cout << "s4 size = " << s4.size() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
         std::cout << "\033[33m" << "----------------------- RECREATED -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
             ft::vector<int> v3 (3, 100);          
@@ -99,17 +91,13 @@ int main() {
             std:: cout << "s3 size = " << s3.size() << std::endl;
             std:: cout << "s4 size = " << s4.size() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
     }
 
-    std::cout << std::endl << "\033[36m" << "************************************ test 3 < top > ************************************ " << "\033[0m" << std::endl;
-    {
+std::cout << std::endl << "\033[36m" << "********************* < top > ********************** " << "\033[0m" << std::endl;{
         std::cout << "\033[32m" << "----------------------- ORIGINAL -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
             ft::vector<int> v3 (3, 100);          
@@ -120,19 +108,17 @@ int main() {
             std::stack<int,ft::vector<int> > s3 (v3);  
             std::stack<int,std::vector<int> > s4 (v4);
 
-            // ? if you uncomment this it will segfault since the stack is empty
-            // std:: cout << "s1 top = " << s1.top() << std::endl;
+#if SG > 0
+    std:: cout << "s1 top = " << s1.top() << std::endl;
+#endif
             std:: cout << "s2 top = " << s2.top() << std::endl;
             std:: cout << "s3 top = " << s3.top() << std::endl;
             std:: cout << "s4 top = " << s4.top() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
         std::cout << "\033[33m" << "----------------------- RECREATED -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
             ft::vector<int> v3 (3, 100);          
@@ -143,23 +129,20 @@ int main() {
             ft::stack<int,ft::vector<int> > s3 (v3);  
             ft::stack<int,std::vector<int> > s4 (v4);
 
-            // ? if you uncomment this it will segfault since the stack is empty
-            // std:: cout << "s1 top = " << s1.top() << std::endl;
+#if SG > 1
+    std:: cout << "s1 top = " << s1.top() << std::endl;
+#endif
             std:: cout << "s2 top = " << s2.top() << std::endl;
             std:: cout << "s3 top = " << s3.top() << std::endl;
             std:: cout << "s4 top = " << s4.top() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
     }
 
-    std::cout << std::endl << "\033[36m" << "************************************ test 4 < push > ************************************ " << "\033[0m" << std::endl;
-    {
+std::cout << std::endl << "\033[36m" << "********************* < push > ********************** " << "\033[0m" << std::endl;{
         std::cout << "\033[32m" << "----------------------- ORIGINAL -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
         
@@ -173,13 +156,10 @@ int main() {
             std:: cout << "s1 top = " << s1.top() << std::endl;
             std:: cout << "s2 top = " << s2.top() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
         std::cout << "\033[33m" << "----------------------- RECREATED -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
         
@@ -193,25 +173,22 @@ int main() {
             std:: cout << "s1 top = " << s1.top() << std::endl;
             std:: cout << "s2 top = " << s2.top() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
     }
 
-    std::cout << std::endl << "\033[36m" << "************************************ test 5 < pop > ************************************ " << "\033[0m" << std::endl;
-    {
+std::cout << std::endl << "\033[36m" << "********************* < pop > ********************** " << "\033[0m" << std::endl;{
         std::cout << "\033[32m" << "----------------------- ORIGINAL -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
         
             std::stack<int,ft::vector<int> > s1 (v1);  
             std::stack<int,std::vector<int> > s2 (v2);
 
-            // ? if you uncomment this it will segfault since the stack is empty
-            // std:: cout << "s1 top = " << s1.top() << std::endl;
+#if SG > 2
+    std:: cout << "s1 top = " << s1.top() << std::endl;
+#endif
             std:: cout << "s2 top = " << s2.top() << std::endl;
 
             s1.push(1);
@@ -229,21 +206,19 @@ int main() {
             std:: cout << "s1 top = " << s1.top() << std::endl;
             std:: cout << "s2 top = " << s2.top() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
         std::cout << "\033[33m" << "----------------------- RECREATED -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> v1 ;          
             std::vector<int> v2 (10);
         
             ft::stack<int,ft::vector<int> > s1 (v1);  
             ft::stack<int,std::vector<int> > s2 (v2);
 
-            // ? if you uncomment this it should segfault since the stack is empty
-            // std:: cout << "s1 top = " << s1.top() << std::endl;
+#if SG > 3
+            std:: cout << "s1 top = " << s1.top() << std::endl;
+#endif
             std:: cout << "s2 top = " << s2.top() << std::endl;
 
             s1.push(1);
@@ -261,17 +236,13 @@ int main() {
             std:: cout << "s1 top = " << s1.top() << std::endl;
             std:: cout << "s2 top = " << s2.top() << std::endl;
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
     }
 
-    std::cout << std::endl << "\033[36m" << "************************************ test 6 < non-member functions > ************************************ " << "\033[0m" << std::endl;
-    {
+std::cout << std::endl << "\033[36m" << "******************************mber functions > ********************** " << "\033[0m" << std::endl;{
         std::cout << "\033[32m" << "----------------------- ORIGINAL -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> foo1 (2,200); 
             ft::vector<int> bar1 (2,200);
 
@@ -299,13 +270,10 @@ int main() {
             if (s3 >= s4) std::cout << "s3 is greater than or equal to s4\n";
             
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
         std::cout << "\033[33m" << "----------------------- RECREATED -----------------------" << "\033[0m" << std::endl;
-        try
-        {
+        try {
+
             ft::vector<int> foo1 (2,200); 
             ft::vector<int> bar1 (2,200);
 
@@ -332,10 +300,7 @@ int main() {
             if (s3 <= s4) std::cout << "s3 is less than or equal to s4\n";
             if (s3 >= s4) std::cout << "s3 is greater than or equal to s4\n";
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
     }
 
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rb_tree.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 22:48:29 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/26 11:03:55 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -753,29 +753,20 @@ template < class Pr, class Allocator >
 			return old;
 		}
 
-		__IterTree&		operator>> (key_type& key) {
+		__IterTree&		operator << (key_type& key) {
 
-			try { while (ItR->Ship->first < key) ItR = &next();}
-			catch (const std::range_error&) { }
-			try {
-
-				while (ItR->Ship->first > key) {
-
-					ptr_node tmp = &prev();
-					if (tmp->Ship->first <= key)
-						break ;
-					ItR = tmp;
-				}
-			}
-			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NIL; }
+			try { while (ItR->Ship->first > key) ItR = &prev();}
+			catch (const std::range_error&) { return *this; }
+			try { while (ItR->Ship->first < key) ItR = &next(); }
+			catch (const std::range_error&) { exit(9);ItR = &nul_; ItR->Ship = NIL; }
 			return *this;
 		}
-		__IterTree&		operator<< (key_type& key) {
+		__IterTree&		operator >> (key_type& key) {
 
 			try { while (ItR->Ship->first > key) ItR = &prev(); }
-			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NIL; }
+			catch (const std::range_error&) { return *this; }
 			try { while (ItR->Ship->first <= key) ItR = &next(); }
-			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NIL; }
+			catch (const std::range_error&) { exit(8);ItR = &nul_; ItR->Ship = NIL; }
 			return *this;
 		}
 
