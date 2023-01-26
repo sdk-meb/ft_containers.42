@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stack.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:35:45 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 12:33:30 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/26 14:58:53 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,15 +89,15 @@ template <class T, class Container = ft::vector<T> >
 
 template<typename _Tp, typename con>
     bool operator== (const stack<_Tp, con>& _x, const stack<_Tp, con>&  _y)
-    { return _x.c ==  _y.c; }
+    { return _x.c == _y.c; }
 
 template<typename _Tp, typename con>
     bool operator< (const stack<_Tp, con>& _x, const stack<_Tp, con>& _y)
-    { return _x.c <  _y.c; }
+    { return _x.c < _y.c; }
 
 template<typename _Tp, typename con>
     bool operator!= (const stack<_Tp, con>& _x, const stack<_Tp, con>& _y)
-    { return not (_x ==  _y); }
+    { return not (_x == _y); }
 
 template<typename _Tp, typename con>
     bool operator> (const stack<_Tp, con>& _x, const stack<_Tp, con>& _y)

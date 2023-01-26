@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rb_tree.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 11:03:55 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/26 15:45:10 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -722,11 +722,11 @@ template < class Pr, class Allocator >
 
 			try { ItR = &next(); }
 			catch (const error_condition&) { }
-			catch (const std::logic_error&) { ItR = NULL; }
+			catch (const std::logic_error&) { nul_.P = NIL; }
 			catch (const std::range_error&) {
 
 				nul_.P = ItR;
-				if (ItR == &nul_) ItR = NULL;
+				if (ItR == &nul_) nul_.P = NIL;
 				else ItR = &nul_;
 			}
 			return *this;
@@ -740,10 +740,10 @@ template < class Pr, class Allocator >
 
 		__IterTree&	operator--() {
 
-			if (ItR == &nul_) { ItR = nul_.P; return *this; }
+			if (ItR == &nul_) { nul_.P = NIL; return *this; }
 			try { ItR = &prev(); }
 			catch (const error_condition&) { }
-			catch (const std::range_error&) { ItR = NULL; }
+			catch (const std::range_error&) { nul_.P = NIL; }
 			return *this;
 		}
 		__IterTree	operator--(int) {
