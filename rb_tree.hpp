@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 19:25:21 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/28 15:14:05 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 
 # include<iostream>
 # include<algorithm>
-#include <cstdlib>
 # include<climits>
 # include<memory>
 
 #ifdef __linux
 	class error_condition {};
+	#include <cstdlib>
 #else
 	using std::error_condition;
 #endif
@@ -54,74 +54,52 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			Allocator			_Alloc;
 			static	T_SHIP		nul_;
 
-		__road_ (const __road_& other) {
-
-			*this = other;
-		}
-		/** @brief constructor for nul node */
+		__road_ (const __road_& other) { *this = other; }
 		__road_ (__road_* const _P=NIL) {
 
-			Ship		= &nul_;
-
+			init_();
 			Color		= BLACK;
 			P			= _P;
-			L_ch		= NIL;
-			R_ch		= NIL;
-
-			copy_ship	= true;
-			_SAlloc		= NIL;
 		}
 		__road_	(T_SHIP ship, SAllocator& _salloc)
 			: _SAlloc(&_salloc), _Alloc(Allocator()) {
 
+			init_();
 			Ship =  _Alloc.allocate(1);
 			_Alloc.construct(Ship, ship);
 
-			Color	= RED;
-			P		= NIL;
-			L_ch	= NIL;
-			R_ch	= NIL;
-			copy_ship = false;
 		}
 		__road_	(T_SHIP& ship, SAllocator& _salloc, Allocator& alloc)
-			: _SAlloc(&_salloc), Ship(&ship), _Alloc(alloc) {
+			: _SAlloc(&_salloc), _Alloc(alloc) {
 
-			Color	= RED;
-
-			P		= NIL;
-			L_ch	= NIL;
-			R_ch	= NIL;
-
-			copy_ship = false;
+			init_();
+			Ship = &ship;
 		}
 		__road_	(T_SHIP* ship, SAllocator& _salloc, Allocator& alloc)
-			: _SAlloc(&_salloc), Ship(ship), _Alloc(alloc) {
+			: _SAlloc(&_salloc), _Alloc(alloc) {
 
-			if (not Ship)
-				std::__throw_bad_function_call ();
-			Color	= RED;
-
-			P		= NIL;
-			L_ch	= NIL;
-			R_ch	= NIL;
-
-			copy_ship = false;
+			init_();
+			Ship = ship;
 		}
 		__road_	(typename T_SHIP::first_type& key, SAllocator& _salloc)
 			: _SAlloc(&_salloc), _Alloc(Allocator()) {
 
+			init_();
 			Ship =  _Alloc.allocate(1);
 			_Alloc.construct(Ship, ft::make_pair
 				<typename T_SHIP::first_type, typename T_SHIP::second_type>
 					(key, typename T_SHIP::second_type()));
+		}
 
-			Color	= RED;
+		void	init_ () {
+
+			Ship		= &nul_;
+			copy_ship	= true;
+			Color		= RED;
 
 			P		= NIL;
 			L_ch	= NIL;
 			R_ch	= NIL;
-
-			copy_ship = false;
 		}
 
 		T_SHIP*			Ship;/* load */
@@ -136,8 +114,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	/*********************************************************************************************************
 	*	@return		JUNIOR in case of the node is left child of his parent
 	*	@return		SENIOR in case of the node is the rigth child of his parent
-	*	@return		otherwise	ROOT
-	*	@exception	If and only	the logic that return NOTHING
+	*	@return		otherwise ROOT
+	*	@exception	If and only if the bind logic that return NOTHING
 	*********************************************************************************************************/
 		short	WhoIm() const {
 
@@ -300,8 +278,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		__road_&	redemption() throw() {
 
-			if (this->L_ch) return this->L_ch->eldest();
-			return *this;
+			return this->L_ch ? this->L_ch->eldest() : *this;
 		}
 
 
@@ -336,8 +313,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void	rr (__road_* _node=NIL) {
 
-			if (not(_node)) _node = this; 
-			if (not(_node->L_ch))
+			if (not _node) _node = this; 
+			if (not _node->L_ch)
 				throw std::logic_error("unqualified left rotation!");
 
 			__road_*	_P	= _node->P;
@@ -384,58 +361,49 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	public:
 
 	/********************************************************************************************************* 
-	* @overload	(1) ref param (save the copyrigth)  (2) ptr param (move the copyrigth)
+	* (1) ref param (save the copyrigth)
 	* @brief copy assignment operator, shallow copy type, that make @a original( @a other) unthreatened by this
 	* @param other  reference
-	* @attention destroctor that deallocate yhe shipment and all branche of node, so (!)
+	* @attention destroctor that deallocate the shipment and all branche of node, so (!)
 	*********************************************************************************************************/
 		void	operator= (const __road_& other) {
 
-			this->Color = other.Color;
-			this->_Alloc = other._Alloc;
-			this->Ship = other.Ship;
-			this->L_ch = other.L_ch;
-			this->R_ch = other.R_ch;
-			this->P = other.P;
+			this->Color	= other.Color;
+			this->Ship	= other.Ship;
+			this->_Alloc	= other._Alloc;
+			this->_SAlloc	= other._SAlloc;
+			this->L_ch	= other.L_ch;
+			this->R_ch	= other.R_ch;
+			this->P		= other.P;
 
-			this->_SAlloc = NIL;
 			this->copy_ship = true;
-		}
-		
-	/*********************************************************************************************************
-	* @attention i can't use it for an lvalue because she gets a pointer in the parameter
-	* @brief copy assignment operator, shallow copy type, that make @a this unthreatened by original( @a other)
-	* @param other  pointer
-	*********************************************************************************************************/
-		void	operator= (const __road_* other) {
-
-			this->Color = other->Color;
-			this->_Alloc = other->_Alloc;
-			this->Ship = other->Ship;
-			this->L_ch = other->L_ch;
-			this->R_ch = other->R_ch;
-			this->P = other->P;
-
-			this->_SAlloc = other->_SAlloc;
-			this->copy_ship = other->copy_ship;
-			other->_SAlloc = NIL;
-			other->copy_ship = true;
 		}
 
 		~__road_ () {
 
-			if (not copy_ship) _Alloc.deallocate (Ship, 1);
-			if (not _SAlloc) return ;
+			if (copy_ship) return;
 
-			_SAlloc->deallocate (L_ch, 1);
-			_SAlloc->deallocate (R_ch, 1);
+			if (Ship) {
+
+				_Alloc.destroy (Ship);
+				_Alloc.deallocate (Ship, 1);
+			}
+			if (L_ch) {
+
+				_SAlloc->destroy(L_ch);
+				_SAlloc->deallocate (L_ch, 1);
+			}
+			if (R_ch) {
+
+				_SAlloc->destroy(R_ch);
+				_SAlloc->deallocate (R_ch, 1);
+			}
 		}
 
 };
 
 template < class T_SHIP, class Allocator>
 	T_SHIP	__road_<T_SHIP, Allocator>::nul_;
-
 
 
 
@@ -484,6 +452,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 				_SAlloc.construct (seed, _node);
 				seed->Color	= BLACK;
+				seed->copy_ship = false;
 
 				++Size;
 				return *seed;
@@ -514,8 +483,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
  	*********************************************************************************************************/
 		__road*		search (key_type& key) const throw() {
 
-			if (not seed) return seed;
-			return searching(key, seed);
+			return not seed ? NIL : searching(key, seed);
 		}
 
 	/*********************************************************************************************************
@@ -524,12 +492,12 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
  	*********************************************************************************************************/
 		v_map&		search (key_type& key, bool ex) {
 
+			if (not ex) return  insert(key, false) .Ship->second;
+
 			__road* find = search(key);
 
-			if (find) return find->Ship->second;
-			if (ex) throw std::out_of_range ("key search");
-
-			return  insert(key) .Ship->second;
+			if (not find) std::__throw_range_error ("key search");
+			return find->Ship->second;
 		}
 
 
@@ -544,9 +512,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 
 			__road* indecated = search(key);
 
-			if (indecated) _delete(indecated);
-			else return false;
-			return true;
+			return indecated ? _delete(indecated), true : false;
 		}
 
 	/*********************************************************************************************************
@@ -578,6 +544,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 					_SAlloc.construct (sub->L_ch, _node);
 					sub->L_ch->P = sub;
 					// sub->L_ch->adjustment();
+					sub->L_ch->copy_ship = false;
 					++Size;
 					return *sub->L_ch;
 				}
@@ -592,6 +559,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 					_SAlloc.construct (sub->R_ch, _node);
 					sub->R_ch->P = sub;
 					// sub->R_ch->adjustment();
+					sub->R_ch->copy_ship = false;
 					++Size;
 					return *sub->R_ch;
 				}
@@ -658,6 +626,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			victim->R_ch	= NIL;
 			victim->P	= NIL;
 
+			_SAlloc.destroy(victim);
 			_SAlloc.deallocate (victim, 1);
 
 			--Size;
@@ -665,7 +634,15 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 		}
 
 	public:
-		~RBT() { _SAlloc.destroy(seed); _SAlloc.deallocate (seed, 1); }
+
+		~RBT() {
+
+			if (seed) {
+
+				_SAlloc.destroy(seed);
+				_SAlloc.deallocate (seed, 1);
+			}
+		}
 };
 
 
@@ -696,7 +673,6 @@ template < class Pr, class Allocator >
 
 			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
 			else ItR = tree.ItR;
-		
 		}
 
 	/*********************************************************************************************************
@@ -782,6 +758,7 @@ template < class Pr, class Allocator >
 			return *this;
 		}
 
+		~__IterTree( ) { ItR = NULL; }
 };
 
 
@@ -808,20 +785,32 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 		size_type	size() const { return  this->Size; }
 		bool		empty() const { return size() ? false : true; }
 
-		IterTree	get_Root() 	{ return this->seed ? IterTree(this->seed) : IterTree(); }
-		IterTree	get_last() 	{ return this->seed ? IterTree(this->seed->eldest(), false): IterTree(); }
-		IterTree	get_first() { return this->seed ? IterTree(this->seed->youngest()): IterTree(); }
+		IterTree	get_Root() const  { return this->seed ? IterTree(this->seed) : IterTree(); }
+		IterTree	get_last() const  { return this->seed ? IterTree(this->seed->eldest(), false): IterTree(); }
+		IterTree	get_first() const { return this->seed ? IterTree(this->seed->youngest()): IterTree(); }
 
+		void		swap (_RBtree& other) {
+
+			std::swap (this->seed, other.seed);
+			std::swap (this->_Alloc, other._Alloc);
+			std::swap (this->_SAlloc, other._SAlloc);
+			std::swap (this->Size, other.Size);
+			
+		}
 		void		destroy() {
 
-			this->_SAlloc.deallocate(this->seed, 1);
+			if (this->seed) {
+
+				this->_SAlloc.destroy(this->seed);
+				this->_SAlloc.deallocate(this->seed, 1);
+			}
 			this->seed = NIL;
 			this->Size = 0;
 		}
 
-		
+		~_RBtree() { };
 
-	};
+};
 
 
 

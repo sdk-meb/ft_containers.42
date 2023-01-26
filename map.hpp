@@ -107,6 +107,7 @@ template	<
 
 /***************************  @category	 __  Constuctors  __  ***********************************************/
 
+			~map () { tree .destroy(); };
 			map() : tree(__tree_()), _v_cmp(Compare()), _Alloc(Allocator()) { }
 
 			explicit map (const Compare& comp, const Allocator& alloc = Allocator())
@@ -121,14 +122,15 @@ template	<
 
 			map (const map& other): _v_cmp(other._v_cmp) {
 
-				tree	= other.tree;
-				_v_cmp	= other._v_cmp;
-				_Alloc	= other._Alloc;
+				*this = other;
 			}
 
 			map&			operator= (const map& other) {
 
-				tree	= other.tree;
+				tree .destroy();
+				for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
+					tree.insert(*it.ItR->Ship);
+
 				_Alloc	= other.get_allocator();
 				_v_cmp	= other._v_cmp;
 				return *this;
@@ -146,7 +148,7 @@ template	<
 	*********************************************************************************************************/
 			mapped_type&			at (const key_type& key)		{ return tree.search(key, __EXCEPTIONS); }
 			const mapped_type&		at (const key_type& key) const	{ return tree.search(key, __EXCEPTIONS); }
-	
+
 	/*********************************************************************************************************
 	*	@brief	get mapped value by key scershing, ifnot endefined behavier
 	*	@param	key
@@ -172,13 +174,13 @@ template	<
 	*********************************************************************************************************/
 		ft::pair<iterator, bool> insert (const value_type& value) {
 
-				ft::pair<iterator, bool> tmpr;
-				try { tmpr = ft::make_pair (
-						iterator (Itree (tree.insert (value))), true); }
-				catch (const std::overflow_error&) { tmpr = ft::make_pair (
-						iterator (Itree(tree.search (value.first))), false); }
+			ft::pair<iterator, bool> tmpr;
+			try { tmpr = ft::make_pair (
+					iterator (Itree (tree.insert (value))), true); }
+			catch (const std::overflow_error&) { tmpr = ft::make_pair (
+					iterator (Itree(tree.search (value.first))), false); }
 
-				return tmpr;
+			return tmpr;
 		}
 
 	/*********************************************************************************************************
@@ -189,14 +191,14 @@ template	<
 	*********************************************************************************************************/
 		iterator	insert (iterator pos, const value_type& value) {
 
-			if (pos->first != value.first) 
+			if (pos->first not_eq value.first) 
 				return insert (value).first;
 			pos->second = value.second;
 			return pos;
 		}
 
 	/*********************************************************************************************************
-	*	@overload (3) template
+	*	@overload  (3) template
 	*	@param		InputIt  template parameter sfinae in case of not input iterator
 	*	@param		first_last	range [F, L] to insert it value 
 	*********************************************************************************************************/
@@ -204,11 +206,7 @@ template	<
 			typename ft::enable_if<__is_input_iter<typename InputIt::iterator_category>::value, void>::type	
 			insert (InputIt first, InputIt last) {
 
-				while (first not_eq last) {
-
-					insert(*first);
-					++first;
-				}
+				while (first not_eq last) insert(*(first++));
 			}
 
 
@@ -246,7 +244,7 @@ template	<
 			void		swap (map& other) {
 
 				std::swap (_v_cmp, other._v_cmp);
-				std::swap (tree, other.tree);
+				tree.swap (other.tree);
 				std::swap (_Alloc, other._Alloc);
 			}
 
@@ -397,7 +395,6 @@ template <class key, class T, class Comp, class Alloc>
 
 		return not (rhs < lhs);
 	}
-
 
 
 }

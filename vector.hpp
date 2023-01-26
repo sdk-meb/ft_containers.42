@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/20 20:10:43 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/28 16:20:24 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ template <class T, class Allocator = std::allocator<T> >
 			void			reserve (size_type new_cap)	{
 
 				if (new_cap == capacity() or new_cap < size()) return ;
-				if (not new_cap) return _del_capacity() , _replace (NULL);
+				if (not new_cap) return _del_capacity();
 				if (empty()) {
 
 					_del_capacity ();
