@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 21:25:13 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/26 15:12:52 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,6 @@ namespace ft {
 			private:
 				treeiter	Super;
 		};
-
-
-	template < typename Iter>
-		bool operator== (const Iter& a, const Iter& b)	{ return not (a not_eq b); }
-	template < typename Iter> 
-		typename ft::enable_if <
-			ft::__is_bidirectional_iter<typename Iter::iterator_category>::value and 
-			not	ft::__is_random_access_iter<typename Iter::iterator_category>::value,
-			bool >::type 
-				operator!= (const Iter& a, const Iter& b)	{ return &(*a) not_eq &(*b); }
 
 
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 11:21:52 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/26 15:44:13 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 
 int main() {
 
-// goto T;
 
 std::cout << std::endl << "\033[36m" << "****************** < constructors , iterators > ************************** " << "\033[0m" << std::endl; {
 
@@ -41,32 +40,32 @@ std::cout << std::endl << "\033[36m" << "****************** < constructors , ite
 
         std::cout << "*********** m1 < normal > ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it = m1.begin() ; it != m1.end(); it++)
-            std::cout << "\n" << it->first << "\t" << (*it).second;
+            std::cout << std::endl << it->first << "\t" << (*it).second;
         std::cout << std::endl;
 
         std::cout << "*********** m1 < reverse > ************" << std::endl;
         for (CCLIB::map<std::string, int>::reverse_iterator it = m1.rbegin() ; it != m1.rend(); it++)
-            std::cout << "\n" << it->first << "\t" << it->second;
+            std::cout << std::endl << it->first << "\t" << it->second;
         std::cout << std::endl;
 
         std::cout << "*********** m2 < normal > ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it = m2.begin() ; it != m2.end(); it++)
-            std::cout << "\n" << it->first << "\t" << it->second;
+            std::cout << std::endl << it->first << "\t" << it->second;
         std::cout << std::endl;
 
         std::cout << "*********** m2 < reverse > ************" << std::endl;
         for (CCLIB::map<std::string, int>::reverse_iterator it = m2.rbegin() ; it != m2.rend(); it++)
-            std::cout << "\n" << it->first << "\t" << it->second;
+            std::cout << std::endl << it->first << "\t" << it->second;
         std::cout << std::endl;
 
         std::cout << "*********** m3 < normal > ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it = m3.begin() ; it != m3.end(); it++)
-            std::cout << "\n" << it->first << "\t" << it->second;
+            std::cout << std::endl << it->first << "\t" << it->second;
         std::cout << std::endl;
 
         std::cout << "*********** m3 < reverse > ************" << std::endl;
         for (CCLIB::map<std::string, int>::reverse_iterator it = m3.rbegin() ; it != m3.rend(); it++)
-            std::cout << "\n" << it->first << "\t" << it->second;
+            std::cout << std::endl << it->first << "\t" << it->second;
         std::cout << std::endl;
     }
     catch (const std::exception& e) { std::cerr << e.what() << '\n'; }
@@ -145,14 +144,14 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
 
         std::cout << "*********** m3 before ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m3.begin() ; it2 != m3.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "m3 size : " << m3.size() << std::endl;
 
         m3.insert(m2.begin(), m2.end());
         std::cout << "*********** m3 after ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m3.begin() ; it2 != m3.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
 
         std::cout << "m3 size : " << m3.size() << std::endl;
@@ -175,26 +174,26 @@ std::cout << std::endl << "\033[36m" << "************************** < erase > **
         m1["f"] = 6;
         std::cout << "*********** m1 before ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m1.begin() ; it2 != m1.end(); ++it2 )
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
         m1.erase(m1.begin());
         std::cout << "*********** m1 after 1 ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m1.begin() ; it2 != m1.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
         std::cout << "elements erased : " << m1.erase("d") << std::endl;
         std::cout << "elements erased : " << m1.erase("d") << std::endl;
         std::cout << "*********** m1 after 2 ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m1.begin() ; it2 != m1.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
         m1.erase(m1.begin(), ++(++m1.begin()));
         std::cout << "*********** m1 after 3 ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m1.begin() ; it2 != m1.end(); it2++)
-            std::cout << "\n" << it2->first << "\t" << it2->second;
+            std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
 

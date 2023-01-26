@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/25 21:24:51 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/26 15:19:20 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,37 +190,28 @@ template <class _Iter>
 
 
 
-
-
 	template < typename Iter>
-		typename ft::enable_if <
-			__is_random_access_iter< typename Iter::iterator_category>::value, bool >::type 
-				operator> (const Iter& a, const Iter& b)	{ return a.base() > b.base(); }
-	template < typename Iter>
-		typename ft::enable_if <
-			__is_random_access_iter< typename Iter::iterator_category>::value, bool >::type 
-				operator>= (const Iter& a, const Iter& b)	{ return a.base() >= b.base(); }
-
-
-	template < typename Iter>
-		typename ft::enable_if <
-			__is_random_access_iter< typename Iter::iterator_category>::value, bool >::type 
-				operator< (const Iter& a, const Iter& b)	{ return a.base() < b.base(); }
-	template < typename Iter>
-		typename ft::enable_if <
-			__is_random_access_iter< typename Iter::iterator_category>::value, bool >::type 
-				operator<= (const Iter& a, const Iter& b)	{ return a.base() <= b.base(); }
-
-
-	template < typename Iter>
-		typename ft::enable_if <
-			__is_random_access_iter< typename Iter::iterator_category>::value, bool >::type 
-				operator== (const Iter& a, const Iter& b)	{ return a.base() == b.base(); }
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter::iterator_category>::value,
+			bool >::type  operator== (const Iter& a, const Iter& b)	{ return &(*a) == &(*b); }
 	template < typename Iter> 
-		typename ft::enable_if <
-			__is_random_access_iter< typename Iter::iterator_category>::value, bool >::type 
-				operator!= (const Iter& a, const Iter& b)	{ return a.base() != b.base(); }
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter::iterator_category>::value,
+			bool >::type 
+				operator< (const Iter& a, const Iter& b)	{ return &(*a) < &(*b); }
 
+
+	template<typename Iter>
+		bool operator!= (const Iter& a, const Iter& b) { return not (a == b); }
+
+	template<typename Iter>
+		bool operator> (const Iter& a, const Iter& b) { return  b < a; }
+
+	template<typename Iter>
+		bool operator<= (const Iter& a, const Iter& b) { return not ( b < a); }
+
+	template<typename Iter>
+		bool operator>= (const Iter& a, const Iter& b) { return not (a <  b); }
 
 	template < class Iter>
 		typename ft::enable_if <
@@ -228,34 +219,19 @@ template <class _Iter>
 				operator- (const Iter& a, const Iter& b)	{ return b.base() - a.base(); }
 
 
-	/**
-		@brief check type of name is it iterator or not, 
-			is a defined behaviour for the enable_if statement
-	*/
-	template < typename, typename>
-		class __is_input_iterator : public false_type { };
-	template < typename _TP >
-		class __is_input_iterator <   _TP, iterator_traits < _TP > > : public true_type { };
-	template <  typename _TP>
-		class __is_input_iterator <   _TP, normal_iterator < _TP > > : public true_type { };
-
-	template <  typename _TP>
-		class __is_input_iterator <   _TP, reverse_iterator < normal_iterator < _TP > > >: public true_type { };
-
-
 	template < class _InputIter>
 	typename _InputIter::difference_type
-		distance (_InputIter __first, _InputIter __last) {
+		distance (_InputIter first, _InputIter last) {
 
-		typename _InputIter::difference_type __r(0);
-		for (; __first != __last; ++__first)
-			++__r;
-		return __r;
+		typename _InputIter::difference_type length(0);
+		for (; first != last; ++first)
+			++length;
+		return length;
 	}
 	template < class _InputIter>
 	typename ft::enable_if <
 		__is_random_access_iter< typename _InputIter::_InputIterator_category>::value, typename _InputIter::difference_type >::type 
-			distance (_InputIter __first, _InputIter __last) { return __last - __first; }
+			distance (_InputIter first, _InputIter last) { return last - first; }
 
 
 }/* name space end [ ft ]*/
