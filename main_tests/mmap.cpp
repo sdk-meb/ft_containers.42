@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 18:29:15 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/28 15:42:57 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@
 
 
 int main() {
+    
 
-std::cout << std::endl << "\033[36m" << "****************** < constructors , iterators > ************************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m****************** < constructors , iterators > ************************** \033[0m" << std::endl; {
 
 
     try {
@@ -70,7 +71,7 @@ std::cout << std::endl << "\033[36m" << "****************** < constructors , ite
     catch (const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "****************** < empty , size >  ************************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m****************** < empty , size >  ************************** \033[0m" << std::endl; {
 
 
     try {
@@ -95,7 +96,7 @@ std::cout << std::endl << "\033[36m" << "****************** < empty , size >  **
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************************** < insert > ************************************ " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************************** < insert > ************************************ \033[0m" << std::endl; {
 
 
     try {
@@ -105,15 +106,15 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
 
         p = m1.insert(CCLIB::make_pair("m", 1));
         std::cout << std::boolalpha;
-        std::cout << "insert m : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : "<< p.second << std::endl;
+        std::cout << "insert m : [ " << p.first->first << " , " << p.first->second << " ] | mes-s : "<< p.second << std::endl;
         p = m1.insert(CCLIB::make_pair("e", 1));
-        std::cout << "insert e : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : "<< p.second << std::endl;
+        std::cout << "insert e : [ " << p.first->first << " , " << p.first->second << " ] | mes-s : "<< p.second << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
 
         p = m1.insert(CCLIB::make_pair("s", 2));
-        std::cout << "insert s : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : " << p.second << std::endl;
+        std::cout << "insert s : [ " << p.first->first << " , " << p.first->second << " ] | mes-s : " << p.second << std::endl;
         p = m1.insert(CCLIB::make_pair("-", 2));
-        std::cout << "insert - : " << "[ " << p.first->first << " , " << p.first->second << " ] | mes-s : " << p.second << std::endl;
+        std::cout << "insert - : [ " << p.first->first << " , " << p.first->second << " ] | mes-s : " << p.second << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
 
         CCLIB::map<std::string, int> m2;
@@ -134,7 +135,7 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
         for (CCLIB::map<std::string, int>::iterator it2 = m2.begin() ; it2 != m2.end(); it2++)
             std::cout << std::endl << it2->first << "\t" << it2->second;
         std::cout << std::endl;
-        std::cout << "insert c : " << "[ " << it->first << " , " << it->second << " ]" << std::endl;
+        std::cout << "insert c : [ " << it->first << " , " << it->second << " ]" << std::endl;
         std::cout << "m2 size : " << m2.size() << std::endl;
 
         CCLIB::map<std::string, int> m3;
@@ -158,7 +159,7 @@ std::cout << std::endl << "\033[36m" << "************************** < insert > *
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************************** < erase > ************************************* " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************************** < erase > ************************************* \033[0m" << std::endl; {
 
 
     try {
@@ -200,7 +201,7 @@ std::cout << std::endl << "\033[36m" << "************************** < erase > **
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************************** < swap > ************************************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************************** < swap > ************************************** \033[0m" << std::endl; {
 
 
     try {
@@ -240,7 +241,7 @@ std::cout << std::endl << "\033[36m" << "************************** < swap > ***
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************************* < clear > ************************************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************************* < clear > ************************************** \033[0m" << std::endl; {
 
 
     try {
@@ -274,7 +275,7 @@ std::cout << std::endl << "\033[36m" << "************************* < clear > ***
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "****************** < key_comp , value_comp > **************************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m****************** < key_comp , value_comp > **************************** \033[0m" << std::endl; {
 
 
     try {
@@ -321,7 +322,7 @@ std::cout << std::endl << "\033[36m" << "****************** < key_comp , value_c
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************************* < find > ************************************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************************* < find > ************************************** \033[0m" << std::endl; {
 
 
     try {
@@ -347,7 +348,7 @@ std::cout << std::endl << "\033[36m" << "************************* < find > ****
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************************* < count > ************************************ " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************************* < count > ************************************ \033[0m" << std::endl; {
 
 
     try {
@@ -372,7 +373,7 @@ std::cout << std::endl << "\033[36m" << "************************* < count > ***
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 }
 
-std::cout << std::endl << "\033[36m" << "************ < lower_bound , upper_bound , equal_range > *************** " << "\033[0m" << std::endl; {
+std::cout << std::endl << "\033[36m************ < lower_bound , upper_bound , equal_range > *************** \033[0m" << std::endl; {
 
 
     try {

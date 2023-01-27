@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 15:19:20 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/28 16:16:09 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ template< class _Tp, class Iter_traits = iterator_traits<_Tp> >
 			normal_iterator&	operator+= (ptrdiff_t n) { Super += n; return *this; }
 			normal_iterator&	operator-= (ptrdiff_t n) { Super -= n; return *this; }
 
-			reference	operator*() 	{ return *Super; }
+			reference	operator*() const	{ return *Super; }
 			pointer		operator->() const	{ return Super; }
 
 			reference	operator[] (difference_type n) const { return Super[n]; }
@@ -208,15 +208,10 @@ template <class _Iter>
 		bool operator> (const Iter& a, const Iter& b) { return  b < a; }
 
 	template<typename Iter>
-		bool operator<= (const Iter& a, const Iter& b) { return not ( b < a); }
+		bool operator<= (const Iter& a, const Iter& b) { return not (b < a); }
 
 	template<typename Iter>
 		bool operator>= (const Iter& a, const Iter& b) { return not (a <  b); }
-
-	template < class Iter>
-		typename ft::enable_if <
-			__is_random_access_iter < typename Iter::iterator_category>::value, typename Iter::difference_type>::type 
-				operator- (const Iter& a, const Iter& b)	{ return b.base() - a.base(); }
 
 
 	template < class _InputIter>
@@ -231,11 +226,10 @@ template <class _Iter>
 	template < class _InputIter>
 	typename ft::enable_if <
 		__is_random_access_iter< typename _InputIter::_InputIterator_category>::value, typename _InputIter::difference_type >::type 
-			distance (_InputIter first, _InputIter last) { return last - first; }
+			distance (_InputIter first, _InputIter last) { return std::abs(last.operator->() - first.operator->()); }
 
 
-}/* name space end [ ft ]*/
-
+} /* namespace ft */
 
 #endif
  
