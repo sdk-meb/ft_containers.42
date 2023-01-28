@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/28 16:16:09 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/28 19:52:26 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ template <class _Iter>
 	template < class _InputIter>
 	typename ft::enable_if <
 		__is_random_access_iter< typename _InputIter::_InputIterator_category>::value, typename _InputIter::difference_type >::type 
-			distance (_InputIter first, _InputIter last) { return std::abs(last.operator->() - first.operator->()); }
+			distance (_InputIter first, _InputIter last) { return abs(last.operator->() - first.operator->()); }
 
 
 } /* namespace ft */

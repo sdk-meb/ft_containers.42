@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:35:45 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 14:58:53 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/29 13:08:38 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 #	define STACK_HPP
 
 # include"vector.hpp"
-#include <cstdlib>
+
+
 namespace	ft {
 
 
@@ -27,6 +28,7 @@ namespace	ft {
 template <class T, class Container = ft::vector<T> >
 	class stack {
 
+
 		public:
 
 		typedef Container	container_type;
@@ -34,7 +36,8 @@ template <class T, class Container = ft::vector<T> >
 		typedef typename	container_type::size_type			size_type;	
 		typedef typename	container_type::reference			reference;	
 		typedef typename	container_type::const_reference		const_reference;
-		
+
+
 
     template<typename _T, typename con>
 		friend bool
@@ -44,8 +47,12 @@ template <class T, class Container = ft::vector<T> >
 		friend bool
 		operator< (const stack<_T, con>&, const stack<_T, con>&);
 
+
+
 		protected :
 			container_type	c;
+
+
 
 		public:
 
@@ -55,37 +62,42 @@ template <class T, class Container = ft::vector<T> >
 				with default constructor  or copy assi-cons i case of argement find;
 			@param cont container which the stack adapt it.
 		*/
-			explicit stack (const Container& cont=Container()): c(cont) { }
+			explicit stack (const container_type& cont=container_type()): c(cont) { }
 
 		/**
 			@category copy Counstructor
 			@brief	Needless to define غني عن تعريف
 			@param	other vector to copie from it
 		*/
-			stack (const stack& other): c(other.Stack) { }
+			stack (const stack& other): c(other.c) { }
 
 		/**
 			@category operator
 			@brief	Needless to define, equal to the same container operator
 			@param	cont Container
 		*/
-			stack&	operator= (const Container& cont) { c = cont.c; return *this; }
+			stack&	operator= (const stack& cont) { c = cont.c; return *this; }
+
+
 
 
 	/** *******************  @category __Capacity__    ******************* */
 			bool		empty() const { return c.empty(); }
 			size_type	size() const { return c.size(); }
-	
+
+
 	/** *******************  @category __Modifiers__    ******************* */
 			void		push (const value_type& value) { c.push_back(value); }
 			void		pop() { c.pop_back(); }
 
+
 	/** *******************  @category __Element_access__    ******************* */
 			reference	top() { return c.back(); }
 
-
+	/** *******************  @brief __destructor__  ******************* */
 		~stack() { };
 	};
+
 
 template<typename _Tp, typename con>
     bool operator== (const stack<_Tp, con>& _x, const stack<_Tp, con>&  _y)
@@ -110,6 +122,7 @@ template<typename _Tp, typename con>
 template<typename _Tp, typename con>
     bool operator>= (const stack<_Tp, con>& _x, const stack<_Tp, con>& _y)
     { return not (_x <  _y); }
+
 
 };
 
