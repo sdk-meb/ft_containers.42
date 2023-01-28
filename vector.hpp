@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/28 16:20:24 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/29 14:02:44 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,8 @@ template <class T, class Allocator = std::allocator<T> >
 				@brief	Needless to define غني عن تعريف
 				@param	other vector to copie from it
 			*/
-			vector( const vector& other ): _Alloc(other.get_allocator()){
-
-				_replace (NULL);			
-				assign(other.begin(), other.end());
-			}
+			vector (const vector& other)
+				: _Alloc(other.get_allocator()) { _replace (NULL); *this = other; }
 
 			/**
 				@category	Constructor
@@ -131,16 +128,18 @@ template <class T, class Allocator = std::allocator<T> >
 				void assign (InputIt first, typename ft::enable_if < ft::__is_input_iter <
 					typename InputIt::iterator_category>::value, InputIt>::type last) {
 
-					size_type		_offset = capacity();
+					vector del(*this, true);
 					difference_type	count 	= ft::distance (first, last);
 
-					iterator old_start = begin();
-					clear();
-					_replace (_Alloc.allocate(count), 0, count);
+					bool k = size() ? true : false;
+					_replace(NULL);
+					if (k)
+						_logical_reserve(count);
+					else
+						reserve(count);
 
-					while (first != last)
+					while (first not_eq last)
 						_Alloc.construct(_Last++, *(first++));
-					_Alloc.deallocate(old_start.base(), _offset);
 				}
 
 			/**
@@ -150,7 +149,13 @@ template <class T, class Allocator = std::allocator<T> >
 			*/
 			void assign (size_type count, const_reference value) {
 
-				clear();
+				vector del(*this, true);
+				bool k = size() ? true : false;
+				_replace(NULL);
+				if (k)
+					_logical_reserve(count);
+				else
+					reserve(count);
 				insert (begin(), count, value);
 			}
 
@@ -161,11 +166,12 @@ template <class T, class Allocator = std::allocator<T> >
 		/* ********************   OPERATOR  ******************** */
 			vector& operator= (const vector& other) {
 
+				if (*this == other) return *this;
+
 				assign(other.begin(), other.end());
 
 				return *this;
 			}
-
 
 		/* *******************   __Capacity__    ******************* */
 			size_type		size (void) const			{ return _Last - _Frst; }
@@ -174,24 +180,19 @@ template <class T, class Allocator = std::allocator<T> >
 			void			reserve (size_type new_cap)	{
 
 				if (new_cap == capacity() or new_cap < size()) return ;
-				if (not new_cap) return _del_capacity();
-				if (empty()) {
 
-					_del_capacity ();
+				vector del(*this, true);
+
+				if (empty())
 					return not new_cap	? _replace (NULL)
 										: _replace (_Alloc.allocate(new_cap), 0, new_cap);
-				}
 
-
-				size_type _offset = capacity();
 				iterator old_start = begin();
-				iterator old_end = end() - ((new_cap >= size()) ? 0 : (size() - new_cap));
+				iterator old_end = end() - ((new_cap >= size()) ? 0 : size() - new_cap);
 
 				_replace (_Alloc.allocate(new_cap), (new_cap > size()) ? size() : new_cap , new_cap);
 
 				move_range (old_start, old_end,  begin());
-
-				_Alloc.deallocate(old_start.base(), _offset);
 			}
 
 			size_type		capacity (void) const		{ return _End_Capacity - _Frst; }
@@ -264,7 +265,7 @@ template <class T, class Allocator = std::allocator<T> >
 					if (range not_eq -1) first = begin() + range;
 					last = first + count;
 
-					while (first != last) _Alloc.construct((_Last++) -_offset, *(first++));
+					while (first not_eq last) _Alloc.construct((_Last++) -_offset, *(first++));
 
 					return end() - _offset - (_offset ? 1 : 0);
 				}
@@ -277,10 +278,11 @@ template <class T, class Allocator = std::allocator<T> >
 				if (capacity()) _Last -= 1;
 				return pos;
 			}
+
 			iterator	erase (iterator first, iterator last) {
 
 				iterator curs = last;			
-				while (curs != first) _Alloc.destroy((--curs).base());
+				while (curs not_eq first) _Alloc.destroy((--curs).base());
 
 				move_range (last, end(), first);
 
@@ -292,21 +294,21 @@ template <class T, class Allocator = std::allocator<T> >
 
 				insert (end(), 1, value);
 			}
+
 			void		pop_back() {
 
 				if (not empty())
 					_Alloc.destroy(--_Last);
-					
 			}
 
 			void		resize (size_type count, value_type value = value_type()) {
 
 				if (count > size()) {
 
-					if (capacity() < count) reserve (count);
+					if (capacity() < count) _logical_reserve (count);
 					insert (end(), count - size(), value);
 				}
-				else if (count < size()) erase (begin() + count);
+				else if (count < size()) erase (begin() + count, end());
 			}
 
 			void		swap (vector& other) {
@@ -350,18 +352,23 @@ template <class T, class Allocator = std::allocator<T> >
 
 		private :
 
+		vector (const vector& other, bool)
+			: _Alloc(other.get_allocator()) { _replace(other._Frst, other.size(), other.capacity()); }
+
 		void	_del_capacity() {
 
-			if (capacity())
-				_Alloc.deallocate (_Frst, capacity());
+			clear();
+			if (capacity()) _Alloc.deallocate (_Frst, capacity());
 			_replace (NULL);
 		}
+
 		void	_replace (pointer F, difference_type _size=0, difference_type _cap=0) {
 
 			_Frst			= F;
 			_Last			= _Frst + _size;
 			_End_Capacity	= _Frst + _cap;
 		}
+
 		/**
 			@brief move range of contente form range address to start address.
 			@attention most move it dongeer in overlapping case ! so here is a defined behiver 
@@ -395,21 +402,18 @@ template <class T, class Allocator = std::allocator<T> >
 			*/
 			void	out_range( size_type idx ) {
 
-				if (idx >= size())
-					throw std::out_of_range( "vector");
+				if (idx >= size()) std::__throw_out_of_range( "vector");
 			}
 
 			void	_logical_reserve (size_type nedl) {
-
-				if (capacity() < nedl) reserve (capacity() ? capacity() * 2 : nedl);
+			
+				if (capacity() >= nedl) return;
+				nedl =  std::max (capacity() * 2, nedl);
+				reserve (nedl);
 			}
 
 		public:
-			~vector() {
-
-				if (capacity())
-					_Alloc.deallocate(_Frst, _End_Capacity - _Frst);
-			}
+			~vector() { _del_capacity(); }
 	};
 
 
@@ -450,7 +454,6 @@ template< class T, class Alloc >
 
 
 };
-// c++ main_vector.cpp -Wall -Wextra -Werror -std=c++98 -fsanitize=address -o .ftc 2> .ftcmp || echo ____COMPILATION_______ERROR__  && ./.ftc > .out 2> .err || $?
 
 # endif
 

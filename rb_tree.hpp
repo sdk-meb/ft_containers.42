@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rb_tree.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/28 15:14:05 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/28 19:50:59 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,16 +446,16 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
  	*********************************************************************************************************/
 		__road&		insert (const __road& _node, bool ex=true) {
 
-				if (seed) return insertion(_node, seed, ex);
+			if (seed) return insertion(_node, seed, ex);
 
-				seed = _SAlloc.allocate ( 1);
+			seed = _SAlloc.allocate ( 1);
 
-				_SAlloc.construct (seed, _node);
-				seed->Color	= BLACK;
-				seed->copy_ship = false;
+			_SAlloc.construct (seed, _node);
+			seed->Color	= BLACK;
+			seed->copy_ship = false;
 
-				++Size;
-				return *seed;
+			++Size;
+			return *seed;
 		}
 
 	/*********************************************************************************************************

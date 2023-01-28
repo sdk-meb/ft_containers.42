@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 15:54:39 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/21 10:10:33 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/29 13:29:23 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@
 	namespace CCLIB = ft;
 #endif
 
+#define test(str) std::cout << std::endl << "\e[36********************* < " << str <<" > *********************\e[0m" << std::endl
+
+
 int main() {
 
 
-std::cout	<< std::endl << "*************** < constructors , iterators > ******************** " << std::endl; {
-
-
-	try {
+	try { test ("constructors , iterators");
 
 		CCLIB::vector<int> v1;
 		CCLIB::vector<int> v2(5, 5);
@@ -77,14 +77,11 @@ std::cout	<< std::endl << "*************** < constructors , iterators > ********
 		for (CCLIB::vector<int>::reverse_iterator it = v4.rbegin(); it != v4.rend(); it++)
 			std::cout << "\t" << *it;
 		std::cout << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "********************** < resize > ******************************* " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("resize");
 
 		int values = 10;
 		CCLIB::vector<int> vec;
@@ -97,6 +94,7 @@ std::cout	<< std::endl << "********************** < resize > *******************
 
 		vec.resize(0);
 		std::cout << "size = " << vec.size() << std::endl;
+
 		std::cout << "capacity = " << vec.capacity() << std::endl;
 		std::cout << "-----------------------------" << std::endl;
 		vec.resize(17);
@@ -106,14 +104,11 @@ std::cout	<< std::endl << "********************** < resize > *******************
 		vec.resize(70);
 		std::cout << "size = " << vec.size() << std::endl;
 		std::cout << "capacity = " << vec.capacity() << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "******************* < max_size > ******************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("max_size");
 		CCLIB::vector<int> v(10, 3);
 
 		std::cout << v.max_size() << std::endl;
@@ -136,14 +131,11 @@ std::cout	<< std::endl << "******************* < max_size > ********************
 		std::cout << std::endl;
 		std::cout << "size = " << v.size() << std::endl;
 		std::cout << "capacity = " << v.capacity() << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "*************** < size , capacity > ********************* " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("size , capacity");
 
 		int values = 10;
 		CCLIB::vector<int> v;
@@ -154,14 +146,11 @@ std::cout	<< std::endl << "*************** < size , capacity > *****************
 			std::cout << "capacity = " << v.capacity() << std::endl;
 			v.push_back(i);
 		}
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "********************** < empty  > ******************************* " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("empty");
 
 		int values = 10;
 		CCLIB::vector<int> v(5);
@@ -175,13 +164,11 @@ std::cout	<< std::endl << "********************** < empty  > *******************
 		for (CCLIB::vector<int>::iterator i = v.begin(); i < v.end(); i++) std::cout << "\t" << *i.base() << std::endl;
 
 		std::cout << "aCCLIBer pushing the vector" << (v.empty() ? " is empty " : " isn't empty ") << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "********************** < reserve  > ***************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
+
 		
-	try {
+	try { test ("reserve");
 
 		int value = 5;
 		CCLIB::vector<int> v(value);
@@ -204,27 +191,20 @@ std::cout	<< std::endl << "********************** < reserve  > *****************
 
 		v.reserve(value * 4);
 		std::cout << "capacity = " << v.capacity() << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "******************** < operator []  > *************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try
-	{
+	try { test ("operator []");
 		CCLIB::vector<int> v(101);
 
 		v[100] = 15;
 		std::cout << v[100] << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "************************* < at > ******************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("at");
 
 		CCLIB::vector<int> v(10);
 
@@ -232,14 +212,11 @@ std::cout	<< std::endl << "************************* < at > ********************
 		std::cout << v.at(8) << std::endl;
 		std::cout << v.at(9) << std::endl;
 		std::cout << v.at(10) << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "********************** < front, back > ************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
-	
-	try {
+
+	try { test ("front, back");
 
 		CCLIB::vector<int> v;
 
@@ -255,13 +232,11 @@ std::cout	<< std::endl << "********************** < front, back > **************
 		v.back() = 15;
 		std::cout << "front = " << v.front() << std::endl;
 		std::cout << "back = " << v.back() << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "*********************** < push_back > *************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
-	try {
+
+	try { test ("push_back");
 
 		int values = 10;
 		CCLIB::vector<int> v;
@@ -281,13 +256,11 @@ std::cout	<< std::endl << "*********************** < push_back > ***************
 
 		std::cout << "size = " << v.size() << std::endl;
 		std::cout << "capacity = " << v.capacity() << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "************************ < pop_back > *************************** " << std::endl; {
-	
-	try {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n';}
+
+
+	try { test ("pop_back");
 
 		int value = 5;
 		CCLIB::vector<int> v;
@@ -306,14 +279,11 @@ std::cout	<< std::endl << "************************ < pop_back > ***************
 		std::cout << std::endl;
 		std::cout << "capacity = " << v.capacity() << std::endl;
 		std::cout << "last = " << *(v.end() - 1) << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "************************ < assign > ***************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("assign");
 
 		CCLIB::vector<int> v(10);
 		CCLIB::vector<int> v2;
@@ -342,14 +312,11 @@ std::cout	<< std::endl << "************************ < assign > *****************
 		std::cout << std::endl;
 		std::cout << "size 2 = " << v2.size() << std::endl;
 		std::cout << "capacity 2 = " << v2.capacity() << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "************************ < INSERT > *************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("insetion");
 
 		CCLIB::vector<int> v(3, 100);
 		CCLIB::vector<int>::iterator it;
@@ -377,14 +344,11 @@ std::cout	<< std::endl << "************************ < INSERT > *****************
 		for (CCLIB::vector<int>::iterator i = v.begin(); i < v.end(); i++)
 			std::cout << "\t" << *i;
 		std::cout << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "*************************** < eraes > *************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("eraesing");
 
 		CCLIB::vector<int> v;
 
@@ -410,14 +374,11 @@ std::cout	<< std::endl << "*************************** < eraes > ***************
 			std::cout << "\t" << *i;
 		std::cout << std::endl;
 		std::cout << "\t" << *(v.end()-1) << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "*************************** < swap > *************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("swap");
 
 		CCLIB::vector<int> foo(3, 100);
 		CCLIB::vector<int> bar(5, 200);
@@ -445,14 +406,11 @@ std::cout	<< std::endl << "*************************** < swap > ****************
 		std::cout << "bar size = " << bar.size() << '\n';
 		std::cout << "bar capacity = " << bar.capacity() << '\n';
 		std::cout << "bar addr  = " << &(*bar.begin()) << '\n';
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "*************************** < clear > *************************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("clearing");
 
 		CCLIB::vector<int> v;
 		v.push_back(100);
@@ -479,14 +437,11 @@ std::cout	<< std::endl << "*************************** < clear > ***************
 		std::cout << "size = " << v.size() << std::endl;
 		std::cout << "capacity = " << v.capacity() << std::endl;
 		std::cout << "end = " << *(v.end()-1) << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout	<< std::endl << "********************** < non_members fun > ********************** " << std::endl; {
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 
-	try {
+	try { test ("non_members fun");
 
 		CCLIB::vector<int> foo(3, 100);
 		CCLIB::vector<int> bar(2, 200);
@@ -535,8 +490,7 @@ std::cout	<< std::endl << "********************** < non_members fun > **********
 		for (unsigned i = 0; i < bar.size(); i++)
 			std::cout << ' ' << bar[i];
 		std::cout << std::endl;
-	}
-	catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
-}
+
+	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
 }

@@ -125,17 +125,6 @@ template	<
 				*this = other;
 			}
 
-			map&			operator= (const map& other) {
-
-				tree .destroy();
-				for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
-					tree.insert(*it.ItR->Ship);
-
-				_Alloc	= other.get_allocator();
-				_v_cmp	= other._v_cmp;
-				return *this;
-			}
-
 			allocator_type	get_allocator() const { return _Alloc; }
 
 
@@ -360,14 +349,20 @@ template	<
 				value_compare	_v_cmp ;
 				allocator_type	_Alloc ;
 
+			map&			operator= (const map& other) {
+
+				tree .destroy();
+				for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
+					tree.insert(*it.ItR->Ship);
+
+				_Alloc	= other.get_allocator();
+				_v_cmp	= other._v_cmp;
+				return *this;
+			}
+
 };
 
 
-template <class key, class T, class Comp, class Alloc>
-	bool operator== (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
-
-		return not (lhs not_eq rhs);
-	}
 template <class key, class T, class Comp, class Alloc>
 	bool operator!= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
 
@@ -379,6 +374,13 @@ template <class key, class T, class Comp, class Alloc>
 
 		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
+
+template <class key, class T, class Comp, class Alloc>
+	bool operator== (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return not (lhs not_eq rhs);
+	}
+
 template <class key, class T, class Comp, class Alloc>
 	bool operator>= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
 
