@@ -6,7 +6,7 @@
 /*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:05:34 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/28 19:50:59 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/30 00:09:23 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,61 +163,58 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			if (WhoIm() == ROOT || P->WhoIm() == ROOT)
 				throw std::logic_error("Uncle doesn't");
 
-			if (P->P->R_ch == NIL || P->P->L_ch == NIL)
+			if (get_G().R_ch == NIL || get_G().L_ch == NIL)
 				throw std::logic_error("Uncle doesn't");
 
 			if (P->WhoIm() == JU)
-				return *P->P->R_ch;
-			return *P->P->L_ch;
+				return *get_G().R_ch;
+			return *get_G().L_ch;
 		}
 
 
 	/*********************************************************************************************************
 	*	@brief		red black tree adjustment, for for violating the properties(rules)
 	*********************************************************************************************************/
-		void		adjustment() throw() {
+		void		adjustment() {
 
-			if (P->Color == BLACK)
+return;
+			if (not P or P->Color == BLACK)
 				return ;
 
 			try {
 
-				if (get_U().Color == BLACK)/* throw in case no uncle */
-					throw "go to internal catch";
+				if (get_U().Color not_eq RED)/* throw in case no uncle */
+					std::__throw_logic_error ("go to internal catch");
 
-				{/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
-
-					P->Color = BLACK;
-					get_U().Color = BLACK;
-					P->P->recolor();
-
-					if (P->P->Color == RED)
-						P->P->adjustment();
-				}
-			}
-			catch(...) {
-
-				if (WhoIm() == JU && P->WhoIm() == SE)/* case 3.2.2 */{
-
-					rr(P);
-					goto C321;/* case 3.2.1 */
-				}
-				else if (WhoIm() == SE && P->WhoIm() == JU)/* case 3.2.4 */{
-
-					lr(P);
-					goto C323;/* case 3.2.3 */
-				}
-				else if (WhoIm() == SE && P->WhoIm() == SE)/* case 3.2.1 */
-	C321:			lr(P->P);
-				else if (WhoIm() == JU && P->WhoIm() == JU)/* case 3.2.3 */
-	C323:			rr(P->P);
-
-				try { get_S().Color = RED;}
-					catch(...){};
-
+				/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
 				P->recolor();
-				if (P->Color == RED)
-					P->adjustment();
+				get_U().recolor();
+				if (get_G().WhoIm() not_eq ROOT)
+					get_G().recolor();
+			}
+			catch (const std::logic_error&) {
+
+				if (WhoIm() == JU and P->WhoIm() == SE)/* case 3.2.2 */
+					rr(P);/* case 3.2.1 */
+				else if (WhoIm() == SE and P->WhoIm() == JU)/* case 3.2.4 */
+					lr(P);/* case 3.2.3 */
+				if (WhoIm() == SE and P->WhoIm() == SE)/* case 3.2.1 */{
+		
+					lr(&get_G());
+
+					if (P->WhoIm() not_eq ROOT) P->recolor();
+					try { get_S().Color = RED; }
+					catch (const std::logic_error&) { };
+					if (P->WhoIm() not_eq ROOT and P->Color == RED) P->adjustment();
+				}
+				else if (WhoIm() == JU and P->WhoIm() == JU)/* case 3.2.3 */{
+		
+					rr(&get_G());
+					if (P->WhoIm() not_eq ROOT) P->recolor();
+					try { get_S().Color = RED; }
+					catch (const std::logic_error&) { };
+					if (P->WhoIm() not_eq ROOT and P->Color == RED) P->adjustment();
+				}
 			}
 		}
 
@@ -226,17 +223,18 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void		delete_fixup() {
 
+	return;
 				if (get_S().Color == RED) {
 
-					get_S().Color = BLACK;
-					P->Color		 = RED;
+					get_S().recolor();
+					P->recolor();
 					if (WhoIm() == JU)
 						P->lr();
 					else
 						P->rr();
 				}
-				if (	get_S().L_ch && get_S().L_ch->Color == BLACK
-					&&	get_S().R_ch && get_S().R_ch->Color == BLACK) {
+				if (get_S().L_ch and get_S().L_ch->Color == BLACK
+					and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
 
 					get_S().Color = RED;
 					if (P->Color == BLACK)
@@ -244,8 +242,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 					P->Color = BLACK;
 					return ;
 				}
-				if (	get_S().L_ch && get_S().R_ch &&
-						get_S().L_ch->Color != get_S().R_ch->Color) {
+				if (get_S().L_ch and get_S().R_ch
+					and	get_S().L_ch->Color != get_S().R_ch->Color) {
 
 					get_S().L_ch->Color = BLACK;
 					if (WhoIm() == JU){
@@ -259,13 +257,13 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 						get_S().lr();
 					}
 				}
-				if (get_S().R_ch && RED == get_S().R_ch->Color && WhoIm() == JU){
+				if (get_S().R_ch and RED == get_S().R_ch->Color and WhoIm() == JU) {
 
 					get_S().R_ch->Color = BLACK;
 					P->Color = BLACK;
 					P->lr();
 				}
-				else if (get_S().L_ch && RED == get_S().L_ch->Color && WhoIm() == SE){
+				else if (get_S().L_ch and RED == get_S().L_ch->Color and WhoIm() == SE) {
 
 					get_S().L_ch->Color = BLACK;
 					P->Color = BLACK;
@@ -411,6 +409,22 @@ template < class T_SHIP, class Allocator>
 *	@brief	base Red _ Black _ tree
 *	@param	T_SHIP	Shipment to stor
 *************************************************************************************************************/
+// template < class Container >
+// 	class RBT {
+
+
+// 		protected:
+// 			typedef 	typename Container::allocator_type		Allocator;
+// 			typedef 	typename Container::size_type			size_type;
+
+// 			typedef 	typename Container::value_type			T_SHIP;
+// 			typedef 	typename Container::key_type			key_type;
+// 			typedef 	typename Container::mapped_type			v_map;
+
+// 			typedef		__road_<T_SHIP, Allocator>				__road;
+
+// 			typedef typename Allocator::template rebind<__road>::other	SAllocator;
+
 template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	class RBT {
 
@@ -542,9 +556,12 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 					sub->L_ch = _SAlloc.allocate(1);
 
 					_SAlloc.construct (sub->L_ch, _node);
+					if (_node.Color == BLACK) throw "fddf";
 					sub->L_ch->P = sub;
-					// sub->L_ch->adjustment();
+
 					sub->L_ch->copy_ship = false;
+					sub->L_ch->adjustment();
+
 					++Size;
 					return *sub->L_ch;
 				}
@@ -557,15 +574,18 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 					sub->R_ch = _SAlloc.allocate(1);
 
 					_SAlloc.construct (sub->R_ch, _node);
+					if (_node.Color == BLACK) throw "fddf";
 					sub->R_ch->P = sub;
-					// sub->R_ch->adjustment();
+
 					sub->R_ch->copy_ship = false;
+					sub->R_ch->adjustment();
+ 
 					++Size;
 					return *sub->R_ch;
 				}
 			}
 			else if (ex)
-				throw std::overflow_error ("similar shipment violates the property of map rules") ;
+				std::__throw_overflow_error ("similar shipment violates the property of map rules") ;
 			else
 				return *sub;
 			return insertion(_node, sub, ex);
@@ -596,24 +616,20 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void		_delete(__road* criminal) {
 
-			if (not criminal)
-				return ;
+			if (not criminal) return ;
+
 			__road* victim = &criminal->redemption();
 
-			if (seed == victim)
-				seed = victim->R_ch;
+			if (seed == victim) seed = victim->R_ch;
+
 			std::swap (victim->Ship, criminal->Ship);
 
 			__road* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
-			if (victim->Color == BLACK)
-				try {
+			if (victim->Color == BLACK) {
 
-					if (ch && ch->Color == RED)
-						ch->recolor();
-					// else
-						// victim->delete_fixup();
-				}
-				catch (...) { }
+				if (ch and ch->Color == RED) ch->recolor();
+				else victim->delete_fixup();
+			}
 
 			/* replace link to victim by who yastahik, ma ya3arfo hta had*/
 			{
@@ -652,6 +668,17 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 *	@brief	iterator helper, manage pointing tree
 *	@param	Pr	pair(Shipment) to iterate it 
 *************************************************************************************************************/	
+// template < class Container >
+// 	struct __IterTree {
+
+
+// 		typedef typename Container::value_type		value_type;
+// 		typedef	__road_<value_type, typename Container::allocator_type>	__node;
+	
+// 		typedef	__node&								ref_node;
+// 		typedef	__node*								ptr_node;
+// 		typedef typename Container::key_type		key_type;
+
 template < class Pr, class Allocator >
 	struct __IterTree {
 
@@ -661,7 +688,7 @@ template < class Pr, class Allocator >
 		typedef	__node&									ref_node;
 		typedef	__node*								ptr_node;
 		typedef	typename Pr::first_type			key_type;
-
+	
 		ptr_node		ItR;
 		__node			nul_;
 
@@ -767,6 +794,16 @@ template < class Pr, class Allocator >
 *	@param	Pr	pair to stored it (Shipment)
 *	@param	Allocator to allocate the @a Pr
 *************************************************************************************************************/	
+// template < class Container >
+// 	class _RBtree : public RBT<Container> {
+
+
+// 		typedef	RBT< Container>					__Base;
+// 		typedef	typename __Base::v_map			v_map;
+// 		typedef	typename __Base::key_type		key_type;
+// 		typedef	typename __Base::size_type		size_type;
+// 		typedef	__IterTree< Container>			IterTree;
+
 template < class Pr, class Allocator = std::allocator<Pr > >
 	class _RBtree : public RBT<Pr, Allocator> {
 
@@ -780,12 +817,15 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 	public:
 		typedef	typename __Base::__road				__base;
 
+	public:
+		typedef	typename __Base::__road			__base;
+
 		_RBtree():__Base() { }
 
 		size_type	size() const { return  this->Size; }
 		bool		empty() const { return size() ? false : true; }
 
-		IterTree	get_Root() const  { return this->seed ? IterTree(this->seed) : IterTree(); }
+		IterTree	get_Root() const  { return IterTree(this->seed); }
 		IterTree	get_last() const  { return this->seed ? IterTree(this->seed->eldest(), false): IterTree(); }
 		IterTree	get_first() const { return this->seed ? IterTree(this->seed->youngest()): IterTree(); }
 
@@ -807,8 +847,6 @@ template < class Pr, class Allocator = std::allocator<Pr > >
 			this->seed = NIL;
 			this->Size = 0;
 		}
-
-		~_RBtree() { };
 
 };
 
