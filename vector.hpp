@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/29 14:02:44 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/30 11:47:27 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,15 +128,9 @@ template <class T, class Allocator = std::allocator<T> >
 				void assign (InputIt first, typename ft::enable_if < ft::__is_input_iter <
 					typename InputIt::iterator_category>::value, InputIt>::type last) {
 
-					vector del(*this, true);
+					clear();
 					difference_type	count 	= ft::distance (first, last);
-
-					bool k = size() ? true : false;
-					_replace(NULL);
-					if (k)
-						_logical_reserve(count);
-					else
-						reserve(count);
+					_logical_reserve(count);
 
 					while (first not_eq last)
 						_Alloc.construct(_Last++, *(first++));
@@ -149,13 +143,8 @@ template <class T, class Allocator = std::allocator<T> >
 			*/
 			void assign (size_type count, const_reference value) {
 
-				vector del(*this, true);
-				bool k = size() ? true : false;
-				_replace(NULL);
-				if (k)
-					_logical_reserve(count);
-				else
-					reserve(count);
+				clear();
+				_logical_reserve(count);
 				insert (begin(), count, value);
 			}
 

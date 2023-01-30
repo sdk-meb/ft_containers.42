@@ -18,7 +18,7 @@
 # include<algorithm>
 # include<cstddef>
 
-# include"rb_tree.hpp"
+# include"bs_tree.hpp"
 # include"map_iterator.hpp"
 # include"utility.hpp"
 
@@ -58,19 +58,19 @@ template	<
 				typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	_RBtree <value_type. Allocator>			__tree_;
+				typedef	_BSTree <map>					__tree_;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
 	*********************************************************************************************************/
-				typedef	__IterTree <value_type. Allocator>			Itree;
+				typedef	typename __tree_::IterTree		Itree;
 
 		public:
 	/*********************************************************************************************************
 	*	@param	Itree tree iterator
 	*********************************************************************************************************/
 				typedef ft::map_iterator <Itree>			iterator;
-				typedef	ft::map_iterator <const Itree>		const_iterator;
+				typedef	ft::const_map_iterator <Itree>		const_iterator;
 
 	/*********************************************************************************************************
 	*	@param	iterator 
@@ -120,10 +120,7 @@ template	<
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
 					: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { insert (first, last); }
 
-			map (const map& other): _v_cmp(other._v_cmp) {
-
-				*this = other;
-			}
+			map (const map& other): _v_cmp(other._v_cmp) { *this = other; }
 
 			allocator_type	get_allocator() const { return _Alloc; }
 

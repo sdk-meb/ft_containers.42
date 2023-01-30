@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/29 23:47:12 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/30 18:17:19 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILITY_HPP
 # define UTILITY_HPP
+
 
 namespace   ft {
 
@@ -31,7 +32,8 @@ namespace   ft {
 				pair (const first_type& _x, const second_type& _y) : first (_x), second (_y) { }
 				template < class U1, class U2>
 					pair( const pair<U1, U2>& p ) : first (p.first), second (p.second) { }
-				pair&	operator= (const pair& p) {
+
+				pair&	operator= (const pair& p)  {
 
 					second = p.second;
 					first = p.first;

@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/29 11:51:13 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/29 12:05:10 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/30 19:54:39 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,6 @@ int main() {
         std::cout << "s1 size : " << s1.size() << std::endl;
         s1.insert(4);
         std::cout << "s1 size : " << s1.size() << std::endl;
-
-        std::cout << "s1 max_size : " << s1.max_size() << std::endl;
-        std::cout << "s2 max_size : " << s2.max_size() << std::endl;
-        std::cout << "s3 max_size : " << s3.max_size() << std::endl;
 
     
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
