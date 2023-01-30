@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/28 15:42:57 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/29 16:35:30 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,13 @@
 	namespace CCLIB = ft;
 #endif
 
+#define test(str) std::cout << std::endl << "\e[36********************* < " << str <<" > *********************\e[0m" << std::endl
+
 
 int main() {
-    
-
-std::cout << std::endl << "\033[36m****************** < constructors , iterators > ************************** \033[0m" << std::endl; {
 
 
-    try {
+    try { test ("iterator/reverse");
         CCLIB::map<std::string, int> m1;
 
         CCLIB::map<std::string, int> m2(m1.begin(), m1.end());
@@ -69,12 +68,9 @@ std::cout << std::endl << "\033[36m****************** < constructors , iterators
         std::cout << std::endl;
     }
     catch (const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
-
-std::cout << std::endl << "\033[36m****************** < empty , size >  ************************** \033[0m" << std::endl; {
 
 
-    try {
+    try { test ("size");
 
         CCLIB::map<std::string, int> m1;
         CCLIB::map<int , int> m2;
@@ -94,12 +90,8 @@ std::cout << std::endl << "\033[36m****************** < empty , size >  ********
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout << std::endl << "\033[36m************************** < insert > ************************************ \033[0m" << std::endl; {
-
-
-    try {
+    try { test ("insertion");
 
         CCLIB::map<std::string, int> m1;
         CCLIB::pair<CCLIB::map<std::string, int>::iterator, bool> p;
@@ -157,12 +149,8 @@ std::cout << std::endl << "\033[36m************************** < insert > *******
         std::cout << "m3 size : " << m3.size() << std::endl;
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout << std::endl << "\033[36m************************** < erase > ************************************* \033[0m" << std::endl; {
-
-
-    try {
+    try { test ("erase");
 
         CCLIB::map<std::string, int> m1;
 
@@ -199,12 +187,9 @@ std::cout << std::endl << "\033[36m************************** < erase > ********
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
-
-std::cout << std::endl << "\033[36m************************** < swap > ************************************** \033[0m" << std::endl; {
 
 
-    try {
+    try { test ("swap");
 
         CCLIB::map<char,int> foo, bar;
 
@@ -223,7 +208,7 @@ std::cout << std::endl << "\033[36m************************** < swap > *********
         std::cout << "bar contains:\n";
         for (CCLIB::map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
             std::cout << it->first << " => " << it->second << '\n';
-        // std::cout << "bar size : " << bar.size() << std::endl;
+        std::cout << "bar size : " << bar.size() << std::endl;
 
         foo.swap(bar);
 
@@ -239,12 +224,8 @@ std::cout << std::endl << "\033[36m************************** < swap > *********
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout << std::endl << "\033[36m************************* < clear > ************************************** \033[0m" << std::endl; {
-
-
-    try {
+    try { test ("clear");
 
         CCLIB::map<char,int> m1;
 
@@ -273,12 +254,9 @@ std::cout << std::endl << "\033[36m************************* < clear > *********
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
-
-std::cout << std::endl << "\033[36m****************** < key_comp , value_comp > **************************** \033[0m" << std::endl; {
 
 
-    try {
+    try { test ("key compare, value compare");
 
         {
             CCLIB::map<char,int> m1;
@@ -320,12 +298,8 @@ std::cout << std::endl << "\033[36m****************** < key_comp , value_comp > 
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout << std::endl << "\033[36m************************* < find > ************************************** \033[0m" << std::endl; {
-
-
-    try {
+    try { test ("find");
 
         CCLIB::map<char,int> m1;
         CCLIB::map<char,int>::iterator it;
@@ -346,12 +320,8 @@ std::cout << std::endl << "\033[36m************************* < find > **********
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
 
-std::cout << std::endl << "\033[36m************************* < count > ************************************ \033[0m" << std::endl; {
-
-
-    try {
+    try { test ("count");
 
         CCLIB::map<char,int> m1;
         char c;
@@ -371,12 +341,9 @@ std::cout << std::endl << "\033[36m************************* < count > *********
 
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
-
-std::cout << std::endl << "\033[36m************ < lower_bound , upper_bound , equal_range > *************** \033[0m" << std::endl; {
 
 
-    try {
+    try { test ("bound, equal range");
 
         CCLIB::map<char,int> m1;
         CCLIB::map<char,int>::iterator low,up;
@@ -431,6 +398,6 @@ std::cout << std::endl << "\033[36m************ < lower_bound , upper_bound , eq
         std::cout << ret.second->first << " => " << ret.second->second << '\n';
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-}
+
 
 }

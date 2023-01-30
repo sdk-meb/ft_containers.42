@@ -58,12 +58,12 @@ template	<
 				typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	_RBtree <value_type, Allocator>			__tree_;
+				typedef	_RBtree <value_type. Allocator>			__tree_;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
 	*********************************************************************************************************/
-				typedef	__IterTree <value_type, Allocator>			Itree;
+				typedef	__IterTree <value_type. Allocator>			Itree;
 
 		public:
 	/*********************************************************************************************************
@@ -352,8 +352,9 @@ template	<
 			map&			operator= (const map& other) {
 
 				tree .destroy();
-				for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
-					tree.insert(*it.ItR->Ship);
+				if (other.tree.get_Root().ItR)
+					for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
+						tree.insert(*it.ItR->Ship);
 
 				_Alloc	= other.get_allocator();
 				_v_cmp	= other._v_cmp;

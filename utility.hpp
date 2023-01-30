@@ -6,7 +6,7 @@
 /*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/19 13:51:52 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/29 23:47:12 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ namespace   ft {
 			struct remove_c { typedef T type; };
 		template <typename T>
 			struct remove_c <const T>{ typedef T type; };
+
 
 };
 
