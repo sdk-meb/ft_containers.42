@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   set.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/30 17:18:15 by mes-sadk          #+#    #+#             */
+/*   Updated: 2023/01/30 19:30:50 by mes-sadk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef SET_HPP
+# define SET_HPP 
 
 # include"./rb_tree.hpp"
 # include"./map_iterator.hpp"
@@ -5,7 +19,13 @@
 
 namespace ft {
 
-
+/*************************************************************************************************************
+*	@category Associative containers
+*	@brief	 key-value storted by itself (key), evrey key should unique
+*	@param	key	indicator  eq value type
+*	@param	Compare  relational operator or function to use it as comparison method (less = default)
+*	@param	Allocator 	typename allocation
+*************************************************************************************************************/
 template <
     class _Key,
     class Compare = std::less<_Key>,
@@ -23,26 +43,26 @@ template <
             typedef	Compare						key_compare;
             typedef	Compare						value_compare;
             typedef	Allocator					allocator_type;
-    
+
             typedef	typename Allocator::reference               reference;
             typedef typename Allocator::const_reference			const_reference;
             typedef	typename Allocator::pointer	            pointer;
             typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	_RBtree <value_type, Allocator>			__tree_;
+				typedef	_RBtree <set>					__tree_;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
 	*********************************************************************************************************/
-				typedef	__IterTree <value_type, Allocator>			Itree;
+				typedef	typename __tree_::IterTree		Itree;
 
 		public:
 	/*********************************************************************************************************
 	*	@param	Itree tree iterator
 	*********************************************************************************************************/
 				typedef ft::map_iterator <Itree>			iterator;
-				typedef	ft::map_iterator <const Itree>		const_iterator;
+				typedef	ft::const_map_iterator <Itree>		const_iterator;
 
 	/*********************************************************************************************************
 	*	@param	iterator 
@@ -82,10 +102,7 @@ template <
 				: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { }
 
 			template< class InputIt >
-				set ( typename ft::enable_if < not
-					__is_random_access_iter<typename InputIt::iterator_category>::value, InputIt>::type first,
-					typename ft::enable_if <
-					__is_input_iter<typename InputIt::iterator_category>::value, InputIt>::type last,
+				set ( InputIt first, InputIt last,
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
 					: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { insert (first, last); }
 
@@ -128,10 +145,7 @@ template <
 	*********************************************************************************************************/
 			size_type		count (const key_type& key) {
 
-				try { tree.search(key, __EXCEPTIONS); }
-				catch (...) { return false ; }
-
-				return true;
+				return tree.search(key) ? true : false ;
 			}
 
 	/*********************************************************************************************************
@@ -143,17 +157,13 @@ template <
 
 				typename __tree_::__base* tmp = tree.search(key);
 
-				if (tmp) return iterator(Itree(*tmp));
-
-				return end();
+				return tmp ? iterator(Itree(*tmp)) : end();
 			}
 			const_iterator	find (const key_type& key) const {
 
 				typename __tree_::__base* tmp = tree.search(key);
 	
-				if (tmp) return const_iterator(Itree(*tmp));
-
-				return end();
+				return tmp ? const_iterator(Itree(*tmp)) : end();
 			}
 
 	/*********************************************************************************************************
@@ -229,9 +239,9 @@ template <
 
 			ft::pair<iterator, bool> tmpr;
 			try { tmpr = ft::make_pair (
-					iterator (Itree (tree.insert (value))), true); }
+					iterator (Itree (&tree.insert (value))), true); }
 			catch (const std::overflow_error&) { tmpr = ft::make_pair (
-					iterator (Itree(tree.search (value.first))), false); }
+					iterator (Itree(tree.search (value))), false); }
 
 			return tmpr;
 		}
@@ -244,9 +254,8 @@ template <
 	*********************************************************************************************************/
 		iterator	insert (iterator pos, const value_type& value) {
 
-			if (pos->first not_eq value.first)
+			if (*pos not_eq value)
 				return insert (value).first;
-			pos->second = value.second;
 			return pos;
 		}
 
@@ -300,4 +309,7 @@ template <
 
     };
 
+
 }
+
+# endif

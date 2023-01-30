@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/29 16:35:30 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/01/30 19:43:20 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 #ifndef LEET
-	#define LEET 1337
+	#define LEET 133
 #endif
 
 #if LEET != 1337
@@ -32,6 +32,7 @@ int main() {
 
 
     try { test ("iterator/reverse");
+
         CCLIB::map<std::string, int> m1;
 
         CCLIB::map<std::string, int> m2(m1.begin(), m1.end());
@@ -377,7 +378,7 @@ int main() {
         m2['b']=20;
         m2['d']=30;
 
-        CCLIB::pair<CCLIB::map<char,int>::iterator,CCLIB::map<char,int>::iterator> ret;
+        CCLIB::pair<CCLIB::map<char,int>::const_iterator,CCLIB::map<char,int>::const_iterator> ret;
         ret = m2.equal_range('b');
 
 

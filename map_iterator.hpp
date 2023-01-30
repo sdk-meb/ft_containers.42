@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/26 15:12:52 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/30 19:36:01 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@ namespace ft {
 
 
 	template <class treeiter>
-		struct map_iterator {
+		class map_iterator {
+
 
 				typedef	iterator<ft::bidirectional_iterator_tag, typename treeiter::value_type>	INTERFACE;
 
+			public:
 				typedef typename INTERFACE::difference_type			difference_type;
 				typedef typename treeiter::value_type				value_type;
 				typedef typename INTERFACE::pointer					pointer;
@@ -31,9 +33,6 @@ namespace ft {
 
 				map_iterator() {}
 				explicit map_iterator(const treeiter& _x):Super(_x)  { }
-				template< class U >
-					map_iterator (map_iterator<U> other)
-						: Super (other.Super) { };
 
 				map_iterator&	operator++ ()  { ++Super; return *this; }
 				map_iterator&	operator-- ()  { --Super; return *this; }
@@ -45,8 +44,31 @@ namespace ft {
 
 				template <typename, typename, typename, typename>
 					friend class map;
-			private:
+				template <typename, typename, typename>
+					friend class set;
+			public:
 				treeiter	Super;
+		};
+
+
+		template <class treeiter>
+		class const_map_iterator : public map_iterator<treeiter> {
+
+			
+				typedef	iterator<ft::bidirectional_iterator_tag, typename treeiter::value_type>	INTERFACE;
+			public:
+				typedef typename INTERFACE::difference_type			difference_type;
+				typedef typename treeiter::value_type				value_type;
+				typedef typename INTERFACE::pointer					pointer;
+				typedef typename INTERFACE::reference				reference;
+				typedef typename INTERFACE::iterator_category		iterator_category;
+
+				const_map_iterator(){}
+				explicit const_map_iterator(const treeiter& _x): map_iterator<treeiter>(_x) { }
+				template< class U >
+					const_map_iterator (map_iterator<U> other)
+						{ this->Super = other.Super; }
+
 		};
 
 

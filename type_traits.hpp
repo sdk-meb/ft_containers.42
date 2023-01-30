@@ -6,20 +6,20 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/15 23:44:12 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/30 14:44:17 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # ifndef _TYPE_TRAITS_HPP
 # define _TYPE_TRAITS_HPP
-#include<iterator>
+
 
 namespace ft {
 
 
 	namespace __Fundamental_Integral_Types {
 
-	 
+
 		template < class T, T v>
 			struct integral_constant { static const T value = v; };
 
