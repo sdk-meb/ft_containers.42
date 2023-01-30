@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 18:17:19 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/31 02:00:08 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,32 @@ namespace   ft {
 			struct remove_c { typedef T type; };
 		template <typename T>
 			struct remove_c <const T>{ typedef T type; };
+		
 
 
 };
 
+template <class T>
+    struct is_pair { static const bool value = false; };
+
+template <class T1, class T2>
+    struct is_pair< ft::pair<T1, T2> > { static const bool value = true; };
+
+template <typename TP, typename TF, typename comp >
+    typename ft::enable_if < is_pair<TP>::value and not is_pair<TF>::value , bool >::type
+        t_comp (const TP& pr, const TF& frst, const comp& cmp) { return cmp (pr.first, frst); }
+
+template <typename TF, typename TP, typename comp >
+    typename ft::enable_if < is_pair<TP>::value and not is_pair<TF>::value , bool >::type
+        t_comp (const TF& frst, const TP& pr, const comp& cmp) { return cmp (frst, pr.first); }
+
+template <typename TP, typename comp>
+    typename ft::enable_if < is_pair<TP>::value , bool >::type
+        t_comp (const TP& pr1, const TP& pr2, const comp& cmp) { return cmp (pr1.first, pr2.first); }
+
+template <typename TF, typename comp >
+    typename ft::enable_if < not is_pair<TF>::value , bool >::type
+		t_comp (const TF& f1, const TF& f2, const comp& cmp) { return cmp (f1, f2); }
 
 
 

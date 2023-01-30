@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 19:43:20 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:53:35 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,8 @@ int main() {
         std::cout << std::endl;
         std::cout << "m3 size : " << m3.size() << std::endl;
 
+        for (CCLIB::map<std::string, int>::iterator it2 = m2.begin() ; it2 != m2.end(); it2++)
+                m3.insert(*it2);
         m3.insert(m2.begin(), m2.end());
         std::cout << "*********** m3 after ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it2 = m3.begin() ; it2 != m3.end(); it2++)
@@ -150,6 +152,7 @@ int main() {
         std::cout << "m3 size : " << m3.size() << std::endl;
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
+return 0;
 
     try { test ("erase");
 

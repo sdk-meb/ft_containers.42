@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_iterator.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 19:36:01 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/31 00:48:08 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ namespace ft {
 				typedef typename INTERFACE::reference				reference;
 				typedef typename INTERFACE::iterator_category		iterator_category;
 
-				map_iterator() {}
+				map_iterator() : Super (typename treeiter::key_compare()) { }
 				explicit map_iterator(const treeiter& _x):Super(_x)  { }
 
 				map_iterator&	operator++ ()  { ++Super; return *this; }
