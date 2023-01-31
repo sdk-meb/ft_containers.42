@@ -96,7 +96,7 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 			if (P->L_ch == this) return JU;
 			if (P->R_ch == this) return SE;
 
-			return throw std::logic_error("tree bind unqualified"), NOTHING;
+			return std::__throw_logic_error ("tree bind unqualified"), NOTHING;
 		}
 
 		void	recolor() { Color = RED == Color ? BLACK : RED; }
@@ -110,8 +110,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		__road_&	get_S() const {
 
-			if (WhoIm() == ROOT || not(P->R_ch) || not(P->L_ch))
-				throw std::logic_error("spiling doesn't");
+			if (WhoIm() == ROOT or not P->R_ch or not P->L_ch)
+				std::__throw_logic_error ("spiling doesn't");
 
 			if (WhoIm() == JU)
 				return *P->R_ch;
@@ -123,8 +123,8 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		__road_&	get_G() const {
 
-			if (WhoIm() == ROOT  || P->WhoIm() == ROOT)
-				throw std::logic_error("Grand P doesn't");
+			if (WhoIm() == ROOT or P->WhoIm() == ROOT)
+				std::__throw_logic_error ("Grand P doesn't");
 			return *P->P;
 		}
 
@@ -133,11 +133,11 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		__road_&	get_U() const {
 
-			if (WhoIm() == ROOT || P->WhoIm() == ROOT)
-				throw std::logic_error("Uncle doesn't");
+			if (WhoIm() == ROOT or P->WhoIm() == ROOT)
+				std::__throw_logic_error ("Uncle doesn't");
 
-			if (get_G().R_ch == NIL || get_G().L_ch == NIL)
-				throw std::logic_error("Uncle doesn't");
+			if (get_G().R_ch == NIL or get_G().L_ch == NIL)
+				std::__throw_logic_error ("Uncle doesn't");
 
 			if (P->WhoIm() == JU)
 				return *get_G().R_ch;
@@ -150,11 +150,9 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 	*********************************************************************************************************/
 		void		adjustment() {
 
-return;
-			if (not P or P->Color == BLACK)
-				return ;
+			if (Color not_eq RED or P->Color not_eq RED ) return ;
 
-			try {
+			try {/* violate the properties of RBT */
 
 				if (get_U().Color not_eq RED)/* throw in case no uncle */
 					std::__throw_logic_error ("go to internal catch");
@@ -196,53 +194,58 @@ return;
 	*********************************************************************************************************/
 		void		delete_fixup() {
 
-	return;
-				if (get_S().Color == RED) {
+			if (Color not_eq RED) return;
 
-					get_S().recolor();
-					P->recolor();
-					if (WhoIm() == JU)
-						P->lr();
-					else
-						P->rr();
-				}
-				if (get_S().L_ch and get_S().L_ch->Color == BLACK
-					and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
+			try { if (get_S().Color == RED) {
+
+				get_S().recolor();
+				P->recolor();
+				if (WhoIm() == JU)
+					P->lr();
+				else
+					P->rr();
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().L_ch and get_S().L_ch->Color == BLACK
+				and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
+
+				get_S().Color = RED;
+				if (P->Color == BLACK)
+					return P->delete_fixup();
+				P->Color = BLACK;
+				return ;
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().L_ch and get_S().R_ch
+				and	get_S().L_ch->Color != get_S().R_ch->Color) {
+
+				get_S().L_ch->Color = BLACK;
+				if (WhoIm() == JU){
 
 					get_S().Color = RED;
-					if (P->Color == BLACK)
-						return P->delete_fixup();
-					P->Color = BLACK;
-					return ;
+					get_S().rr();
 				}
-				if (get_S().L_ch and get_S().R_ch
-					and	get_S().L_ch->Color != get_S().R_ch->Color) {
+				else {
 
-					get_S().L_ch->Color = BLACK;
-					if (WhoIm() == JU){
-
-						get_S().Color = RED;
-						get_S().rr();
-					}
-					else {
-
-						get_S().Color = RED;
-						get_S().lr();
-					}
+					get_S().Color = RED;
+					get_S().lr();
 				}
-				if (get_S().R_ch and RED == get_S().R_ch->Color and WhoIm() == JU) {
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().R_ch and RED == get_S().R_ch->Color and WhoIm() == JU) {
 
-					get_S().R_ch->Color = BLACK;
-					P->Color = BLACK;
-					P->lr();
-				}
-				else if (get_S().L_ch and RED == get_S().L_ch->Color and WhoIm() == SE) {
-
-					get_S().L_ch->Color = BLACK;
-					P->Color = BLACK;
-					P->rr();
-				}
+				get_S().R_ch->Color = BLACK;
+				P->Color = BLACK;
+				P->lr();
 			}
+			else if (get_S().L_ch and RED == get_S().L_ch->Color and WhoIm() == SE) {
+
+				get_S().L_ch->Color = BLACK;
+				P->Color = BLACK;
+				P->rr();
+			}	}
+			catch (const std::logic_error&) { };
+		}
 
 	/*********************************************************************************************************
 	*	@return	a node which can replace the caller node, without violating the binary search tree rules
@@ -252,64 +255,78 @@ return;
 			return this->L_ch ? this->L_ch->eldest() : *this;
 		}
 
-
+	private:
 	/*********************************************************************************************************
 	*	@brief	Left  Rotation
 	*	@param	_node	indicator to being rotated
 	*********************************************************************************************************/
-		void	lr (__road_* _node=NIL) {
+		void	lr (__road_* _node=NIL) const {
 
-			if (not(_node)) _node = this;
-			if (not(_node->R_ch))
-				throw std::logic_error("unqualified left rotation!");
-
-			__road_*	_P	= _node->P;
-			__road_*	y	= _node->R_ch;
-			__road_*	_β	= y->L_ch;
-
-			y->P	= _P;
-			if 	(_node->WhoIm() == JU)	_P->L_ch = y;
-			else if (_node->WhoIm() == SE)	_P->R_ch = y;
-
-			_node->R_ch = _β;
-			if (_β)	_β->P = _node;
-
-			y->R_ch	= _node;
-			_node->P = y;
+			if (not _node) _node = const_cast<__road_*>(this);;
+			if (not _node->R_ch) std::__throw_logic_error ("unqualified left rotation!");
+			return _node->_lr();
 		}
+
+		void	_lr()/* Left  Rotation */ {
+
+			__road_*	y = this->R_ch;
+
+			
+			std::swap(Ship, y->Ship);
+			std::swap(Color, y->Color);
+
+			this->R_ch = this->R_ch->R_ch;
+			if (this->R_ch)
+				this->R_ch->P = this;
+			y->R_ch = y->L_ch;
+
+			y->L_ch = this->L_ch;
+			if (this->L_ch)
+				y->L_ch->P = y;
+
+			this->L_ch = y;
+		}
+
 
 	/*********************************************************************************************************
 	*	@brief	Rigth  Rotation
 	*	@param	_node	indicator to being rotated 
 	*********************************************************************************************************/
-		void	rr (__road_* _node=NIL) {
+		void	rr (__road_* _node=NIL) const {
 
-			if (not _node) _node = this; 
-			if (not _node->L_ch)
-				throw std::logic_error("unqualified left rotation!");
+			if (not _node) _node = const_cast<__road_*>(this);; 
+			if (not _node->L_ch) std::__throw_logic_error ("unqualified left rotation!");
+			return _node->_rr();
+		}
 
-			__road_*	_P	= _node->P;
-			__road_*	x	= _node->L_ch;
-			__road_*	_β	= x->R_ch;
+		void	_rr()/* Rigth Rotation */ {
 
-			x->P	= _P;
-			if 	(_node->WhoIm() == JU)	_P->L_ch = x;
-			else if (_node->WhoIm() == SE)	_P->R_ch = x;
+			__road_*	x = this->L_ch;
 
-			_node->L_ch = _β;
-			if (_β)	_β->P = _node;
+			std::swap(Ship, x->Ship);
+			std::swap(Color, x->Color);
 
-			x->L_ch	= _node;
-			_node->P = x;
+			this->L_ch = this->L_ch->L_ch;
+			if (this->L_ch)
+				this->L_ch->P = this;
+
+			x->L_ch = x->R_ch;
+
+			x->R_ch = this->R_ch;
+			if (this->R_ch)
+				x->R_ch->P = x;
+
+			this->R_ch = x;
 		}
 
 
+	public:
 	/*********************************************************************************************************
 	*	@return	 youngest of this subtree
 	*********************************************************************************************************/	
-		__road_&	youngest()  throw() {
+		__road_&	youngest() const throw() {
 
-			__road_* tmp = this;
+			__road_* tmp = const_cast<__road_*>(this);
 
 			while (tmp->L_ch) tmp = tmp->L_ch;
 					
@@ -319,9 +336,9 @@ return;
 	/*********************************************************************************************************
 	*	@return	eldest of this subtree
 	*********************************************************************************************************/	
-		__road_&	eldest()  throw() {
+		__road_&	eldest() const throw() {
 
-			__road_* tmp = this;
+			__road_* tmp = const_cast<__road_*>(this);
 
 			while (tmp->R_ch) tmp = tmp->R_ch;
 
@@ -329,7 +346,6 @@ return;
 		}
 
 
-	public:
 
 	/********************************************************************************************************* 
 	* (1) ref param (save the copyrigth)
