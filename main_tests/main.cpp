@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#if 1 //CREATE A REAL STL EXAMPLE
+
+#ifdef GO //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <set>
 	#include <stack>
@@ -14,9 +15,12 @@
 	#include "../vector.hpp"
 #endif
 
-#include <stdlib.h>
+#define VEC false
+#define MAP false
+#define SET true
 
-#define MAX_RAM 4294967296
+// MAX_RAM 4 294 967 296 ( 4294967296 )
+#define MAX_RAM    4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -47,6 +51,8 @@ public:
 };
 
 int main(int argc, char** argv) {
+	
+{
 	if (argc != 2)
 	{
 		std::cerr << "Usage: ./test seed" << std::endl;
@@ -65,18 +71,20 @@ int main(int argc, char** argv) {
 	ft::map<int, int> map_int;
 	ft::set<int> set_int;
 
-	for (int i = 0; i < COUNT; i++)
+	for (int i = 0; VEC and i < COUNT; i++)
 	{
 		vector_buffer.push_back(Buffer());
 	}
 
-	for (int i = 0; i < COUNT; i++)
+	for (int i = 0; VEC and i < COUNT; i++)
 	{
 		const int idx = rand() % COUNT;
 		vector_buffer[idx].idx = 5;
 	}
+	if (VEC)
 	ft::vector<Buffer>().swap(vector_buffer);
 
+	if (VEC)
 	try
 	{
 		for (int i = 0; i < COUNT; i++)
@@ -90,34 +98,36 @@ int main(int argc, char** argv) {
 	{
 		//NORMAL ! :P
 	}
-	
-	for (int i = 0; i < COUNT; ++i)
+
+	for (int i = 0; MAP and i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
 	}
-
 	int sum = 0;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; MAP and i < 10000; i++)
 	{
 		int access = rand();
 		sum += map_int[access];
 	}
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
+	if (MAP)
 	{
 		ft::map<int, int> copy = map_int;
 	}
-	for (int i = 0; i < COUNT; ++i)
+
+	for (int i = 0; SET and i < COUNT; ++i)
 	{
 		set_int.insert(rand());
 	}
 
 	sum = 0;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; SET and i < COUNT; i++)
 	{
 		int access = rand();
-		sum += set_int.insert(access).second;
+		set_int.insert(access);
 	}
+	if (SET)
 	{
 		ft::set<int> copy = set_int;
 	}
@@ -128,6 +138,18 @@ int main(int argc, char** argv) {
 	{
 		std::cout << *it;
 	}
+	#if  defined(__has_feature)
+	# if not __has_feature(address_sanitizer)
+        system ("leaks a.out");
+    #endif
+	#endif
 	std::cout << std::endl;
-	return (0);
+}
+
+	#if  defined(__has_feature)
+	# if not __has_feature(address_sanitizer)
+        system ("leaks a.out");
+    #endif
+	#endif
+
 }

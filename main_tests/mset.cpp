@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/29 11:51:13 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 19:54:39 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/01 19:47:18 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,7 +399,14 @@ int main() {
         std::cout << "upper bound points to: ";
         std::cout << *ret.first << " => " << *ret.second << '\n';
 
+        std::cout << std::endl;
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 
+    #if  defined(__has_feature)
+	# if not __has_feature(address_sanitizer)
+        system ("leaks .ftc");
+    #endif
+	#endif
 
 }
+

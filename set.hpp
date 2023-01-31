@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 17:18:15 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/31 01:53:16 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/01 19:47:53 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ template <
             typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	__tree_ <set, RBT<set> >					_tree;
+				typedef	__tree_ <set, value_type>					_tree;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
@@ -75,19 +75,21 @@ template <
         private :
 
             value_compare	_v_cmp ;
-            _tree			tree;
             allocator_type	_Alloc ;
+            _tree			tree;
 
         public:
 
             set&			operator= (const set& other) {
 
-				tree .destroy();
-				for (Itree it (other.tree.get_first().ItR, _v_cmp); iterator(it) != end(); ++it)
-					tree.insert(*it.ItR->Ship);
+				if (this == &other) return *this;
 
-				_Alloc	= other.get_allocator();
+				tree .destroy();
+
 				_v_cmp	= other._v_cmp;
+				if (other.size())
+					insert(other.begin(), other.end());
+
 				return *this;
 			}
 
@@ -96,17 +98,18 @@ template <
 /***************************  @category	 __  Constuctors  __  ***********************************************/
 
 			~set () { tree .destroy(); };
-			set() : _v_cmp(Compare()), tree(_v_cmp), _Alloc(Allocator()) { }
+			set() : _v_cmp(Compare()), _Alloc(Allocator()), tree(_v_cmp, _Alloc) { }
 
 			explicit set (const Compare& comp, const Allocator& alloc = Allocator())
-				: _v_cmp(comp), tree(_v_cmp), _Alloc(alloc) { }
+				: _v_cmp(comp), _Alloc(alloc), tree(_v_cmp, _Alloc) { }
 
 			template< class InputIt >
 				set ( InputIt first, InputIt last,
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
-					: _v_cmp(comp), tree(_v_cmp), _Alloc(alloc) { insert (first, last); }
+					: _v_cmp(comp), _Alloc(alloc), tree(_v_cmp, _Alloc) { insert (first, last); }
 
-			set (const set& other): _v_cmp(other._v_cmp), tree(_v_cmp) { *this = other; }
+			set (const set& other): _v_cmp(other._v_cmp), _Alloc(other._Alloc), tree(_v_cmp, _Alloc)
+				{ *this = other; }
 
 			allocator_type	get_allocator() const { return _Alloc; }
 
@@ -152,13 +155,13 @@ template <
 	*********************************************************************************************************/
 			iterator		find (const key_type& key) {
 
-				typename _tree::__base* tmp = tree.search(key);
+				typename _tree::__road* tmp = tree.search(key);
 
 				return tmp ? iterator(Itree(*tmp, _v_cmp)) : end();
 			}
 			const_iterator	find (const key_type& key) const {
 
-				typename _tree::__base* tmp = tree.search(key);
+				typename _tree::__road* tmp = tree.search(key);
 	
 				return tmp ? const_iterator(Itree(*tmp, _v_cmp)) : end();
 			}

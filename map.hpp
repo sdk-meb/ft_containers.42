@@ -52,7 +52,7 @@ template	<
 				typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	__tree_ <map, BST<map> >					_tree;
+				typedef	__tree_ <map, mapped_type>					_tree;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
@@ -82,39 +82,42 @@ template	<
 	*	@note	[functor] that compar the first components of the pairs (in map, the key of @a value_type)
 	*	@param	key_compare that take in costruction
 	*********************************************************************************************************/
-				class	value_compare {
+			class	value_compare {
 
-					friend class map;
-					protected:
-						key_compare comp;
-					
-						value_compare(key_compare c): comp(c) { }
+				friend class map;
+				protected:
+					key_compare comp;
+				
+					value_compare(key_compare c): comp(c) { }
 
-					public:
-						bool	operator() (const value_type& lhs, const value_type& rhs) {
+				public:
+					bool	operator() (const value_type& lhs, const value_type& rhs) {
 
-							return comp(lhs.first, rhs.first);
-						}
-				};
+						return comp(lhs.first, rhs.first);
+					}
+			};
 
 
 
 /***************************  @category	 __  Constuctors  __  ***********************************************/
 
 			~map () { tree .destroy(); };
-			map() : _v_cmp(Compare()), tree(_v_cmp.comp), _Alloc(Allocator()) { }
+
+			map() : _v_cmp(Compare()), _Alloc(Allocator()), tree(_v_cmp.comp, _Alloc) { }
 
 			explicit map (const Compare& comp, const Allocator& alloc = Allocator())
-				: _v_cmp(comp), tree(_v_cmp.comp), _Alloc(alloc) { }
+				: _v_cmp(comp), _Alloc(alloc), tree(_v_cmp.comp, _Alloc) { }
 
 			template< class InputIt >
 				map (InputIt first,
 					typename ft::enable_if <
 					__is_input_iter<typename InputIt::iterator_category>::value, InputIt>::type last,
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
-					: _v_cmp(comp), tree(_v_cmp.comp), _Alloc(alloc) { insert (first, last); }
+					: _v_cmp(comp), _Alloc(alloc), tree(_v_cmp.comp, _Alloc)
+						{ insert (first, last); }
 
-			map (const map& other): _v_cmp(other._v_cmp), tree(_v_cmp.comp) { *this = other; }
+			map (const map& other): _v_cmp(other._v_cmp), _Alloc(other._Alloc),  tree(_v_cmp.comp, _Alloc)
+				{ *this = other; }
 
 			allocator_type	get_allocator() const { return _Alloc; }
 
@@ -133,7 +136,7 @@ template	<
 	*	@brief	get mapped value by key scershing, ifnot endefined behavier
 	*	@param	key
 	*********************************************************************************************************/
-			mapped_type&	operator[] (const key_type& key)   { return tree.search (key, not(__EXCEPTIONS)); }
+			mapped_type&	operator[] (const key_type& key) { return tree.search (key, not(__EXCEPTIONS)).second; }
 
 
 
@@ -265,7 +268,7 @@ template	<
 	*********************************************************************************************************/
 			iterator		find (const key_type& key) {
 
-				typename _tree::__base* tmp = tree.search(key);
+				typename _tree::__road* tmp = tree.search(key);
 
 				if (tmp) return iterator(Itree(*tmp, _v_cmp.comp));
 
@@ -273,7 +276,7 @@ template	<
 			}
 			const_iterator	find (const key_type& key) const {
 
-				typename _tree::__base* tmp = tree.search(key);
+				typename _tree::__road* tmp = tree.search(key);
 
 				if (tmp) return const_iterator(Itree(*tmp, _v_cmp.comp));
 
@@ -337,18 +340,19 @@ template	<
 			private :
 
 				value_compare	_v_cmp ;
-				_tree			tree;
 				allocator_type	_Alloc ;
+				_tree			tree;
 
 			map&			operator= (const map& other) {
 
-				tree .destroy();
-				if (other.tree.get_Root().ItR)
-					for (Itree it (other.tree.get_first().ItR, _v_cmp.comp); iterator(it) != end(); ++it)
-						tree.insert(*it.ItR->Ship);
+				if (this == &other) return *this;
 
-				_Alloc	= other.get_allocator();
+				tree .destroy();
+
 				_v_cmp	= other._v_cmp;
+				if (other.size())
+					insert(other.begin(), other.end());
+
 				return *this;
 			}
 
