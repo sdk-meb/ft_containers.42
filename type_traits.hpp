@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 14:44:17 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/31 10:56:16 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ namespace ft {
 			struct is_integral< bool> : public true_type { };
 		template < >
 			struct is_integral< char> : public true_type { };
-#ifdef	__APPLE__
+#ifdef	__APPLE__2
 		template < >
 			struct is_integral< char16_t> : public true_type { };
 		template < >
@@ -66,7 +66,7 @@ namespace ft {
 	namespace __Enable_if {
 
 		// Primary template.
-		/*
+		/**
 			@brief if condition is false, enable_if has no public member typedef `type` of T
 			so in case of using type, substitution failuer is not an error
 			@param Cond flage was true or false

@@ -392,7 +392,21 @@ template < class T_SHIP, class Allocator = std::allocator <T_SHIP> >
 template < class T_SHIP, class Allocator>
 	T_SHIP	__road_<T_SHIP, Allocator>::nul_;
 
+template <typename TP, typename TF, typename comp >
+    typename ft::enable_if < is_pair<TP>::value and not is_pair<TF>::value , bool >::type
+        t_comp (const TP& pr, const TF& frst, const comp& cmp) { return cmp (pr.first, frst); }
 
+template <typename TF, typename TP, typename comp >
+    typename ft::enable_if < is_pair<TP>::value and not is_pair<TF>::value , bool >::type
+        t_comp (const TF& frst, const TP& pr, const comp& cmp) { return cmp (frst, pr.first); }
+
+template <typename TP, typename comp>
+    typename ft::enable_if < is_pair<TP>::value , bool >::type
+        t_comp (const TP& pr1, const TP& pr2, const comp& cmp) { return cmp (pr1.first, pr2.first); }
+
+template <typename TF, typename comp >
+    typename ft::enable_if < not is_pair<TF>::value , bool >::type
+		t_comp (const TF& f1, const TF& f2, const comp& cmp) { return cmp (f1, f2); }
 
 /*************************************************************************************************************
 *	@brief	iterator helper, manage pointing tree
