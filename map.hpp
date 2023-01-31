@@ -13,14 +13,8 @@
 #ifndef	MAP_HPP
 # define MAP_HPP
 
-# include<functional>
-# include<memory>
-# include<algorithm>
-# include<cstddef>
-
-# include"bs_tree.hpp"
+# include"./ab__tree.hpp"
 # include"map_iterator.hpp"
-# include"utility.hpp"
 
 
 namespace	ft {
@@ -58,12 +52,12 @@ template	<
 				typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	_BSTree <map>					__tree_;
+				typedef	__tree_ <map, BST<map> >					_tree;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
 	*********************************************************************************************************/
-				typedef	typename __tree_::IterTree		Itree;
+				typedef	typename _tree::IterTree		Itree;
 
 		public:
 	/*********************************************************************************************************
@@ -108,19 +102,19 @@ template	<
 /***************************  @category	 __  Constuctors  __  ***********************************************/
 
 			~map () { tree .destroy(); };
-			map() : tree(__tree_()), _v_cmp(Compare()), _Alloc(Allocator()) { }
+			map() : _v_cmp(Compare()), tree(_v_cmp.comp), _Alloc(Allocator()) { }
 
 			explicit map (const Compare& comp, const Allocator& alloc = Allocator())
-				: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { }
+				: _v_cmp(Compare()), tree(_v_cmp.comp), _Alloc(alloc) { }
 
 			template< class InputIt >
 				map (InputIt first,
 					typename ft::enable_if <
 					__is_input_iter<typename InputIt::iterator_category>::value, InputIt>::type last,
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
-					: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { insert (first, last); }
+					: _v_cmp(comp), tree(_v_cmp.comp), _Alloc(alloc) { insert (first, last); }
 
-			map (const map& other): _v_cmp(other._v_cmp) { *this = other; }
+			map (const map& other): _v_cmp(other._v_cmp), tree(_v_cmp.comp) { *this = other; }
 
 			allocator_type	get_allocator() const { return _Alloc; }
 
@@ -162,9 +156,9 @@ template	<
 
 			ft::pair<iterator, bool> tmpr;
 			try { tmpr = ft::make_pair (
-					iterator (Itree (tree.insert (value))), true); }
+					iterator (Itree (tree.insert (value), _v_cmp.comp)), true); }
 			catch (const std::overflow_error&) { tmpr = ft::make_pair (
-					iterator (Itree(tree.search (value.first))), false); }
+					iterator (Itree(tree.search (value.first), _v_cmp.comp)), false); }
 
 			return tmpr;
 		}
@@ -271,17 +265,17 @@ template	<
 	*********************************************************************************************************/
 			iterator		find (const key_type& key) {
 
-				typename __tree_::__base* tmp = tree.search(key);
+				typename _tree::__base* tmp = tree.search(key);
 
-				if (tmp) return iterator(Itree(*tmp));
+				if (tmp) return iterator(Itree(*tmp, _v_cmp.comp));
 
 				return end();
 			}
 			const_iterator	find (const key_type& key) const {
 
-				typename __tree_::__base* tmp = tree.search(key);
+				typename _tree::__base* tmp = tree.search(key);
 
-				if (tmp) return const_iterator(Itree(*tmp));
+				if (tmp) return const_iterator(Itree(*tmp, _v_cmp.comp));
 
 				return end();
 			}
@@ -342,15 +336,15 @@ template	<
 
 			private :
 
-				__tree_			tree;
 				value_compare	_v_cmp ;
+				_tree			tree;
 				allocator_type	_Alloc ;
 
 			map&			operator= (const map& other) {
 
 				tree .destroy();
 				if (other.tree.get_Root().ItR)
-					for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
+					for (Itree it (other.tree.get_first().ItR, _v_cmp.comp); iterator(it) != end(); ++it)
 						tree.insert(*it.ItR->Ship);
 
 				_Alloc	= other.get_allocator();

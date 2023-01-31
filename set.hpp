@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 17:18:15 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 19:30:50 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/01/31 01:53:16 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SET_HPP
 # define SET_HPP 
 
-# include"./rb_tree.hpp"
+# include"./ab__tree.hpp"
 # include"./map_iterator.hpp"
 
 
@@ -50,12 +50,12 @@ template <
             typedef	typename Allocator::const_pointer		const_pointer;
 
 		private:
-				typedef	_RBtree <set>					__tree_;
+				typedef	__tree_ <set, RBT<set> >					_tree;
 
 	/*********************************************************************************************************
 	*	@brief	is a class  with hir income pointer of tree node
 	*********************************************************************************************************/
-				typedef	typename __tree_::IterTree		Itree;
+				typedef	typename _tree::IterTree		Itree;
 
 		public:
 	/*********************************************************************************************************
@@ -74,8 +74,8 @@ template <
 
         private :
 
-            __tree_			tree;
             value_compare	_v_cmp ;
+            _tree			tree;
             allocator_type	_Alloc ;
 
         public:
@@ -83,7 +83,7 @@ template <
             set&			operator= (const set& other) {
 
 				tree .destroy();
-				for (Itree it (other.tree.get_first().ItR); iterator(it) != end(); ++it)
+				for (Itree it (other.tree.get_first().ItR, _v_cmp); iterator(it) != end(); ++it)
 					tree.insert(*it.ItR->Ship);
 
 				_Alloc	= other.get_allocator();
@@ -96,20 +96,17 @@ template <
 /***************************  @category	 __  Constuctors  __  ***********************************************/
 
 			~set () { tree .destroy(); };
-			set() : tree(__tree_()), _v_cmp(Compare()), _Alloc(Allocator()) { }
+			set() : _v_cmp(Compare()), tree(_v_cmp), _Alloc(Allocator()) { }
 
 			explicit set (const Compare& comp, const Allocator& alloc = Allocator())
-				: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { }
+				: _v_cmp(comp), tree(_v_cmp), _Alloc(alloc) { }
 
 			template< class InputIt >
 				set ( InputIt first, InputIt last,
 					const Compare& comp = Compare(), const Allocator& alloc = Allocator())
-					: tree(__tree_()), _v_cmp(comp), _Alloc(alloc) { insert (first, last); }
+					: _v_cmp(comp), tree(_v_cmp), _Alloc(alloc) { insert (first, last); }
 
-			set (const set& other): _v_cmp(other._v_cmp) {
-
-				*this = other;
-			}
+			set (const set& other): _v_cmp(other._v_cmp), tree(_v_cmp) { *this = other; }
 
 			allocator_type	get_allocator() const { return _Alloc; }
 
@@ -155,15 +152,15 @@ template <
 	*********************************************************************************************************/
 			iterator		find (const key_type& key) {
 
-				typename __tree_::__base* tmp = tree.search(key);
+				typename _tree::__base* tmp = tree.search(key);
 
-				return tmp ? iterator(Itree(*tmp)) : end();
+				return tmp ? iterator(Itree(*tmp, _v_cmp)) : end();
 			}
 			const_iterator	find (const key_type& key) const {
 
-				typename __tree_::__base* tmp = tree.search(key);
+				typename _tree::__base* tmp = tree.search(key);
 	
-				return tmp ? const_iterator(Itree(*tmp)) : end();
+				return tmp ? const_iterator(Itree(*tmp, _v_cmp)) : end();
 			}
 
 	/*********************************************************************************************************
@@ -239,9 +236,9 @@ template <
 
 			ft::pair<iterator, bool> tmpr;
 			try { tmpr = ft::make_pair (
-					iterator (Itree (&tree.insert (value))), true); }
+					iterator (Itree (&tree.insert (value), _v_cmp)), true); }
 			catch (const std::overflow_error&) { tmpr = ft::make_pair (
-					iterator (Itree(tree.search (value))), false); }
+					iterator (Itree(tree.search (value), _v_cmp)), false); }
 
 			return tmpr;
 		}
