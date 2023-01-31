@@ -105,7 +105,7 @@ template	<
 			map() : _v_cmp(Compare()), tree(_v_cmp.comp), _Alloc(Allocator()) { }
 
 			explicit map (const Compare& comp, const Allocator& alloc = Allocator())
-				: _v_cmp(Compare()), tree(_v_cmp.comp), _Alloc(alloc) { }
+				: _v_cmp(comp), tree(_v_cmp.comp), _Alloc(alloc) { }
 
 			template< class InputIt >
 				map (InputIt first,
