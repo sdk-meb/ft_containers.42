@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 21:53:35 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/01 19:22:40 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 #ifndef LEET
-	#define LEET 133
+	#define LEET 1337
 #endif
 
 #if LEET != 1337
@@ -70,12 +70,9 @@ int main() {
     }
     catch (const std::exception& e) { std::cerr << e.what() << '\n'; }
 
-
     try { test ("size");
 
         CCLIB::map<std::string, int> m1;
-        CCLIB::map<int , int> m2;
-        CCLIB::map<std::string , std::string> m3;
 
         std::cout << "m1 empty : " << m1.empty() << std::endl;
         std::cout << "m1 size : " << m1.size() << std::endl;
@@ -152,7 +149,6 @@ int main() {
         std::cout << "m3 size : " << m3.size() << std::endl;
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
-return 0;
 
     try { test ("erase");
 
@@ -400,8 +396,14 @@ return 0;
 
         std::cout << "upper bound points to: ";
         std::cout << ret.second->first << " => " << ret.second->second << '\n';
+
+        std::cout << std::endl;
     }
     catch(const std::exception& e) { std::cerr << e.what() << '\n'; }
 
-
+    #if  defined(__has_feature)
+	# if not __has_feature(address_sanitizer)
+        system ("leaks .ftc");
+    #endif
+	#endif
 }

@@ -1,4 +1,5 @@
 NAME = containers
+NAME = 
 
 CC = c++
 INC = -I$(shell pwd)

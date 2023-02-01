@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/29 10:55:55 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/29 13:17:43 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/01 19:21:49 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,5 +182,10 @@ int main() {
 
     } catch (const std::exception &e) { std::cerr << e.what() << std::endl;; }
 
-
+    #if  defined(__has_feature)
+	# if not __has_feature(address_sanitizer)
+        system ("leaks .ftc");
+    #endif
+	#endif
 }
+
