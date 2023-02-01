@@ -174,7 +174,7 @@ template	<
 	*********************************************************************************************************/
 		iterator	insert (iterator pos, const value_type& value) {
 
-			if (pos->first not_eq value.first) 
+			if (pos->first not_eq value.first)
 				return insert (value).first;
 			pos->second = value.second;
 			return pos;
@@ -228,7 +228,6 @@ template	<
 
 				std::swap (_v_cmp, other._v_cmp);
 				tree.swap (other.tree);
-				std::swap (_Alloc, other._Alloc);
 			}
 
 
