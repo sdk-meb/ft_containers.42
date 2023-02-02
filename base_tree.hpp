@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   base_tree.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 17:30:56 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/02 14:22:26 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/02 15:43:40 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ template < class Container >
 		__road&		find_place (T_SHIP& ship) const throw() {
 
 			__road* sub = const_cast<__road*> (seed);
-			std::cout << &ship << std::endl;
 			while (sub) {
 
 				if (t_comp (ship, *sub->Ship, this->k_comp) and sub->L_ch)

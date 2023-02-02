@@ -226,7 +226,6 @@ template	<
 	*********************************************************************************************************/		
 			void		swap (map& other) {
 
-				std::swap (_v_cmp, other._v_cmp);
 				tree.swap (other.tree);
 			}
 
@@ -347,10 +346,8 @@ template	<
 				if (this == &other) return *this;
 
 				tree .destroy();
-
-				_v_cmp	= other._v_cmp;
 				if (other.size())
-					insert(other.begin(), other.end());
+					tree = const_cast<map&> (other).tree;
 
 				return *this;
 			}
