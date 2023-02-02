@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/02 18:06:16 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/02 18:53:14 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*	@brief		red black tree adjustment, for for violating the properties(rules)
 	*********************************************************************************************************/
 		void		adjustment() {
-return;
+
 			if (1 or not violate_rule()) return ;
 
 			try {
@@ -179,7 +179,6 @@ return;
 				P->recolor();
 				get_U().recolor();
 				if (get_G().WhoIm() not_eq ROOT) get_G().recolor();
-				get_G().adjustment(); 
 			}
 			catch (const std::logic_error&) {
 
@@ -446,8 +445,7 @@ template < class DS >
 		ptr_node		ItR;
 		__node			nul_;
 
-		__IterTree_ () : k_comp(key_compare()) { }
-		__IterTree_ (const key_compare& cmp) : k_comp(cmp) { ItR = &nul_; }
+		__IterTree_ (const key_compare& cmp=key_compare()) : k_comp(cmp) { ItR = &nul_; }
 		__IterTree_ (ref_node _P, const key_compare& cmp, bool) : k_comp(cmp) { nul_.P = &_P; ItR = &nul_; }
 		__IterTree_ (ref_node tree, const key_compare& cmp): k_comp(cmp), ItR(&tree) { }
 		__IterTree_ (ptr_node tree, const key_compare& cmp): k_comp(cmp), ItR(tree) { }
