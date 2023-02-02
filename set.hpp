@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 17:18:15 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/01 19:47:53 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/02 17:58:42 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,8 @@ template <
 
 				tree .destroy();
 
-				_v_cmp	= other._v_cmp;
 				if (other.size())
-					insert(other.begin(), other.end());
+					tree	= const_cast<set&> (other).tree;
 
 				return *this;
 			}

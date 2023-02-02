@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ab__tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/02 13:55:34 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/02 18:06:16 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,28 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 		static	T_SHIP		nul_;
 
 		__road_ (const __road_& other) { *this = other; }
+
+		template <class SAlloc>
+			__road_ (const __road_& other, Allocator& _Alloc, SAlloc& _SAlloc) {
+
+				init_();
+				Color = other.Color;
+				Ship = _Alloc.allocate(1);
+				_Alloc.construct (Ship, *other.Ship);
+
+				if (other.L_ch) {
+
+					L_ch = _SAlloc.allocate (1);
+					_SAlloc.construct (L_ch, __road_(other.L_ch, _Alloc, _SAlloc));
+				}
+
+				if (other.R_ch) {
+
+					R_ch = _SAlloc.allocate (1);
+					_SAlloc.construct (R_ch, __road_(other.R_ch, _Alloc, _SAlloc));
+				}
+			}
+
 		__road_ (__road_* const _P=NULL) { init_(); Color = BLACK; P = _P; }
 		__road_	(T_SHIP ship, Allocator& _alloc) {
 
@@ -95,8 +117,8 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 			return std::__throw_logic_error ("tree bind unqualified"), NOTHING;
 		}
 
-		void	recolor() { Color = RED == Color ? BLACK : RED; }
-
+		void	recolor() { Color = (Color not_eq RED and WhoIm() not_eq ROOT) ? RED : BLACK; }
+		bool	violate_rule () { return Color not_eq BLACK and P and P->Color not_eq BLACK; }
 
 /***************************  @category	 __   getters alogo __  *********************************************/
 
@@ -146,9 +168,9 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*********************************************************************************************************/
 		void		adjustment() {
 return;
-			if (Color not_eq RED or P->Color not_eq RED) return ;
+			if (1 or not violate_rule()) return ;
 
-			try {/* violate the properties of RBT */
+			try {
 
 				if (get_U().Color not_eq RED)/* throw in case no uncle */
 					std::__throw_logic_error ("go to internal catch");
@@ -156,8 +178,8 @@ return;
 				/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
 				P->recolor();
 				get_U().recolor();
-				if (get_G().WhoIm() not_eq ROOT)
-					get_G().recolor();
+				if (get_G().WhoIm() not_eq ROOT) get_G().recolor();
+				get_G().adjustment(); 
 			}
 			catch (const std::logic_error&) {
 
@@ -172,7 +194,7 @@ return;
 					if (P->WhoIm() not_eq ROOT) P->recolor();
 					try { get_S().Color = RED; }
 					catch (const std::logic_error&) { };
-					if (P->WhoIm() not_eq ROOT and P->Color == RED) P->adjustment();
+					P->adjustment();
 				}
 				else if (WhoIm() == JU and P->WhoIm() == JU)/* case 3.2.3 */{
 		
@@ -180,7 +202,7 @@ return;
 					if (P->WhoIm() not_eq ROOT) P->recolor();
 					try { get_S().Color = RED; }
 					catch (const std::logic_error&) { };
-					if (P->WhoIm() not_eq ROOT and P->Color == RED) P->adjustment();
+					P->adjustment();
 				}
 			}
 		}
@@ -381,6 +403,7 @@ return;
 
 };
 
+
 template < class T_SHIP, class Alloc>
 	T_SHIP	__road_<T_SHIP, Alloc>::nul_;
 
@@ -471,7 +494,7 @@ template < class DS >
 
 			try { ItR = &next(); }
 			catch (const error_condition&) { }
-			catch (const std::logic_error&) { ItR = &nul_; nul_.P = NULL; }
+			catch (const std::logic_error&) { nul_.P = NULL; }
 			catch (const std::range_error&) {
 
 				nul_.P = ItR;
@@ -484,8 +507,8 @@ template < class DS >
 		__IterTree_&	operator--() {
 
 			try { ItR = &prev(); }
-			catch (const std::logic_error&) { ItR = (nul_.P ? nul_.P : &nul_); nul_.P = NULL; return *this; }
 			catch (const error_condition&) { }
+			catch (const std::logic_error&) { ItR = (nul_.P ? nul_.P : &nul_); nul_.P = NULL; return *this; }
 			catch (const std::range_error&) { ItR = &nul_; nul_.P = NULL; }
 			return *this;
 		}
@@ -640,6 +663,15 @@ template < class Container, class v_map>
 			this->Size = 0;
 		}
 
+		void operator= (__tree_& other) {
+
+			if (not other.seed or &other == this) return;
+			destroy();
+			this->seed = this->_SAlloc.allocate (1);
+			this->_SAlloc.construct (this->seed, __road(*other.seed, this->_Alloc, this->_SAlloc));
+			this->Size = other.size();
+		}
+
 	private:
 
 	/*********************************************************************************************************
@@ -687,7 +719,7 @@ template < class Container, class v_map>
 	*	@param	criminal	the node who has the shipment  referred by the key
 	*********************************************************************************************************/
 		void		_delete(__road* criminal) {
-abort();
+
 			if (not criminal) return ;
 
 			__road* victim = &criminal->redemption();

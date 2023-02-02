@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 	}
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
-	if (MAP)
+	if (1)
 	{
 		ft::map<int, int> copy = map_int;
 	}
@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
 		int access = rand();
 		set_int.insert(access);
 	}
-	if (0)
+	if (SET)
 	{
 		ft::set<int> copy = set_int;
 	}
