@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mmap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 10:32:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/01 19:22:40 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/02 21:55:16 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,16 @@ int main() {
 
         CCLIB::map<std::string, int> m1;
 
-        CCLIB::map<std::string, int> m2(m1.begin(), m1.end());
+        m1.insert(CCLIB::make_pair("mes-sadk", 56 ));
+        m1.insert(CCLIB::make_pair("containers", 44 ));
+        m1.insert(CCLIB::make_pair("", 22 ));
+
         CCLIB::map<std::string, int> m3(m1);
+
+        m1.insert(CCLIB::make_pair("\t\t", 90 ));
+
+        CCLIB::map<std::string, int> m2(m1.begin(), m1.end());
+
 
         std::cout << "*********** m1 < normal > ************" << std::endl;
         for (CCLIB::map<std::string, int>::iterator it = m1.begin() ; it != m1.end(); it++)

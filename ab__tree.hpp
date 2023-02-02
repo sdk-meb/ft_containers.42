@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ab__tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/02 18:53:14 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/02 23:00:01 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,32 +46,33 @@
 template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	class __road_ {
 
+		typedef typename Allocator::template rebind<__road_>::other SAlloc;
+
 	public:
 
 		static	T_SHIP		nul_;
 
-		__road_ (const __road_& other) { *this = other; }
+		__road_ (const __road_& other, Allocator& _Alloc, SAlloc& _SAlloc) {
 
-		template <class SAlloc>
-			__road_ (const __road_& other, Allocator& _Alloc, SAlloc& _SAlloc) {
+			init_();
+			Color = other.Color;
+			Ship = _Alloc.allocate(1);
+			_Alloc.construct (Ship, *other.Ship);
 
-				init_();
-				Color = other.Color;
-				Ship = _Alloc.allocate(1);
-				_Alloc.construct (Ship, *other.Ship);
+			if (other.L_ch) {
 
-				if (other.L_ch) {
-
-					L_ch = _SAlloc.allocate (1);
-					_SAlloc.construct (L_ch, __road_(other.L_ch, _Alloc, _SAlloc));
-				}
-
-				if (other.R_ch) {
-
-					R_ch = _SAlloc.allocate (1);
-					_SAlloc.construct (R_ch, __road_(other.R_ch, _Alloc, _SAlloc));
-				}
+				L_ch = _SAlloc.allocate (1);
+				_SAlloc.construct (L_ch, __road_(*other.L_ch, _Alloc, _SAlloc));
+				// L_ch->P = this;
 			}
+
+			if (other.R_ch) {
+
+				R_ch = _SAlloc.allocate (1);
+				_SAlloc.construct (R_ch, __road_(*other.R_ch, _Alloc, _SAlloc));
+				// R_ch->P = this;
+			}
+		}
 
 		__road_ (__road_* const _P=NULL) { init_(); Color = BLACK; P = _P; }
 		__road_	(T_SHIP ship, Allocator& _alloc) {
@@ -362,24 +363,7 @@ return;
 			return *tmp;
 		}
 
-
-	/********************************************************************************************************* 
-	* (1) ref param (save the copyrigth)
-	* @brief copy assignment operator, shallow copy type, that make @a original( @a other) unthreatened by this
-	* @param other  reference
-	* @attention destroctor that deallocate the shipment and all branche of node, so (!)
-	*********************************************************************************************************/
-		void	operator= (const __road_& other) {
-
-			this->Color	= other.Color;
-			this->Ship	= other.Ship;
-			this->L_ch	= other.L_ch;
-			this->R_ch	= other.R_ch;
-			this->P		= other.P;
-		}
-
-	template <typename Al, typename SAl>
-		void destroy (Al& _alloc, SAl& _salloc) {
+		void destroy (Allocator& _alloc, SAlloc& _salloc) {
 
 				if (Ship) {
 
@@ -639,9 +623,14 @@ template < class Container, class v_map>
 		size_type	size() const { return  this->Size; }
 		bool		empty() const { return size() ? false : true; }
 
-		IterTree	get_Root() const  { return IterTree(this->seed, this->k_comp); }
-		IterTree	get_last() const  { return this->seed ? IterTree(this->seed->eldest(), this->k_comp ,false): IterTree(this->k_comp); }
-		IterTree	get_first() const { return this->seed ? IterTree(this->seed->youngest(), this->k_comp): IterTree(this->k_comp); }
+		IterTree	get_Root() const 
+			{ return IterTree(this->seed, this->k_comp); }
+
+		IterTree	get_last() const  
+			{ return this->seed ? IterTree(this->seed->eldest(), this->k_comp ,false): IterTree(this->k_comp); }
+
+		IterTree	get_first() const 
+			{ return this->seed ? IterTree(this->seed->youngest(), this->k_comp): IterTree(this->k_comp); }
 
 		void		swap (__tree_& other) {
 
@@ -667,6 +656,7 @@ template < class Container, class v_map>
 			destroy();
 			this->seed = this->_SAlloc.allocate (1);
 			this->_SAlloc.construct (this->seed, __road(*other.seed, this->_Alloc, this->_SAlloc));
+
 			this->Size = other.size();
 		}
 
