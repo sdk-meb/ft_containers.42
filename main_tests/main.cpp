@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <deque>
-
+# include <stdlib.h>
 #ifdef GO //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <set>
@@ -15,11 +15,12 @@
 	#include "../vector.hpp"
 #endif
 
-#define VEC false
-#define MAP false
+#define VEC true
+#define MAP true
 #define SET true
 
 // MAX_RAM 4 294 967 296 ( 4294967296 )
+
 #define MAX_RAM    4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
@@ -127,7 +128,7 @@ int main(int argc, char** argv) {
 		int access = rand();
 		set_int.insert(access);
 	}
-	if (SET)
+	if (0)
 	{
 		ft::set<int> copy = set_int;
 	}

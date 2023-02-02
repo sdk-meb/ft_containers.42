@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ab__tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/01 19:54:47 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/02 13:55:34 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 		static	T_SHIP		nul_;
 
 		__road_ (const __road_& other) { *this = other; }
-		__road_ (__road_* const _P=NULL) { init_(); Color = BLACK; P	= _P; }
+		__road_ (__road_* const _P=NULL) { init_(); Color = BLACK; P = _P; }
 		__road_	(T_SHIP ship, Allocator& _alloc) {
 
 			init_();
@@ -403,11 +403,6 @@ template <typename TF, typename comp >
 		t_comp (const TF& f1, const TF& f2, const comp& cmp) { return cmp (f1, f2); }
 
 
-template <typename T>
-	const T& 	get_pf (const T& a, const T&) { return a; }
-template <typename Pr, typename T>
-	const T&	get_pf (const Pr& Pir, const T&) { return Pir.first; }
-
 /*************************************************************************************************************
 *	@brief	iterator helper, manage pointing tree
 *	@param	DS data struct, rules to iterate it
@@ -656,7 +651,7 @@ template < class Container, class v_map>
 	*********************************************************************************************************/
 		__road&		insertion(__road& _node, bool ex=true) {
 
-			__road*	sub = &this->find_place (get_pf (*_node.Ship, key_type()));
+			__road*	sub = &this->find_place (*_node.Ship);
 
 			if (not t_comp (*_node.Ship, *sub->Ship, this->k_comp) and
 				not t_comp (*sub->Ship, *_node.Ship, this->k_comp)) {
@@ -692,7 +687,7 @@ template < class Container, class v_map>
 	*	@param	criminal	the node who has the shipment  referred by the key
 	*********************************************************************************************************/
 		void		_delete(__road* criminal) {
-
+abort();
 			if (not criminal) return ;
 
 			__road* victim = &criminal->redemption();

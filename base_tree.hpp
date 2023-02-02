@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   base_tree.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 17:30:56 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/01 19:39:45 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/02 14:22:26 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ template < class Container >
         typedef 	typename Container::allocator_type		Allocator;
         typedef 	typename Container::size_type			size_type;
         typedef const typename Container::key_type			key_type;
+		typedef const typename Container::value_type		T_SHIP;
+
 
         typedef 	typename Container::key_compare			key_compare;
 
@@ -60,14 +62,15 @@ template < class Container >
 	*	@param	key	 searching indicator 
 	*	@return	parent who can accept new node withe the new key
 	*********************************************************************************************************/
-		__road&		find_place (key_type& key) const throw() {
+		__road&		find_place (T_SHIP& ship) const throw() {
 
 			__road* sub = const_cast<__road*> (seed);
+			std::cout << &ship << std::endl;
 			while (sub) {
 
-				if (t_comp (key, *sub->Ship, this->k_comp) and sub->L_ch)
+				if (t_comp (ship, *sub->Ship, this->k_comp) and sub->L_ch)
 						sub = sub->L_ch;
-				else if (t_comp (*sub->Ship, key, this->k_comp) and sub->R_ch)
+				else if (t_comp (*sub->Ship, ship, this->k_comp) and sub->R_ch)
 						sub = sub->R_ch;
 				else break ;
 			}
