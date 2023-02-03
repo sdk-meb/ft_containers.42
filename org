@@ -1,0 +1,576 @@
+should be constant with the same seed: 0
+abcdefghijklmnopqrstuvwxyz
+
+[36********************* < constructors , iterators > *********************[0m
+*********** v1 < normal > ************
+
+*********** v1 < reverse > ************
+
+*********** v2 < normal > ************
+	5	5	5	5	5
+*********** v2 < reverse > ************
+	5	5	5	5	5
+*********** v3 < normal > ************
+	5	5	5	5	5
+*********** v3 < reverse > ************
+	5	5	5	5	5
+*********** v4 < normal > ************
+	5	5	5	5	5
+*********** v4 < reverse > ************
+	5	5	5	5	5
+
+[36********************* < resize > *********************[0m
+size = 10
+capacity = 16
+size = 0
+capacity = 16
+-----------------------------
+size = 17
+capacity = 32
+size = 70
+capacity = 70
+
+[36********************* < max_size > *********************[0m
+4611686018427387903
+	3	3	3	3	3	3	3	3	3	3
+size = 10
+capacity = 10
+	3	3	3	3	3
+size = 5
+capacity = 10
+	3	3	3	3	3	0	0	0	0	0	0
+size = 11
+capacity = 20
+
+[36********************* < size , capacity > *********************[0m
+size = 0 | capacity = 0
+size = 1 | capacity = 1
+size = 2 | capacity = 2
+size = 3 | capacity = 4
+size = 4 | capacity = 4
+size = 5 | capacity = 8
+size = 6 | capacity = 8
+size = 7 | capacity = 8
+size = 8 | capacity = 8
+size = 9 | capacity = 16
+
+[36********************* < empty > *********************[0m
+if initialised the vector isn't empty 
+aCCLIBer resize the vector is empty 
+	0
+	1
+	2
+	3
+	4
+	5
+	6
+	7
+	8
+	9
+aCCLIBer pushing the vector isn't empty 
+
+[36********************* < reserve > *********************[0m
+capacity = 5
+	0
+	0
+	0
+	0
+	0
+	0
+	1
+	2
+	3
+	4
+capacity = 10
+capacity = 15
+capacity = 15
+	0
+	0
+	0
+	0
+	0
+	0
+	1
+	2
+	3
+	4
+capacity = 20
+
+[36********************* < operator [] > *********************[0m
+15
+
+[36********************* < at > *********************[0m
+15
+0
+
+[36********************* < front, back > *********************[0m
+front = 11
+back = 11
+front = 11
+back = 5
+front = 1
+back = 15
+
+[36********************* < push_back > *********************[0m
+	0
+	1
+	2
+	3
+	4
+	5
+	6
+	7
+	8
+	9
+size = 0
+capacity = 16
+	0
+	0
+	0
+	0
+	0
+	0
+	0
+	0
+	0
+	0
+size = 10
+capacity = 16
+
+[36********************* < pop_back > *********************[0m
+	0	1	2	3	4
+capacity = 8
+	0	1	2	3
+capacity = 8
+last = 3
+
+[36********************* < assign > *********************[0m
+	0	0	0	0	0	0	0	0	0	0	5
+size = 11
+capacity = 20
+	10	10	10	10	10	10	10	10	10	10	10	10	10	10	10
+size = 15
+size = 10
+capacity = 20
+size 2 = 0
+capacity 2 = 0
+	10	10	10	10	10	10	10	10	10	10	10	10	10
+size 2 = 13
+capacity 2 = 13
+
+[36********************* < insetion > *********************[0m
+	100	100	100
+	200	100	100	100
+	200	100	30	30	20	20	10	10	100	100
+	200	100	400	400	30	30	20	20	10	10	100	100
+
+[36********************* < eraesing > *********************[0m
+	1	2	3	4	5	6	7	8	9	10
+	1	2	3	4	5	7	8	9	10
+	3	4	5	7	8	9	10
+	10
+	3	4	9	10
+	10
+
+[36********************* < swap > *********************[0m
+foo size = 3
+foo capacity = 3
+foo addr  = 0x7fe9f9000000
+bar size = 5
+bar capacity = 5
+bar addr  = 0x7fe9f9000010
+foo contains: 200 200 200 200 200
+foo size = 5
+foo capacity = 5
+foo addr  = 0x7fe9f9000010
+bar contains: 100 100 100
+bar size = 3
+bar capacity = 3
+bar addr  = 0x7fe9f9000000
+
+[36********************* < clearing > *********************[0m
+contains: 100 200 300
+size = 3
+capacity = 4
+size = 0
+capacity = 4
+contains: 1101 2202
+size = 2
+capacity = 4
+end = 2202
+
+[36********************* < non_members fun > *********************[0m
+foo and bar are not equal
+foo is less than bar
+foo is less than or equal to bar
+foo and bar are not equal
+foo is greater than bar
+foo is greater than or equal to bar
+foo:  200 200
+bar:  100 100 100
+foo:  100 100 100
+bar:  200 200
+
+[36********************* < iterator/reverse > *********************[0m
+*********** m1 < normal > ************
+
+	22
+			90
+containers	44
+mes-sadk	56
+*********** m1 < reverse > ************
+
+mes-sadk	56
+containers	44
+			90
+	22
+*********** m2 < normal > ************
+
+	22
+			90
+containers	44
+mes-sadk	56
+*********** m2 < reverse > ************
+
+mes-sadk	56
+containers	44
+			90
+	22
+*********** m3 < normal > ************
+
+	22
+containers	44
+mes-sadk	56
+*********** m3 < reverse > ************
+
+mes-sadk	56
+containers	44
+	22
+
+[36********************* < size > *********************[0m
+m1 empty : 1
+m1 size : 0
+m1 empty : 0
+m1 size : 1
+m1 size : 2
+m1 size : 3
+m1 size : 4
+
+[36********************* < insertion > *********************[0m
+insert m : [ m , 1 ] | mes-s : true
+insert e : [ e , 1 ] | mes-s : true
+m1 size : 2
+insert s : [ s , 2 ] | mes-s : true
+insert - : [ - , 2 ] | mes-s : true
+m1 size : 4
+*********** m2 before ************
+
+-	4
+a	5
+d	6
+e	2
+k	7
+m	1
+s	3
+*********** m2 after ************
+
+-	4
+a	5
+c	3
+d	6
+e	2
+k	7
+m	1
+s	3
+insert c : [ c , 3 ]
+m2 size : 8
+*********** m3 before ************
+
+a	1
+b	2
+m3 size : 2
+*********** m3 after ************
+
+-	4
+a	1
+b	2
+c	3
+d	6
+e	2
+k	7
+m	1
+s	3
+m3 size : 9
+
+[36********************* < erase > *********************[0m
+*********** m1 before ************
+
+a	1
+b	2
+c	3
+d	4
+e	5
+f	6
+m1 size : 6
+*********** m1 after 1 ************
+
+b	2
+c	3
+d	4
+e	5
+f	6
+m1 size : 5
+elements erased : 1
+elements erased : 0
+*********** m1 after 2 ************
+
+b	2
+c	3
+e	5
+f	6
+m1 size : 4
+*********** m1 after 3 ************
+
+e	5
+f	6
+m1 size : 2
+
+[36********************* < swap > *********************[0m
+foo contains:
+x => 100
+y => 200
+foo size : 2
+bar contains:
+a => 11
+b => 22
+c => 33
+bar size : 3
+foo contains:
+a => 11
+b => 22
+c => 33
+foo size : 3
+bar contains:
+x => 100
+y => 200
+bar size : 2
+
+[36********************* < clear > *********************[0m
+m1 contains:
+x => 100
+y => 200
+z => 300
+m1 size : 3
+m1 contains:
+m1 size : 0
+m1 contains:
+a => 1101
+b => 2202
+m1 size : 2
+
+[36********************* < key compare, value compare > *********************[0m
+m1 contains:
+a => 100
+b => 200
+c => 300
+
+m2 contains:
+x => 1001
+y => 2002
+z => 3003
+
+[36********************* < find > *********************[0m
+elements in m1:
+a => 50
+c => 150
+d => 200
+
+[36********************* < count > *********************[0m
+a is an element of m1.
+b is not an element of m1.
+c is an element of m1.
+d is not an element of m1.
+e is not an element of m1.
+f is an element of m1.
+g is not an element of m1.
+
+[36********************* < bound, equal range > *********************[0m
+low : a
+up : c
+low : c
+up : f
+a => 20
+f => 400
+	equal_range for existing key: 
+lower bound points to: b => 20
+upper bound points to: d => 30
+	equal_range for non-existing key: 
+lower bound points to: d => 30
+upper bound points to: d => 30
+
+
+[36********************* < constructor > *********************[0m
+
+[36********************* < empty > *********************[0m
+s1 is empty ? true
+s2 is empty ? true
+s3 is empty ? false
+s4 is empty ? false
+
+[36********************* < size > *********************[0m
+s1 size = 0
+s2 size = 40
+s3 size = 7
+s4 size = 7
+
+[36********************* < top > *********************[0m
+s2 top = 0
+s3 top = 89
+s4 top = 89
+
+[36********************* < push > *********************[0m
+s2 top = 0
+s1 top = 1
+s2 top = 2
+
+[36********************* < pop > *********************[0m
+s2 top = 0
+s1 top = 55
+s2 top = 66
+s1 top = 74
+s2 top = 84
+s1 top = 55
+s2 top = 66
+
+[36********************* < fun members > *********************[0m
+s1 and s2 are equal
+s1 is less than or equal to s2
+s1 is greater than or equal to s2
+s3 and s4 are equal
+s3 is less than or equal to s4
+s3 is greater than or equal to s4
+
+[36********************* < iterator/reverse > *********************[0m
+*********** s1 < normal > ************
+	1	2	3	4
+*********** s1 < reverse > ************
+	4	3	2	1
+*********** s2 < normal > ************
+	1	2	3	4
+*********** s2 < reverse > ************
+	4	3	2	1
+*********** s3 < normal > ************
+	1	2	3	4
+*********** s3 < reverse > ************
+	4	3	2	1
+
+[36********************* < capacity > *********************[0m
+s1 empty : true
+s1 size : 0
+s1 empty : false
+s1 size : 1
+s1 size : 2
+s1 size : 3
+s1 size : 4
+
+[36********************* < insertion > *********************[0m
+insert a : [ 1 ] | Added : true
+insert a : [ 1 ] | Added : false
+s1 size : 1
+insert b : [ 2 ] | Added : true
+insert b : [ 2 ] | Added : false
+s1 size : 2
+*********** s2 before ************
+	1	2	4	5	6	7	8
+*********** s2 after ************
+	1	2	3	4	5	6	7	8
+insert c : [ 3 ]
+s2 size : 8
+*********** m3 before ************
+	1	2
+m3 size : 2
+*********** m3 after ************
+	1	2	3	4	5	6	7	8
+m3 size : 8
+
+[36********************* < erase > *********************[0m
+*********** s1 before ************
+	1	2	3	4	5	6
+s1 size : 6
+*********** s1 after 1 ************
+	2	3	4	5	6
+s1 size : 5
+elements erased : 1
+elements erased : 0
+*********** s1 after 2 ************
+	2	3	5	6
+s1 size : 4
+*********** s1 after 3 ************
+	5	6
+s1 size : 2
+
+[36********************* < swap > *********************[0m
+foo contains:
+100
+200
+foo size : 2
+bar contains:
+11
+22
+33
+bar size : 3
+foo contains:
+11
+22
+33
+foo size : 3
+bar contains:
+100
+200
+bar size : 2
+
+[36********************* < clear > *********************[0m
+m1 contains:
+100
+200
+300
+m1 size : 3
+m1 contains:
+m1 size : 0
+m1 contains:
+1101
+2202
+m1 size : 2
+
+[36********************* < key_comp , value_comp > *********************[0m
+m1 contains:
+100
+200
+300
+
+s2 contains: 0 1 2 3 4
+
+[36********************* < find > *********************[0m
+elements in m1:
+a => 50
+c => 150
+d => 200
+
+[36********************* < count > *********************[0m
+a is an element of m1.
+b is an element of m1.
+c is an element of m1.
+d is not an element of m1.
+e is not an element of m1.
+f is not an element of m1.
+g is not an element of m1.
+
+[36********************* < lower_bound , upper_bound , equal_range > *********************[0m
+s1 contains: 10 20 70 80 90
+	equal_range for existing key: 
+lower bound points to: 20 => 30
+upper bound points to: 30 => 30
+	equal_range for non-existing key: 
+lower bound points to: 40 => 40
+upper bound points to: 40 => 40
+

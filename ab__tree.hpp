@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/03 16:42:34 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/04 15:49:34 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,28 +51,6 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	public:
 
 		static	T_SHIP		nul_;
-
-		__road_ (const __road_& other, Allocator& _Alloc, SAlloc& _SAlloc) {
-
-			init_();
-			Color = other.Color;
-			Ship = _Alloc.allocate(1);
-			_Alloc.construct (Ship, *other.Ship);
-
-			if (other.L_ch) {
-
-				L_ch = _SAlloc.allocate (1);
-				_SAlloc.construct (L_ch, __road_(*other.L_ch, _Alloc, _SAlloc));
-				L_ch->P = this;
-			}
-
-			if (other.R_ch) {
-
-				R_ch = _SAlloc.allocate (1);
-				_SAlloc.construct (R_ch, __road_(*other.R_ch, _Alloc, _SAlloc));
-				R_ch->P = this;
-			}
-		}
 
 		__road_ (__road_* const _P=NULL) { init_(); Color = BLACK; P = _P; }
 		__road_	(T_SHIP ship, Allocator& _alloc) {
@@ -169,7 +147,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*********************************************************************************************************/
 		void		adjustment() {
 
-			if (1 or not violate_rule()) return ;
+			if (not violate_rule()) return ;
 
 			try {
 
@@ -211,7 +189,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*	@brief	 rb-tree rules fixing
 	*********************************************************************************************************/
 		void		delete_fixup() {
-return;
+
 			if (Color not_eq RED) return;
 
 			try { if (get_S().Color == RED) {
@@ -583,7 +561,7 @@ template < class Container, class v_map>
 	*	@param	ex exeption true = default
 	*	@exception permitted by order
  	*********************************************************************************************************/
-		__road&		insert (const __road& _node, bool ex=true) {
+private:__road&		insert (const __road& _node, bool ex=true) {
 
 			if (this->seed) return this->insertion(const_cast<__road&>(_node), ex);
 
@@ -601,7 +579,7 @@ template < class Container, class v_map>
 	*			, and thas not dealocated in destruction
 	*	@param ship shipment to insert
  	*********************************************************************************************************/
-		__road&		insert (const T_SHIP& ship) { return insert (__road (ship, this->_Alloc)); }
+public:	__road&		insert (const T_SHIP& ship) { return insert (__road (ship, this->_Alloc)); }
 
 
 /***************************  @category	 __  BST # binary search tree  __  **********************************/
@@ -738,11 +716,12 @@ template < class Container, class v_map>
 
 			__road* victim = &criminal->redemption();
 
-			if (this->seed == victim) this->seed = victim->R_ch;
-
-			std::swap (victim->Ship, criminal->Ship);
+			if (victim->WhoIm() == ROOT) return destroy();
 
 			__road* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
+
+			std::swap (victim->Ship, criminal->Ship);
+			std::swap (criminal->Color, victim->Color);
 
 			if (ch and ch->Color == RED) ch->recolor();
 			else victim->delete_fixup();

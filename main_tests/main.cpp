@@ -2,18 +2,8 @@
 #include <string>
 #include <deque>
 # include <stdlib.h>
-#ifdef GO //CREATE A REAL STL EXAMPLE
-	#include <map>
-	#include <set>
-	#include <stack>
-	#include <vector>
-	namespace ft = std;
-#else
-	#include "../map.hpp"
-	#include "../set.hpp"
-	#include "../stack.hpp"
-	#include "../vector.hpp"
-#endif
+
+# include "test.hpp"
 
 #define VEC true
 #define MAP true
@@ -21,7 +11,7 @@
 
 // MAX_RAM 4 294 967 296 ( 4294967296 )
 
-#define MAX_RAM    4294967296
+#define MAX_RAM    42949 //67296
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -33,7 +23,7 @@ struct Buffer
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 template<typename T>
-class MutantStack : public ft::stack<T>
+class MutantStack : public CCLIB::stack<T>
 {
 public:
 	MutantStack() {}
@@ -45,7 +35,7 @@ public:
 	}
 	~MutantStack() {}
 
-	typedef typename ft::stack<T>::container_type::iterator iterator;
+	typedef typename CCLIB::stack<T>::container_type::iterator iterator;
 
 	iterator begin() { return this->c.begin(); }
 	iterator end() { return this->c.end(); }
@@ -64,13 +54,13 @@ int main(int argc, char** argv) {
 	const int seed = atoi(argv[1]);
 	srand(seed);
 
-	ft::vector<std::string> vector_str;
-	ft::vector<int> vector_int;
-	ft::stack<int> stack_int;
-	ft::vector<Buffer> vector_buffer;
-	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
-	ft::map<int, int> map_int;
-	ft::set<int> set_int;
+	CCLIB::vector<std::string> vector_str;
+	CCLIB::vector<int> vector_int;
+	CCLIB::stack<int> stack_int;
+	CCLIB::vector<Buffer> vector_buffer;
+	CCLIB::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+	CCLIB::map<int, int> map_int;
+	CCLIB::set<int> set_int;
 
 	for (int i = 0; VEC and i < COUNT; i++)
 	{
@@ -83,7 +73,7 @@ int main(int argc, char** argv) {
 		vector_buffer[idx].idx = 5;
 	}
 	if (VEC)
-	ft::vector<Buffer>().swap(vector_buffer);
+	CCLIB::vector<Buffer>().swap(vector_buffer);
 
 	if (VEC)
 	try
@@ -102,7 +92,7 @@ int main(int argc, char** argv) {
 
 	for (int i = 0; MAP and i < COUNT; ++i)
 	{
-		map_int.insert(ft::make_pair(rand(), rand()));
+		map_int.insert(CCLIB::make_pair(rand(), rand()));
 	}
 	int sum = 0;
 	for (int i = 0; MAP and i < 10000; i++)
@@ -114,7 +104,7 @@ int main(int argc, char** argv) {
 
 	if (1)
 	{
-		ft::map<int, int> copy = map_int;
+		CCLIB::map<int, int> copy = map_int;
 	}
 
 	for (int i = 0; SET and i < COUNT; ++i)
@@ -130,7 +120,7 @@ int main(int argc, char** argv) {
 	}
 	if (SET)
 	{
-		ft::set<int> copy = set_int;
+		CCLIB::set<int> copy = set_int;
 	}
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
@@ -139,18 +129,24 @@ int main(int argc, char** argv) {
 	{
 		std::cout << *it;
 	}
-	#if  defined(__has_feature)
-	# if not __has_feature(address_sanitizer)
-        system ("leaks a.out");
-    #endif
-	#endif
-	std::cout << std::endl;
 }
+	std::cout << std::endl;
+
+	{
+		vec_test();
+		map_test();
+		stk_test();
+		set_test();
+	}
+	std::cout << std::endl;
 
 	#if  defined(__has_feature)
 	# if not __has_feature(address_sanitizer)
-        system ("leaks a.out");
+	#if LEET ==  1337
+        system ("leaks rec_cs");
+	#else
+		system ("leaks org_cs");
+	#endif
     #endif
 	#endif
-
 }
