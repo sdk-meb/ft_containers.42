@@ -1,40 +1,76 @@
-NAME = containers
-NAME = 
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/02/03 22:09:06 by mes-sadk          #+#    #+#              #
+#    Updated: 2023/02/04 14:56:03 by mes-sadk         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+
+NAME = rec_cs
+
+N_ORG = 
 
 CC = c++
 INC = -I$(shell pwd)
-RED = \033[0;31m
-GREEN = \033[0;32m
-NO_COLOR = \033[0m
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+RED = #\033[0;31m
+GREEN =# \033[0;32m
+NO_COLOR = #\033[0m
 
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC_FILES = main_map.cpp
+SRC_FILES = main_tests/main.cpp \
+			main_tests/mmap.cpp \
+			main_tests/mset.cpp \
+			main_tests/mstk.cpp \
+			main_tests/mvec.cpp
 
 OBJ_FILES = $(SRC_FILES:.cpp=.opp)
 
-ORDR = a
+.PHONY: re fclean clean all
+
+%.opp:%.cpp  $(shell ls *.hpp) main_tests/test.hpp
+	@${CC} ${CFLAGS} $(INC)  -o $@ -c $< -D LEET
+
+all:  help ${NAME}
 
 
-%.opp:%.cpp  $(shell ls *.hpp)
-	@${CC} ${CFLAGS} $(INC)  -o $@ -c $<
+_org: clean ${OBJ_FILES}
+	@${CC} ${CFLAGS} ${SRC_FILES} -o org_cs ${INC} -D LEET=1
+	@echo ${GREEN} ./org_cs ${NO_COLOR}
 
-all: ${NAME}
+_rec: clean ${OBJ_FILES}
+	@${CC} ${CFLAGS} ${SRC_FILES} -o ${NAME} ${INC} -D LEET=1337
+	@echo ${GREEN} ./${NAME} ${NO_COLOR}
 
-$(NAME):
-	@${CC} main_map.cpp ${CFLAGS} 2> re
-	@time ./${NAME}
-	@echo exit status 
+ORG: _org
+
+REC: _rec
+
+diff: ORG REC
+	@diff 
+
+help:
+	@echo ${RED}
+	@echo "make ORG (ORIGINAL) or make REC (RECREATED)"
+	@echo also you can make diff
+	@echo $(NO_COLOR)
+
+$(NAME): _rec
 
 clean:
+	@echo cleaning ...
 	@rm -rf ${OBJ_FILES}
-	@echo "${RED} • ALL object files are deleted${NO_COLOR}"
+	@echo \e clean
+	
 
 fclean: clean
-	@rm -rf ${NAME}
-	@echo "${RED} • The executed file is removed${NO_COLOR}"
+	@rm -rf rec_cs org_cs
 
 re: fclean all
 
-.PHONY: re fclean clean all

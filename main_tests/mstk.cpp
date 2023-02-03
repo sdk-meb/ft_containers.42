@@ -6,30 +6,14 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/29 10:55:55 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/01 19:21:49 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/04 12:06:59 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
+# include"test.hpp"
+# include<vector.hpp>
 
-#ifndef LEET
-    #define LEET 1337
-#endif
-
-#include <vector>
-#include "../vector.hpp"
-
-#if LEET not_eq 1337
-    #include <stack>
-    namespace CCLIB = std;
-#else
-    #include "../stack.hpp"
-    namespace CCLIB = ft;
-#endif
-
-#define test(str) std::cout << std::endl << "\e[36********************* < " << str <<" > *********************\e[0m" << std::endl
-
-int main() {
+void stk_test() {
 
     try { test("constructor");
 
@@ -182,10 +166,5 @@ int main() {
 
     } catch (const std::exception &e) { std::cerr << e.what() << std::endl;; }
 
-    #if  defined(__has_feature)
-	# if not __has_feature(address_sanitizer)
-        system ("leaks .ftc");
-    #endif
-	#endif
 }
 

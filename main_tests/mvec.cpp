@@ -3,31 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   mvec.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 15:54:39 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/02 12:20:05 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/04 12:06:51 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include<iostream>
 
-#ifndef LEET
-	#define LEET 1337
-#endif
+# include"test.hpp"
 
-#if LEET != 1337
-	# include<vector>
-	namespace CCLIB = std;
-#else
-	# include"../vector.hpp"
-	namespace CCLIB = ft;
-#endif
-
-#define test(str) std::cout << std::endl << "\e[36********************* < " << str <<" > *********************\e[0m" << std::endl
-
-
-int main() {
+void vec_test() {
 
 
 	try { test ("constructors , iterators");
@@ -493,10 +479,5 @@ int main() {
 
 	} catch (const std::exception &e) { std::cerr << e.what() << '\n'; }
 
-  	#if  defined(__has_feature)
-	# if not __has_feature(address_sanitizer)
-        system ("leaks .ftc");
-    #endif
-	#endif
 
 }
