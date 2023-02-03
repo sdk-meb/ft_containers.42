@@ -332,7 +332,7 @@ template	<
 	/*********************************************************************************************************
 	*	@return	 the object of the functor @a value_compare
 	*********************************************************************************************************/
-			value_compare	value_comp() {return _v_cmp; }
+			value_compare	value_comp() { return _v_cmp; }
 
 
 			private :

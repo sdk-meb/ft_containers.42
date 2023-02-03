@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ab__tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/02 23:00:01 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/03 16:42:34 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,14 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 
 				L_ch = _SAlloc.allocate (1);
 				_SAlloc.construct (L_ch, __road_(*other.L_ch, _Alloc, _SAlloc));
-				// L_ch->P = this;
+				L_ch->P = this;
 			}
 
 			if (other.R_ch) {
 
 				R_ch = _SAlloc.allocate (1);
 				_SAlloc.construct (R_ch, __road_(*other.R_ch, _Alloc, _SAlloc));
-				// R_ch->P = this;
+				R_ch->P = this;
 			}
 		}
 
@@ -363,25 +363,51 @@ return;
 			return *tmp;
 		}
 
-		void destroy (Allocator& _alloc, SAlloc& _salloc) {
+		void	dup_  (const __road_& other, Allocator& _alloc, SAlloc& _salloc) {
+
+			init_();
+
+			Color = other.Color;
+			Ship = _alloc.allocate(1);
+			_alloc.construct (Ship, *other.Ship);
+			if (other.L_ch) {
+
+				L_ch = _salloc.allocate (1);
+				L_ch->dup_ (*other.L_ch, _alloc, _salloc);
+				L_ch->P = this;
+			}
+			if (other.R_ch) {
+
+				R_ch = _salloc.allocate (1);
+				R_ch->dup_ (*other.R_ch, _alloc, _salloc);
+				R_ch->P = this;
+			}
+			
+		}
+
+		void	destroy (Allocator& _alloc, SAlloc& _salloc) {
 
 				if (Ship) {
 
 					_alloc.destroy (Ship);
 					_alloc.deallocate (Ship, 1);
+					Ship = NULL;
 				}
 				if (L_ch) {
 
 					L_ch->destroy(_alloc, _salloc);
 					_salloc.destroy(L_ch);
 					_salloc.deallocate (L_ch, 1);
+					L_ch = NULL;
 				}
 				if (R_ch) {
 
 					R_ch->destroy(_alloc, _salloc);
 					_salloc.destroy(R_ch);
 					_salloc.deallocate (R_ch, 1);
+					R_ch = NULL;
 				}
+				P = NULL;
 			}
 
 };
@@ -654,8 +680,9 @@ template < class Container, class v_map>
 
 			if (not other.seed or &other == this) return;
 			destroy();
+
 			this->seed = this->_SAlloc.allocate (1);
-			this->_SAlloc.construct (this->seed, __road(*other.seed, this->_Alloc, this->_SAlloc));
+			this->seed->dup_ (*other.seed, this->_Alloc, this->_SAlloc);
 
 			this->Size = other.size();
 		}
@@ -664,8 +691,7 @@ template < class Container, class v_map>
 
 	/*********************************************************************************************************
 	*	@brief	binary tree insertion, that call @a adjustment that remove the violated rules of rb-tree
-	*	@param	_node	indicator to being rotated
-	*	@param	sub	indicator in last after recursions, the parent of the new child
+	*	@param	_node	indicator to being inserted
 	*	@param	ex exeption true = default
 	*	@exception permitted by order
 	*********************************************************************************************************/
