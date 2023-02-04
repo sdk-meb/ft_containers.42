@@ -6,7 +6,7 @@
 #    By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/03 22:09:06 by mes-sadk          #+#    #+#              #
-#    Updated: 2023/02/04 14:56:03 by mes-sadk         ###   ########.fr        #
+#    Updated: 2023/02/06 12:05:05 by mes-sadk         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ RED = #\033[0;31m
 GREEN =# \033[0;32m
 NO_COLOR = #\033[0m
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
 
 SRC_FILES = main_tests/main.cpp \
 			main_tests/mmap.cpp \
@@ -40,20 +40,20 @@ OBJ_FILES = $(SRC_FILES:.cpp=.opp)
 all:  help ${NAME}
 
 
-_org: clean ${OBJ_FILES}
+_org:  ${OBJ_FILES}
 	@${CC} ${CFLAGS} ${SRC_FILES} -o org_cs ${INC} -D LEET=1
 	@echo ${GREEN} ./org_cs ${NO_COLOR}
 
-_rec: clean ${OBJ_FILES}
+_rec:  ${OBJ_FILES}
 	@${CC} ${CFLAGS} ${SRC_FILES} -o ${NAME} ${INC} -D LEET=1337
 	@echo ${GREEN} ./${NAME} ${NO_COLOR}
 
-ORG: _org
+ORG:  _org
 
-REC: _rec
+REC:  _rec
 
 diff: ORG REC
-	@diff 
+#@diff 
 
 help:
 	@echo ${RED}

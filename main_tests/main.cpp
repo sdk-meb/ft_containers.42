@@ -11,7 +11,7 @@
 
 // MAX_RAM 4 294 967 296 ( 4294967296 )
 
-#define MAX_RAM    42949 //67296
+#define MAX_RAM    4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
 	#if  defined(__has_feature)
 	# if not __has_feature(address_sanitizer)
 	#if LEET ==  1337
-        system ("leaks rec_cs");
+    	system ("leaks rec_cs");
 	#else
 		system ("leaks org_cs");
 	#endif

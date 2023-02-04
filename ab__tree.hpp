@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/04 15:49:34 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/06 12:32:48 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*	@brief		red black tree adjustment, for for violating the properties(rules)
 	*********************************************************************************************************/
 		void		adjustment() {
-
+return;
 			if (not violate_rule()) return ;
 
 			try {
@@ -365,7 +365,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 
 		void	destroy (Allocator& _alloc, SAlloc& _salloc) {
 
-				if (Ship) {
+				if (Ship and Ship not_eq &nul_) {
 
 					_alloc.destroy (Ship);
 					_alloc.deallocate (Ship, 1);
@@ -561,7 +561,7 @@ template < class Container, class v_map>
 	*	@param	ex exeption true = default
 	*	@exception permitted by order
  	*********************************************************************************************************/
-private:__road&		insert (const __road& _node, bool ex=true) {
+		__road&		insert (const __road& _node, bool ex=true) {
 
 			if (this->seed) return this->insertion(const_cast<__road&>(_node), ex);
 
@@ -579,7 +579,7 @@ private:__road&		insert (const __road& _node, bool ex=true) {
 	*			, and thas not dealocated in destruction
 	*	@param ship shipment to insert
  	*********************************************************************************************************/
-public:	__road&		insert (const T_SHIP& ship) { return insert (__road (ship, this->_Alloc)); }
+		__road&		insert (const T_SHIP& ship) { return insert (__road (ship, this->_Alloc)); }
 
 
 /***************************  @category	 __  BST # binary search tree  __  **********************************/
@@ -716,12 +716,11 @@ public:	__road&		insert (const T_SHIP& ship) { return insert (__road (ship, this
 
 			__road* victim = &criminal->redemption();
 
-			if (victim->WhoIm() == ROOT) return destroy();
-
-			__road* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
+			if (this->seed == victim) this->seed = victim->R_ch;
 
 			std::swap (victim->Ship, criminal->Ship);
-			std::swap (criminal->Color, victim->Color);
+
+			__road* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
 
 			if (ch and ch->Color == RED) ch->recolor();
 			else victim->delete_fixup();
