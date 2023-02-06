@@ -41,17 +41,6 @@ template <class T_SHIP>
 				R_ch	= NIL;
 				Empty	= false;
 			};
-			RBT(const RBT& tree){
-
-				/* the copy assignment constructor here is dangerous, because the 
-					destroying of an object have a role in killing all his child */
-				Color	= tree.Color;
-				Ship	= tree.Ship;
-				P		= NIL;
-				L_ch	= NIL;
-				R_ch	= NIL;
-				Empty	= false;
-			}
 		
 			void		insert(T_SHIP ship) {
 
@@ -79,7 +68,7 @@ template <class T_SHIP>
 				RBT* indecated = const_cast<RBT<T_SHIP>*> (search(ship));
 
 				if (indecated)
-					_delete(*indecated);
+					_delete(indecated);
 			}
 
 			~RBT(){
@@ -97,15 +86,9 @@ template <class T_SHIP>
 				R_ch	= NIL;
 			}
 
-			void	recolor(){
-
-				if (WhoIm() == ROOT)
-					return ;
-				if (Color == RED)
-					Color = BLACK;
-				else
-					Color = RED;
-			}
+			
+		void	recolor() { Color = (Color not_eq RED and WhoIm() not_eq ROOT) ? RED : BLACK; }
+		bool	violate_rule () { return Color not_eq BLACK and P and P->Color not_eq BLACK; }
 
 			short	WhoIm() const {
 
@@ -190,54 +173,46 @@ template <class T_SHIP>
 				this->R_ch = x;
 			}
 
-			void		adjustment(){
+		void		adjustment() {
 
-				if (P->Color == BLACK)
-					return ;
-				try {/* violate the properties of RBT */
+			if (not violate_rule()) return ;
 
-					if (get_U().Color == BLACK)/* throw in case no uncle */
-						throw "";
+			try {
 
-					{/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
+				if (get_U().Color not_eq RED)/* throw in case no uncle */
+					std::__throw_logic_error ("go to internal catch");
 
-						P->Color = BLACK;
-						get_U().Color = BLACK;
-						P->P->recolor();
-						if (P->P->Color == RED)
-							P->P->adjustment();
-					}
-				}
-				catch(...){
-
-					if (WhoIm() == JU && WhoIs(P) == SE)/* case 3.2.2 */{
-
-						P->rr();/* I'M ju to SE */
-						goto C321;/* case 3.2.1 */
-					}
-					else if(WhoIm() == SE && WhoIs(P) == JU)/* case 3.2.4 */{
-
-						P->lr();/* I'M SU to ju */
-						goto C323;/* case 3.2.3 */
-					}
-					else if (WhoIm() == SE && WhoIs(P) == SE)/* case 3.2.1 */
-		C321:			P->P->lr();
-					else if (WhoIm() == JU && WhoIs(P) == JU)/* case 3.2.3 */
-		C323:			P->P->rr();
-					else
-						exit(3456);
-					try{ get_S().Color = RED;}
-						catch(...){};
-
-					P->recolor();
-					if (P->Color == RED)
-						P->adjustment();
-				}
+				/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
+				P->recolor();
+				get_U().recolor();
+				get_G().recolor();
+				try { get_G().adjustment(); } catch (...) { abort(); }
 			}
+			catch (const std::logic_error&) {
+
+				if (WhoIm() == JU and P->WhoIm() == SE)/* case 3.2.2 */
+					P->rr();/* case 3.2.1 */
+				else if (WhoIm() == SE and P->WhoIm() == JU)/* case 3.2.4 */
+					P->lr();/* case 3.2.3 */
+				if (WhoIm() == SE and P->WhoIm() == SE)/* case 3.2.1 */
+					get_G().lr();
+				else if (WhoIm() == JU and P->WhoIm() == JU)/* case 3.2.3 */
+					get_G().rr();
+
+				P->recolor();
+				get_S().recolor();
+				try { P->adjustment(); } catch (...) { abort(); }
+			}
+			catch (...) { abort(); }
+
+		}
+		
+		
 			void		insertion(const T_SHIP& ship, RBT* subtree)/* BST_i # binary search tree insertion # */{
 			
 				if (subtree == NIL)/* It will never come true */
 					return ;
+				while (1) {
 				if (ship < subtree->Ship){
 
 					if (subtree->L_ch)
@@ -260,141 +235,116 @@ template <class T_SHIP>
 				}
 				else
 					throw "similar shipment violates the property of red-black tree" ;
+				}
 				return insertion(ship, subtree);
 			}
 			const RBT*	searching(T_SHIP ship, RBT* subtree) const/* BST # binary search tree searching # */{
 			
 				if (subtree == NIL)
 					return NIL;
+				while(1){
 				if (ship < subtree->Ship)
 						subtree = subtree->L_ch;
 				else if (ship > subtree->Ship)
 						subtree = subtree->R_ch;
 				else
 					return  subtree;
-				return searching(ship, subtree);
+							}			return searching(ship, subtree);
 			}
 
 			RBT&		best_child() {
 
-				RBT*	rch = this->R_ch;
-				RBT*	lch = this->L_ch;
-				int		l_path = 0;
-
-				/* this function return the best child can replace this G^k
-					without violate the the rule of BST (su(left), ju(rigth))*/
-				if (not(lch) && not(rch))
-					return *this;
-				while (rch && rch->L_ch){
-
-					rch = rch->L_ch;
-					l_path++;
-				}
-
-				if (rch && rch->Color == RED)/*  */
-					return *rch;
-				
-				while (lch && lch->R_ch) {
-
-					l_path--;
-					lch = lch->R_ch;
-				}
-
-				if (lch && lch->Color == RED)
-					return *lch;
-
-				if (not(lch) || l_path > 0)
-					return *rch;
-				return *lch;
+				return this->L_ch ? this->L_ch->eldest() : (this->R_ch ? this->R_ch->youngest() : *this );
 			}
 			
-			void		delete_fixup(RBT* vctm){
+			void		delete_fixup(){
 
-				if (vctm->get_S().Color == RED) {
+				if (Color not_eq BLACK) return;
 
-					vctm->get_S().Color = BLACK;
-					vctm->P->Color		 = RED;
-					if (WhoIs(vctm) == JU)
-						vctm->P->lr();
-					else
-						vctm->P->rr();
+			try { if (get_S().Color == RED) {
+
+				get_S().recolor();
+				P->recolor();
+				if (WhoIm() == JU)
+					P->lr();
+				else
+					P->rr();
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().L_ch and get_S().L_ch->Color == BLACK
+				and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
+
+				get_S().Color = RED;
+				if (P->Color == BLACK)
+					return P->delete_fixup();
+				P->Color = BLACK;
+				return ;
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().L_ch and get_S().R_ch
+				and	get_S().L_ch->Color != get_S().R_ch->Color) {
+
+				get_S().L_ch->Color = BLACK;
+				if (WhoIm() == JU){
+
+					get_S().Color = RED;
+					get_S().rr();
 				}
-				if (	vctm->get_S().L_ch && vctm->get_S().L_ch->Color == BLACK
-					&&	vctm->get_S().R_ch && vctm->get_S().R_ch->Color == BLACK) {
+				else {
 
-					vctm->get_S().Color = RED;
-					if (vctm->P->Color == BLACK)
-						return delete_fixup(vctm->P);
-					vctm->P->Color = BLACK;
-					return ;
+					get_S().Color = RED;
+					get_S().lr();
 				}
-				if (	vctm->get_S().L_ch && vctm->get_S().R_ch &&
-						vctm->get_S().L_ch->Color != vctm->get_S().R_ch->Color){
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().R_ch and RED == get_S().R_ch->Color and WhoIm() == JU) {
 
-					vctm->get_S().L_ch->Color = BLACK;
-					if (WhoIs(vctm) == JU){
-
-						vctm->get_S().Color = RED;
-						vctm->get_S().rr();
-					}
-					else {
-
-						vctm->get_S().Color = RED;
-						vctm->get_S().lr();
-					}
-				}
-				if (vctm->get_S().R_ch && RED == vctm->get_S().R_ch->Color && WhoIs(vctm) == JU){
-
-					vctm->get_S().R_ch->Color = BLACK;
-					vctm->P->Color = BLACK;
-					vctm->P->lr();
-				}
-				else if (vctm->get_S().L_ch && RED == vctm->get_S().L_ch->Color && WhoIs(vctm) == SE){
-
-					vctm->get_S().L_ch->Color = BLACK;
-					vctm->P->Color = BLACK;
-					vctm->P->rr();
-				}
+				get_S().R_ch->Color = BLACK;
+				P->Color = BLACK;
+				P->lr();
 			}
+			else if (get_S().L_ch and RED == get_S().L_ch->Color and WhoIm() == SE) {
 
-			void		_delete(RBT& criminal){
+				get_S().L_ch->Color = BLACK;
+				P->Color = BLACK;
+				P->rr();
+			}	}
+			catch (const std::logic_error&) { };
+			}
+RBT&	redemption() throw() {
+
+			return this->L_ch ? this->L_ch->eldest() : *this;
+		}
 
 
-				RBT& victim = criminal.best_child();
+			void		_delete(RBT* criminal){
 
-				Empty = (*this == victim);
-				if (Empty)
-					return ;
 
-				RBT* ch = victim.L_ch ?  victim.L_ch :  victim.R_ch;
+				if (not criminal) return ;
 
-				if (victim.Color == BLACK)
-					try {
+			RBT* victim = &criminal->redemption();
 
-							if (ch && ch->Color == RED)
-								ch->recolor();
-							else
-								delete_fixup(&victim);
-					}
-					catch (...) {}
+			if (this == victim and not R_ch) { 
+			Empty = true; return;}
 
-				std::swap(criminal->Ship, victim->Ship);
 
-				/* replace link to victim by who yastahik, ma ya3arfo hta had*/
-				{
-					if (ch)
-						ch->P = victim.P;
-					if (victim.WhoIm() == JU)
-						victim.P->L_ch = ch;
-					else if (victim.WhoIm() == SE)
-						victim.P->R_ch = ch;
-				}
-				/* unlink the victim , mayaraf raso fin*/
-				victim.L_ch	= NIL;
-				victim.R_ch	= NIL;
-				victim.P	= NIL;
+			std::swap (victim->Ship, criminal->Ship);
 
-				delete &victim; /* end of history */
+			RBT* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
+
+			if (ch and ch->Color == RED) ch->recolor();
+			else victim->delete_fixup();
+
+			/* replace link to victim by who yastahik, ma ya3arfo hta had*/
+			{
+				if (ch) ch->P = victim->P;
+				if (victim->WhoIm() == JU)	victim->P->L_ch = ch;
+				else if (victim->WhoIm() == SE) victim->P->R_ch = ch;
+			}
+			/* unlink the victim , mayaraf raso fin*/
+			victim->L_ch = victim->R_ch = victim->P = NULL;
+
+				delete victim; /* end of history */
 			}
 
 		RBT&	youngest() const throw() {
@@ -445,16 +395,19 @@ int	main(){
 
 	 RBT<int> t;
 
-	int count = 699;
+	int count = 6365;
 
-	srand (count);
 
-		try {
 		for (size_t i = count; i ; --i)
-			t.insert (rand());
-		}catch (const char* e) { std::cerr << e << std::endl; }
-		// for (size_t i = count / 7; i; --i)
-		// 	t.del (rand());
+			t.insert (i);
+		for (size_t i = count; i ; --i){
+			t.del (i);}
+		for (size_t i = count; i ; --i)
+			t.insert (i);
+		for (size_t i = count; i ; --i)
+			t.insert (i);
+		for (size_t i = count; i ; --i)
+			t.insert (i);
 		
 		try {
 		for ( RBT<int> *o = &t.eldest(); ; o = &o->prev())
@@ -464,6 +417,7 @@ int	main(){
 		for ( RBT<int> *o = &t.youngest(); ; o = &o->next())
 			std::cerr << o->Ship << std::endl;
 		}catch (const std::range_error& ) { }
+		// abort();
 
 	return 0;
 }
