@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ab__tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/06 12:32:48 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/06 23:01:09 by sdk-meb          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,8 @@ return;
 				/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
 				P->recolor();
 				get_U().recolor();
-				if (get_G().WhoIm() not_eq ROOT) get_G().recolor();
+				get_G().recolor();
+				try { get_G().adjustment(); } catch (...) { abort(); }
 			}
 			catch (const std::logic_error&) {
 
@@ -165,42 +166,34 @@ return;
 					rr(P);/* case 3.2.1 */
 				else if (WhoIm() == SE and P->WhoIm() == JU)/* case 3.2.4 */
 					lr(P);/* case 3.2.3 */
-				if (WhoIm() == SE and P->WhoIm() == SE)/* case 3.2.1 */{
-
+				if (WhoIm() == SE and P->WhoIm() == SE)/* case 3.2.1 */
 					lr(&get_G());
-
-					if (P->WhoIm() not_eq ROOT) P->recolor();
-					try { get_S().Color = RED; }
-					catch (const std::logic_error&) { };
-					P->adjustment();
-				}
-				else if (WhoIm() == JU and P->WhoIm() == JU)/* case 3.2.3 */{
-		
+				else if (WhoIm() == JU and P->WhoIm() == JU)/* case 3.2.3 */
 					rr(&get_G());
-					if (P->WhoIm() not_eq ROOT) P->recolor();
-					try { get_S().Color = RED; }
-					catch (const std::logic_error&) { };
-					P->adjustment();
-				}
+
+				P->recolor();
+				get_S().recolor();
+				try { P->adjustment(); } catch (...) { abort(); }
 			}
+			catch (...) { abort(); }
+
 		}
 
 	/*********************************************************************************************************
 	*	@brief	 rb-tree rules fixing
 	*********************************************************************************************************/
 		void		delete_fixup() {
-
+return;
 			if (Color not_eq RED) return;
+			// if (Color not_eq BLACK) return;
 
 			try { if (get_S().Color == RED) {
 
 				get_S().recolor();
 				P->recolor();
-				if (WhoIm() == JU)
-					P->lr();
-				else
-					P->rr();
-			}	}
+				if (WhoIm() == JU) P->lr();
+				else P->rr();
+			} }
 			catch (const std::logic_error&) { }
 			try { if (get_S().L_ch and get_S().L_ch->Color == BLACK
 				and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
@@ -341,6 +334,13 @@ return;
 			return *tmp;
 		}
 
+
+	/*********************************************************************************************************
+	*	@brief	duplacate the tree, deep copy of it
+	*	@param	other tree to dup-it
+	*	@param	_alloc allocator to alocate a new shipment
+	*	@param	_salloc allocator to alocate a new ndoe
+	*********************************************************************************************************/	
 		void	dup_  (const __road_& other, Allocator& _alloc, SAlloc& _salloc) {
 
 			init_();
@@ -363,6 +363,12 @@ return;
 			
 		}
 
+
+	/*********************************************************************************************************
+	*	@brief	destory
+	*	@param	_alloc allocator to dealocate the shipments
+	*	@param	_salloc allocator to dealocate the ndoes
+	*********************************************************************************************************/	
 		void	destroy (Allocator& _alloc, SAlloc& _salloc) {
 
 				if (Ship and Ship not_eq &nul_) {
@@ -684,25 +690,17 @@ template < class Container, class v_map>
 				if (not ex) return *sub;
 				std::__throw_overflow_error ("similar shipment violates the property of map rules") ;
 			}
-			else if (t_comp (*_node.Ship, *sub->Ship, this->k_comp)) {
-
-				sub->L_ch = this->_SAlloc.allocate(1);
-
-				this->_SAlloc.construct (sub->L_ch, _node);
-				sub->L_ch->P = sub;
-
-				sub->L_ch->adjustment();
-
-				return ++this->Size, *sub->L_ch;
-			}
-			{
-				sub->R_ch = this->_SAlloc.allocate(1);
-				this->_SAlloc.construct (sub->R_ch, _node);
-				sub->R_ch->P = sub;
-
-				sub->R_ch->adjustment();
-			}
-			return ++this->Size, *sub->R_ch;
+			return t_comp (*_node.Ship, *sub->Ship, this->k_comp)
+			?(
+				sub->L_ch = this->_SAlloc.allocate(1), this->_SAlloc.construct (sub->L_ch, _node),
+				sub->L_ch->P = sub, sub->L_ch->adjustment(),
+				++this->Size, *sub->L_ch
+			)
+			:(
+				sub->R_ch = this->_SAlloc.allocate(1), this->_SAlloc.construct (sub->R_ch, _node),
+				sub->R_ch->P = sub, sub->R_ch->adjustment(),
+				++this->Size, *sub->R_ch
+			);
 		}
 
 
@@ -732,9 +730,7 @@ template < class Container, class v_map>
 				else if (victim->WhoIm() == SE) victim->P->R_ch = ch;
 			}
 			/* unlink the victim , mayaraf raso fin*/
-			victim->L_ch	= NULL;
-			victim->R_ch	= NULL;
-			victim->P	= NULL;
+			victim->L_ch = victim->R_ch = victim->P = NULL;
 
 			victim->destroy(this->_Alloc,this-> _SAlloc);
 			this->_SAlloc.destroy(victim);
