@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ab__tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdk-meb <sdk-meb@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/06 23:01:09 by sdk-meb          ###   ########.fr       */
+/*   Updated: 2023/02/07 23:47:02 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # include"utility.hpp"
 # include"iterator.hpp"
 
-			# define	RED		1
+			# define	__RED	1
 			# define	BLACK	0
 			# define	SE		37/* SE_NIOR */
 			# define	JU		13/* JU_NIOR */
@@ -65,7 +65,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 		void	init_ () {
 
 			Ship		= &nul_;
-			Color		= RED;
+			Color		= __RED;
 
 			P		= NULL;
 			L_ch	= NULL;
@@ -96,7 +96,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 			return std::__throw_logic_error ("tree bind unqualified"), NOTHING;
 		}
 
-		void	recolor() { Color = (Color not_eq RED and WhoIm() not_eq ROOT) ? RED : BLACK; }
+		void	recolor() { Color = (Color not_eq __RED and WhoIm() not_eq ROOT) ? __RED : BLACK; }
 		bool	violate_rule () { return Color not_eq BLACK and P and P->Color not_eq BLACK; }
 
 /***************************  @category	 __   getters alogo __  *********************************************/
@@ -143,105 +143,29 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 
 
 	/*********************************************************************************************************
-	*	@brief		red black tree adjustment, for for violating the properties(rules)
+	*	@brief		__red black tree adjustment, for for violating the properties(rules)
 	*********************************************************************************************************/
 		void		adjustment() {
-return;
-			if (not violate_rule()) return ;
 
-			try {
-
-				if (get_U().Color not_eq RED)/* throw in case no uncle */
-					std::__throw_logic_error ("go to internal catch");
-
-				/* ( uncle exiicte and has RED color )*/ /* case 3.1 */
-				P->recolor();
-				get_U().recolor();
-				get_G().recolor();
-				try { get_G().adjustment(); } catch (...) { abort(); }
-			}
-			catch (const std::logic_error&) {
-
-				if (WhoIm() == JU and P->WhoIm() == SE)/* case 3.2.2 */
-					rr(P);/* case 3.2.1 */
-				else if (WhoIm() == SE and P->WhoIm() == JU)/* case 3.2.4 */
-					lr(P);/* case 3.2.3 */
-				if (WhoIm() == SE and P->WhoIm() == SE)/* case 3.2.1 */
-					lr(&get_G());
-				else if (WhoIm() == JU and P->WhoIm() == JU)/* case 3.2.3 */
-					rr(&get_G());
-
-				P->recolor();
-				get_S().recolor();
-				try { P->adjustment(); } catch (...) { abort(); }
-			}
-			catch (...) { abort(); }
-
+			/* this is the new node which has red color */
 		}
 
 	/*********************************************************************************************************
 	*	@brief	 rb-tree rules fixing
 	*********************************************************************************************************/
 		void		delete_fixup() {
-return;
-			if (Color not_eq RED) return;
-			// if (Color not_eq BLACK) return;
 
-			try { if (get_S().Color == RED) {
-
-				get_S().recolor();
-				P->recolor();
-				if (WhoIm() == JU) P->lr();
-				else P->rr();
-			} }
-			catch (const std::logic_error&) { }
-			try { if (get_S().L_ch and get_S().L_ch->Color == BLACK
-				and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
-
-				get_S().Color = RED;
-				if (P->Color == BLACK)
-					return P->delete_fixup();
-				P->Color = BLACK;
-				return ;
-			}	}
-			catch (const std::logic_error&) { }
-			try { if (get_S().L_ch and get_S().R_ch
-				and	get_S().L_ch->Color != get_S().R_ch->Color) {
-
-				get_S().L_ch->Color = BLACK;
-				if (WhoIm() == JU){
-
-					get_S().Color = RED;
-					get_S().rr();
-				}
-				else {
-
-					get_S().Color = RED;
-					get_S().lr();
-				}
-			}	}
-			catch (const std::logic_error&) { }
-			try { if (get_S().R_ch and RED == get_S().R_ch->Color and WhoIm() == JU) {
-
-				get_S().R_ch->Color = BLACK;
-				P->Color = BLACK;
-				P->lr();
-			}
-			else if (get_S().L_ch and RED == get_S().L_ch->Color and WhoIm() == SE) {
-
-				get_S().L_ch->Color = BLACK;
-				P->Color = BLACK;
-				P->rr();
-			}	}
-			catch (const std::logic_error&) { };
+			/* a node which  in the progress of deletion (this),
+				in case of Right that meant no Left and vice versa,
+					no Left no Right means nothing */
 		}
 
 	/*********************************************************************************************************
 	*	@return	a node which can replace the caller node, without violating the binary search tree rules
 	*********************************************************************************************************/
-		__road_&	redemption() throw() {
+		__road_&	__redemption() throw() {
 
-			return this->L_ch ? this->L_ch->eldest() : *this;
+			return	this->L_ch ? this->L_ch->eldest() : *this;
 		}
 
 	private:
@@ -253,10 +177,10 @@ return;
 
 			if (not _node) _node = const_cast<__road_*>(this);;
 			if (not _node->R_ch) std::__throw_logic_error ("unqualified left rotation!");
-			return _node->_lr();
+			return _node->unsaf_left_retate();
 		}
 
-		void	_lr() throw() {
+		void	unsaf_left_retate() throw() {
 
 			__road_*	y = this->R_ch;
 
@@ -285,10 +209,10 @@ return;
 
 			if (not _node) _node = const_cast<__road_*>(this);; 
 			if (not _node->L_ch) std::__throw_logic_error ("unqualified left rotation!");
-			return _node->_rr();
+			return _node->unsaf_rigth_retate();
 		}
 
-		void	_rr() throw() {
+		void	unsaf_rigth_retate() throw() {
 
 			__road_*	x = this->L_ch;
 
@@ -418,111 +342,6 @@ template <typename TF, typename comp >
     typename ft::enable_if < not is_pair<TF>::value , bool >::type
 		t_comp (const TF& f1, const TF& f2, const comp& cmp) { return cmp (f1, f2); }
 
-
-/*************************************************************************************************************
-*	@brief	iterator helper, manage pointing tree
-*	@param	DS data struct, rules to iterate it
-*************************************************************************************************************/	
-template < class DS >
-	struct __IterTree_ {
-
-
-		typedef typename DS::T_SHIP		value_type;
-		typedef typename DS::key_type		key_type;
-		typedef typename DS::key_compare		key_compare;
-		typedef	__road_<value_type>	__node;
-	
-		typedef	__node&						ref_node;
-		typedef	__node*						ptr_node;
-	
-        const key_compare&    k_comp;
-		ptr_node		ItR;
-		__node			nul_;
-
-		__IterTree_ (const key_compare& cmp=key_compare()) : k_comp(cmp) { ItR = &nul_; }
-		__IterTree_ (ref_node _P, const key_compare& cmp, bool) : k_comp(cmp) { nul_.P = &_P; ItR = &nul_; }
-		__IterTree_ (ref_node tree, const key_compare& cmp): k_comp(cmp), ItR(&tree) { }
-		__IterTree_ (ptr_node tree, const key_compare& cmp): k_comp(cmp), ItR(tree) { }
-		__IterTree_ (const __IterTree_& tree) : k_comp(tree.k_comp)  { *this = tree; }
-		void	operator= (const __IterTree_& tree) {
-
-			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
-			else ItR = tree.ItR;
-		}
-
-	/*********************************************************************************************************
-	*	@return	next node in tree contine the next sequence key
-	*********************************************************************************************************/	
-		ref_node	next() const {
-
-			if (not ItR) throw error_condition();
-			if (ItR->R_ch) return ItR->R_ch->youngest();
-
-			ptr_node	tmp = ItR;
-
-			while (tmp->WhoIm() == SE) tmp = tmp->P;
-			if (tmp->WhoIm() == ROOT)
-                throw std::range_error ("no next");/* ItR is the eldest in tree*/
-			return *tmp->P;
-		}
-
-	/*********************************************************************************************************
-	*	@return	previous node in tree contine the first less of sequence key
-	*********************************************************************************************************/	
-		ref_node	prev() const {
-
-			if (not ItR) throw error_condition();
-			if (ItR->L_ch) return ItR->L_ch->eldest();
-
-			ptr_node	tmp = ItR;
-
-			while (tmp->WhoIm() == JU) tmp = tmp->P;
-			if (tmp->WhoIm() == ROOT)
-                throw std::range_error ("no prev");/* ItR is the young in tree*/
-			return *tmp->P;
-		}
-
-		__IterTree_&	operator++() {
-
-			try { ItR = &next(); }
-			catch (const error_condition&) { }
-			catch (const std::logic_error&) { nul_.P = NULL; }
-			catch (const std::range_error&) {
-
-				nul_.P = ItR;
-				if (ItR == &nul_) nul_.P = NULL;
-				else ItR = &nul_;
-			}
-			return *this;
-		}
-
-		__IterTree_&	operator--() {
-
-			try { ItR = &prev(); }
-			catch (const error_condition&) { }
-			catch (const std::logic_error&) { ItR = (nul_.P ? nul_.P : &nul_); nul_.P = NULL; return *this; }
-			catch (const std::range_error&) { ItR = &nul_; nul_.P = NULL; }
-			return *this;
-		}
-
-		__IterTree_&		operator << (key_type& key) {
-
-			try { while ( t_comp(key, *ItR->Ship, k_comp)) ItR = &prev();}
-			catch (const std::range_error&) { return *this; }
-			try { while ( t_comp(*ItR->Ship, key, k_comp)) ItR = &next(); }
-			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NULL; }
-			return *this;
-		}
-		__IterTree_&		operator >> (key_type& key) {
-
-			try { while (t_comp(key, *ItR->Ship, k_comp)) ItR = &prev(); }
-			catch (const std::range_error&) { return *this; }
-			try { while (not t_comp(key, *ItR->Ship, k_comp)) ItR = &next(); }
-			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NULL; }
-			return *this;
-		}
-
-};
 
 # include"./base_tree.hpp"
 
@@ -706,29 +525,29 @@ template < class Container, class v_map>
 
 	/*********************************************************************************************************
 	*	@brief	binary tree deletion, that call @a delete_fixup rb-tree in case of violated rules
-	*	@param	criminal	the node who has the shipment  referred by the key
+	*	@param	criminal	the node who has the shipment  refer__red by the key
 	*********************************************************************************************************/
 		void		_delete(__road* criminal) {
 
 			if (not criminal) return ;
 
-			__road* victim = &criminal->redemption();
+			__road* victim = &criminal->__redemption();
 
-			if (this->seed == victim) this->seed = victim->R_ch;
+			if (victim->WhoIm() == ROOT) this->seed = victim->R_ch;
 
-			std::swap (victim->Ship, criminal->Ship);
+			__road* ch = NULL;
+			victim->delete_fixup();
+			if (victim not_eq criminal) {
 
-			__road* ch = victim->L_ch ?  victim->L_ch :  victim->R_ch;
-
-			if (ch and ch->Color == RED) ch->recolor();
-			else victim->delete_fixup();
-
-			/* replace link to victim by who yastahik, ma ya3arfo hta had*/
-			{
-				if (ch) ch->P = victim->P;
-				if (victim->WhoIm() == JU)	victim->P->L_ch = ch;
-				else if (victim->WhoIm() == SE) victim->P->R_ch = ch;
+				std::swap (victim->Ship, criminal->Ship);
+				ch = victim->L_ch;
 			}
+			else ch = victim->R_ch;
+	
+			if (ch) ch->P = victim->P;
+			if (victim->WhoIm() == JU)	victim->P->L_ch = ch;
+			else if (victim->WhoIm() == SE) victim->P->R_ch = ch;
+
 			/* unlink the victim , mayaraf raso fin*/
 			victim->L_ch = victim->R_ch = victim->P = NULL;
 
