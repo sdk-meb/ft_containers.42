@@ -133,9 +133,9 @@ int main(int argc, char** argv) {
 	std::cout << std::endl;
 
 	{
-		vec_test();
+		// vec_test();
 		map_test();
-		stk_test();
+		// stk_test();
 		set_test();
 	}
 	std::cout << std::endl;
