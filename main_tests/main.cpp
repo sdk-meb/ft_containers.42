@@ -5,9 +5,9 @@
 
 # include "test.hpp"
 
-#define VEC false
-#define MAP false
-#define SET false
+#define VEC true
+#define MAP true
+#define SET true
 
 // MAX_RAM 4 294 967 296 ( 4294967296 )
 
@@ -94,15 +94,16 @@ int main(int argc, char** argv) {
 	{
 		map_int.insert(CCLIB::make_pair(rand(), rand()));
 	}
+	
 	int sum = 0;
 	for (int i = 0; MAP and i < 10000; i++)
 	{
 		int access = rand();
 		sum += map_int[access];
 	}
+
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
-	if (1)
 	{
 		CCLIB::map<int, int> copy = map_int;
 	}
@@ -118,7 +119,7 @@ int main(int argc, char** argv) {
 		int access = rand();
 		set_int.insert(access);
 	}
-	if (SET)
+
 	{
 		CCLIB::set<int> copy = set_int;
 	}
@@ -133,9 +134,9 @@ int main(int argc, char** argv) {
 	std::cout << std::endl;
 
 	{
-		// vec_test();
+		vec_test();
 		map_test();
-		// stk_test();
+		stk_test();
 		set_test();
 	}
 	std::cout << std::endl;

@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/07 23:47:02 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/08 15:57:48 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,19 +145,127 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	/*********************************************************************************************************
 	*	@brief		__red black tree adjustment, for for violating the properties(rules)
 	*********************************************************************************************************/
-		void		adjustment() {
+		__road_&		adjustment (__road_*& root) {
 
 			/* this is the new node which has red color */
+			try { get_G(); } catch (const std::logic_error&) { return *this; }
+
+			__road_* u;
+			__road_* k = this;
+			while (k->P->Color == __RED) {
+
+			if (k->P->WhoIm() == SE) {
+
+				try { u = &k->get_U();
+					if (u->Color not_eq __RED) std::__throw_logic_error ("internal catch");
+
+					u->Color = BLACK;
+					k->P->Color = BLACK;
+					k->get_G().Color = __RED;
+					k = &k->get_G();
+				}
+				catch (const std::logic_error&) { /* no uncel or uncel is black */
+
+					if (k->WhoIm() == JU) {
+
+						k = k->P;
+						k->rr (root);
+					}
+					k->P->Color = BLACK;
+					k->get_G().Color = __RED;
+					k->get_G().lr (root);
+				}
+			}
+			else if (k->P->WhoIm() == JU) {
+
+				try { u = &k->get_U();
+					if (u->Color not_eq __RED) std::__throw_logic_error ("internal catch");
+
+					u->Color = BLACK;
+					k->P->Color = BLACK;
+					k->get_G().Color = __RED;
+					k = &k->get_G();
+				}
+				catch (const std::logic_error&) { /* no uncel or uncel is black */
+
+					if (k->WhoIm() == SE) {
+
+						k = k->P;
+						k->lr (root);
+					}
+					k->P->Color = BLACK;
+					k->get_G().Color = __RED;
+					k->get_G().rr (root);
+				}
+			}
+			else break;
+			if (k->WhoIm() == ROOT) break;
 		}
+		return *this;
+	}
 
 	/*********************************************************************************************************
 	*	@brief	 rb-tree rules fixing
 	*********************************************************************************************************/
-		void		delete_fixup() {
+		void		delete_fixup (__road_*& root) {
 
-			/* a node which  in the progress of deletion (this),
+			/* here the node which in the progress of deletion (this),
 				in case of Right that meant no Left and vice versa,
 					no Left no Right means nothing */
+			if (Color not_eq BLACK) return;
+
+			__road_* ch = R_ch ? R_ch : L_ch;
+			if (ch and ch->Color == __RED) return ch->recolor();
+
+			try { if (get_S().Color == __RED) {
+
+				get_S().recolor();
+				P->recolor();
+				if (WhoIm() == JU)
+					P->lr (root);
+				else
+					P->rr (root);
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().L_ch and get_S().L_ch->Color == BLACK
+				and	get_S().R_ch and get_S().R_ch->Color == BLACK) {
+
+				get_S().Color = __RED;
+				if (P->Color == BLACK)
+					return P->delete_fixup (root);
+				P->Color = BLACK;
+				return ;
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().L_ch and get_S().R_ch
+				and	get_S().L_ch->Color != get_S().R_ch->Color) {
+
+				get_S().L_ch->Color = BLACK;
+				if (WhoIm() == JU){
+
+					get_S().Color = __RED;
+					get_S().rr (root);
+				}
+				else {
+
+					get_S().Color = __RED;
+					get_S().lr (root);
+				}
+			}	}
+			catch (const std::logic_error&) { }
+			try { if (get_S().R_ch and __RED == get_S().R_ch->Color and WhoIm() == JU) {
+
+				get_S().R_ch->Color = BLACK;
+				P->Color = BLACK;
+				P->lr (root);
+			}
+			else if (get_S().L_ch and __RED == get_S().L_ch->Color and WhoIm() == SE) {
+
+				get_S().L_ch->Color = BLACK;
+				P->Color = BLACK;
+				P->rr (root);
+			}	}
+			catch (const std::logic_error&) { };
 		}
 
 	/*********************************************************************************************************
@@ -173,31 +281,27 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*	@brief	Left  Rotation
 	*	@param	_node	indicator to being rotated
 	*********************************************************************************************************/
-		void	lr (__road_* _node=NULL) const {
+		void	lr (__road_*& root, __road_* _node=NULL) const {
 
 			if (not _node) _node = const_cast<__road_*>(this);;
 			if (not _node->R_ch) std::__throw_logic_error ("unqualified left rotation!");
-			return _node->unsaf_left_retate();
+			return _node->unsaf_left_retate (root);
 		}
 
-		void	unsaf_left_retate() throw() {
+		void	unsaf_left_retate (__road_*& root) throw() {
 
-			__road_*	y = this->R_ch;
+			__road_*	y = R_ch;
 
-			
-			std::swap(Ship, y->Ship);
-			std::swap(Color, y->Color);
+			R_ch = y->L_ch;
+			if (R_ch) R_ch->P = this;
 
-			this->R_ch = this->R_ch->R_ch;
-			if (this->R_ch)
-				this->R_ch->P = this;
-			y->R_ch = y->L_ch;
+			y->P = P;
+			if (WhoIm() == ROOT) root = y;
+			else if (WhoIm() == SE) P->R_ch = y;
+			else P->L_ch = y;
 
-			y->L_ch = this->L_ch;
-			if (this->L_ch)
-				y->L_ch->P = y;
-
-			this->L_ch = y;
+			y->L_ch = this;
+			P = y;
 		}
 
 
@@ -205,31 +309,30 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 	*	@brief	Rigth  Rotation
 	*	@param	_node	indicator to being rotated 
 	*********************************************************************************************************/
-		void	rr (__road_* _node=NULL) const {
+		void	rr (__road_*& root, __road_* _node=NULL) const {
 
 			if (not _node) _node = const_cast<__road_*>(this);; 
 			if (not _node->L_ch) std::__throw_logic_error ("unqualified left rotation!");
-			return _node->unsaf_rigth_retate();
+			return _node->unsaf_rigth_retate (root);
 		}
 
-		void	unsaf_rigth_retate() throw() {
+		void	unsaf_rigth_retate (__road_*& root) throw() {
 
-			__road_*	x = this->L_ch;
+			__road_* y = L_ch;
+			L_ch = y->R_ch;
+			if (y->R_ch)
+				y->R_ch->P = this;
 
-			std::swap(Ship, x->Ship);
-			std::swap(Color, x->Color);
+			y->P = P;
+			if (WhoIm() == ROOT)
+				root = y;
+			else if (WhoIm() == JU)
+				P->L_ch = y;
+			else
+				P->R_ch = y;
 
-			this->L_ch = this->L_ch->L_ch;
-			if (this->L_ch)
-				this->L_ch->P = this;
-
-			x->L_ch = x->R_ch;
-
-			x->R_ch = this->R_ch;
-			if (this->R_ch)
-				x->R_ch->P = x;
-
-			this->R_ch = x;
+			y->R_ch = this;
+			P = y;
 		}
 
 
@@ -404,7 +507,7 @@ template < class Container, class v_map>
 	*			, and thas not dealocated in destruction
 	*	@param ship shipment to insert
  	*********************************************************************************************************/
-		__road&		insert (const T_SHIP& ship) { return insert (__road (ship, this->_Alloc)); }
+		__road&		insert (const T_SHIP& ship, bool ex=true) { return insert (__road (ship, this->_Alloc), ex); }
 
 
 /***************************  @category	 __  BST # binary search tree  __  **********************************/
@@ -423,10 +526,11 @@ template < class Container, class v_map>
  	*********************************************************************************************************/
 		T_SHIP& search (key_type& key, bool ex) {
 
+			if (not ex) return  *insert(ft::make_pair (key, v_map()), false).Ship;
+
 			__road* find = search(key);
-			if (find) return *find->Ship;
-			if (ex) std::__throw_range_error ("key search");
-			return  *insert(ft::make_pair (key, v_map())).Ship;
+			if (not find) std::__throw_range_error ("key search");
+			return *find->Ship;
 		}
 
 /***************************  @category	 __  BST #  node deletion tree  __  *********************************/
@@ -509,17 +613,16 @@ template < class Container, class v_map>
 				if (not ex) return *sub;
 				std::__throw_overflow_error ("similar shipment violates the property of map rules") ;
 			}
-			return t_comp (*_node.Ship, *sub->Ship, this->k_comp)
-			?(
-				sub->L_ch = this->_SAlloc.allocate(1), this->_SAlloc.construct (sub->L_ch, _node),
-				sub->L_ch->P = sub, sub->L_ch->adjustment(),
-				++this->Size, *sub->L_ch
-			)
-			:(
-				sub->R_ch = this->_SAlloc.allocate(1), this->_SAlloc.construct (sub->R_ch, _node),
-				sub->R_ch->P = sub, sub->R_ch->adjustment(),
-				++this->Size, *sub->R_ch
-			);
+
+			__road*&	child = t_comp (*_node.Ship, *sub->Ship, this->k_comp)
+							? sub->L_ch : sub->R_ch;
+		
+			child = this->_SAlloc.allocate(1),
+
+			this->_SAlloc.construct (child, _node);
+			child->P = sub;
+			++this->Size;
+			return child->adjustment (this->seed);
 		}
 
 
@@ -533,10 +636,12 @@ template < class Container, class v_map>
 
 			__road* victim = &criminal->__redemption();
 
+			if (size() == 1) return destroy();
 			if (victim->WhoIm() == ROOT) this->seed = victim->R_ch;
+			else victim->delete_fixup (this->seed);
 
+			this->seed->recolor();
 			__road* ch = NULL;
-			victim->delete_fixup();
 			if (victim not_eq criminal) {
 
 				std::swap (victim->Ship, criminal->Ship);
@@ -547,6 +652,7 @@ template < class Container, class v_map>
 			if (ch) ch->P = victim->P;
 			if (victim->WhoIm() == JU)	victim->P->L_ch = ch;
 			else if (victim->WhoIm() == SE) victim->P->R_ch = ch;
+
 
 			/* unlink the victim , mayaraf raso fin*/
 			victim->L_ch = victim->R_ch = victim->P = NULL;
