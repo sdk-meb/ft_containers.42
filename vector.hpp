@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 04:08:25 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/30 11:47:27 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/09 17:58:19 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,16 @@
 #	define VECTOR_HPP
 
 # include<memory>
+# include<__split_buffer>
 
 # include"iterator.hpp"
 # include"utility.hpp"
 
 namespace ft {
 
+
+template <typename _T>
+	void swap (_T& a, _T&b);
 
 /*************************************************************************************************************
 *	@category Sequence Containers
@@ -74,10 +78,8 @@ template <class T, class Allocator = std::allocator<T> >
 					and inisialize the _End_Capacity with nulptr.
 				@param alloc allocator which the vector use it.
 			*/
-			explicit vector (const Allocator& alloc = allocator_type()): _Alloc(alloc) {
-
-				_replace (NULL);
-			}
+			explicit vector (const Allocator& alloc = allocator_type())
+				: _Alloc(alloc) { _replace (NULL); }
 
 			/**
 				@category copy Counstructor
@@ -168,20 +170,15 @@ template <class T, class Allocator = std::allocator<T> >
 			size_type		max_size (void) const		{ return _Alloc.max_size(); }
 			void			reserve (size_type new_cap)	{
 
-				if (new_cap == capacity() or new_cap < size()) return ;
+				if (capacity() == new_cap or new_cap < size()) return ;
+				if (new_cap > max_size()) std::__throw_length_error ("vector");
 
-				vector del(*this, true);
+				if (true) {
 
-				if (empty())
-					return not new_cap	? _replace (NULL)
-										: _replace (_Alloc.allocate(new_cap), 0, new_cap);
-
-				iterator old_start = begin();
-				iterator old_end = end() - ((new_cap >= size()) ? 0 : size() - new_cap);
-
-				_replace (_Alloc.allocate(new_cap), (new_cap > size()) ? size() : new_cap , new_cap);
-
-				move_range (old_start, old_end,  begin());
+					vector del(*this, true);
+					_replace (_Alloc.allocate (new_cap), size(), new_cap);
+					move_range (del.begin(), del.end(), begin());
+				}
 			}
 
 			size_type		capacity (void) const		{ return _End_Capacity - _Frst; }
@@ -241,22 +238,46 @@ template <class T, class Allocator = std::allocator<T> >
 				typename enable_if<__is_input_iter<typename InputIt::iterator_category>::value, iterator>::type 
 				insert (iterator pos, InputIt first, InputIt last) {
 
-					difference_type _offset = ft::distance (pos, end());
+	  				difference_type _offset = ft::distance (pos, end());
 					difference_type count =	ft::distance (first, last);
 
-					difference_type	range = -1;
-					if (&(*first) >= &(*begin()) and &(*first) < &(*end()))
-									range =	&(*first) - &(*begin());
-					_logical_reserve (size() + count);
+					vector del(*this, true or false);
+					vector __save(*this, false);
+					try {
+						const size_type ndl =  _logical_reserve (size() + count, false);
+						if (ndl not_eq capacity()) _replace (NULL);
+						else del._replace (NULL);
+						_logical_reserve (ndl);
+					}
+					catch (const std::length_error& lerr) {
 
+						del._replace (NULL);
+						if (__save.capacity() not_eq capacity())
+							vector del(*this, true or false);
+						_replace (__save);
+						__save._replace (NULL); throw lerr;
+						
+					}
 
-					if (_offset) move_range (end() - _offset, end(), (end() - _offset) + count);
-					if (range not_eq -1) first = begin() + range;
-					last = first + count;
+					if (del.capacity()) {
 
-					while (first not_eq last) _Alloc.construct((_Last++) -_offset, *(first++));
+						move_range (del.begin(), del.end() - _offset, begin()); /* size() = del.size() - _offset */
+						if (_offset) move_range (del.end() - _offset, del.end(), begin() + (del.size() - _offset) + count);
+						_replace (_Frst, del.size(), capacity());
+					}
+					else if (_offset) move_range (end() - _offset, end(), (end() - _offset) + count);
 
-					return end() - _offset - (_offset ? 1 : 0);
+					try { while (first not_eq last) _Alloc.construct((_Last++) -_offset, *(first++)); }
+					catch (const char* ss) {
+
+						del._replace (NULL);
+						if (__save.capacity() not_eq capacity())
+							vector del(*this, true or false);
+						_replace (__save);
+						__save._replace (NULL); throw ss;
+					}
+					__save._replace (NULL);
+					return end() - _offset;
 				}
 
 
@@ -279,10 +300,7 @@ template <class T, class Allocator = std::allocator<T> >
 				return first;
 			}
 
-			void		push_back (const_reference value) {
-
-				insert (end(), 1, value);
-			}
+			void		push_back (const_reference value) { insert (end(), 1, value); }
 
 			void		pop_back() {
 
@@ -292,20 +310,16 @@ template <class T, class Allocator = std::allocator<T> >
 
 			void		resize (size_type count, value_type value = value_type()) {
 
-				if (count > size()) {
-
-					if (capacity() < count) _logical_reserve (count);
-					insert (end(), count - size(), value);
-				}
+				if (count > size()) insert (end(), count - size(), value);
 				else if (count < size()) erase (begin() + count, end());
 			}
 
 			void		swap (vector& other) {
 
-				std::swap(_Frst, other._Frst);
-				std::swap(_Last, other._Last);
-				std::swap(_End_Capacity, other._End_Capacity);
-				std::swap(_Alloc, other._Alloc);
+				vector __swap(other, false);
+				other._replace(_Frst, size(), capacity());
+				_replace (__swap._Frst, __swap.size(), __swap.capacity());
+				__swap._replace(NULL);
 			}
 
 
@@ -347,7 +361,7 @@ template <class T, class Allocator = std::allocator<T> >
 		void	_del_capacity() {
 
 			clear();
-			if (capacity()) _Alloc.deallocate (_Frst, capacity());
+			if ( capacity() ) _Alloc.deallocate (_Frst, capacity());
 			_replace (NULL);
 		}
 
@@ -356,6 +370,10 @@ template <class T, class Allocator = std::allocator<T> >
 			_Frst			= F;
 			_Last			= _Frst + _size;
 			_End_Capacity	= _Frst + _cap;
+		}
+		void	_replace (const vector& c) {
+
+			this->_replace (c._Frst, c.size(), c.capacity());
 		}
 
 		/**
@@ -394,28 +412,31 @@ template <class T, class Allocator = std::allocator<T> >
 				if (idx >= size()) std::__throw_out_of_range( "vector");
 			}
 
-			void	_logical_reserve (size_type nedl) {
-			
-				if (capacity() >= nedl) return;
-				nedl =  std::max (capacity() * 2, nedl);
-				reserve (nedl);
+			size_type	_logical_reserve (size_type nedl, bool __set=true) {
+
+				if (capacity() >= nedl) return capacity();
+				if (nedl > max_size()) std::__throw_length_error ("vector");
+				nedl =  std::min ( std::max (capacity() * 2, nedl), max_size());
+
+				if (__set) {
+
+					vector del(*this, true);
+					_replace (_Alloc.allocate (nedl), size(), nedl);
+					move_range (del.begin(), del.end(), begin());
+				}
+				return nedl;
 			}
 
 		public:
 			~vector() { _del_capacity(); }
 	};
 
-
-
-template< class T, class Alloc >
-	bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs) {
-
-		return not (lhs not_eq rhs);
-	}
-template< class T, class Alloc >
-	bool operator!= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs) {
-
-		return (lhs.size() not_eq rhs.size()) or (not ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+template <typename _T>
+	void swap (_T& a, _T&b) {
+		
+		_T c = a;
+		a = b;
+		b = c;
 	}
 
 template< class T, class Alloc >
@@ -423,6 +444,7 @@ template< class T, class Alloc >
 
 		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
+
 template< class T, class Alloc >
 	bool operator>= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs) {
 
@@ -439,6 +461,19 @@ template< class T, class Alloc >
 
 		return not (rhs < lhs);
 	}
+
+template< class T, class Alloc >
+	bool operator!= (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs) {
+
+		return lhs < rhs or lhs > rhs;
+	}
+
+template< class T, class Alloc >
+	bool operator== (const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs) {
+
+		return not (lhs not_eq rhs);
+	}
+
 
 
 
