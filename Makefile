@@ -6,7 +6,7 @@
 #    By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/03 22:09:06 by mes-sadk          #+#    #+#              #
-#    Updated: 2023/02/07 23:18:12 by mes-sadk         ###   ########.fr        #
+#    Updated: 2023/02/08 16:15:14 by mes-sadk         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ SRC_FILES = main_tests/main.cpp \
 
 OBJ_FILES = $(SRC_FILES:.cpp=.opp)
 
-.PHONY: re fclean clean all
+.PHONY: re fclean clean all _org  _rec REC ORG diff
 
 %.opp:%.cpp  $(shell ls *.hpp) main_tests/test.hpp
 	@${CC} ${CFLAGS} $(INC)  -o $@ -c $< -D LEET
