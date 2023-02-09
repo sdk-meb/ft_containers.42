@@ -6,14 +6,16 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/04 12:12:02 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:23:38 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAP_ITER_HPP
-#define MAP_ITER_HPP
+#if  not defined(MAP_ITER_HPP) or defined(COMPL_MITR)
 
 #include "iterator.hpp"
+
+#ifndef  MAP_ITER_HPP
+# define MAP_ITER_HPP
 
 namespace ft {
 
@@ -32,7 +34,12 @@ namespace ft {
 				typedef typename INTERFACE::iterator_category		iterator_category;
 
 				map_iterator() : Super (typename treeiter::key_compare()) { }
-				explicit map_iterator(const treeiter& _x):Super(_x)  { }
+				explicit map_iterator(const treeiter& _x) :Super(_x)  { }
+				template <typename m_Iter>
+					map_iterator (typename ft::enable_if < 
+						ft::__is_bidirectional_iter < 
+						typename  m_Iter::iterator_category >::value, const m_Iter&>::type other)
+						: Super(other.Super) { }
 
 				map_iterator&	operator++ ()  { ++Super; return *this; }
 				map_iterator&	operator-- ()  { --Super; return *this; }
@@ -42,6 +49,8 @@ namespace ft {
 				reference	operator*() const	{ return *Super.ItR->Ship; }
 				pointer		operator->() const	{ return Super.ItR->Ship; }
 
+				template <typename _Iter>
+					void operator= (const _Iter& other) { Super = other.Super;}
 				template <typename, typename, typename, typename>
 					friend class map;
 				template <typename, typename, typename>
@@ -73,5 +82,7 @@ namespace ft {
 
 
 }
+#endif
+#define COMPL_MITR
 
 #endif

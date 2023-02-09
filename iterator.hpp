@@ -6,19 +6,19 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/09 13:12:58 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:01:33 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ITERATOR_HPP
-#	define ITERATOR_HPP
+#if	not defined(ITERATOR_HPP) or not defined(CMPL_ITER) 
 
 # include<cstddef>
 
 # include"utility.hpp"
 # include"type_traits.hpp"
 
-
+#ifndef ITERATOR_HPP
+#	define ITERATOR_HPP
 
 namespace ft {
 
@@ -188,30 +188,36 @@ template <class _Iter>
 			reference	operator[] (difference_type n) const { return *(*this + n); }
 	};
 
+}
+
+#endif
+
+#include "__compaires.hpp"
+
+
+#ifndef CMPL_ITER
+
+namespace ft {
 
 
 	template < typename Iter>
 		typename ft::enable_if < 
 			ft::__is_input_iter<typename Iter::iterator_category>::value,
-			bool >::type  operator== (const Iter& a, const Iter& b)	{ return &(*a) == &(*b); }
+			bool >::type  operator!= (const Iter& a, const Iter& b)	{
+				
+				return a.operator->() not_eq b.operator->();
+			}
 	template < typename Iter> 
 		typename ft::enable_if < 
 			ft::__is_input_iter<typename Iter::iterator_category>::value,
 			bool >::type 
-				operator< (const Iter& a, const Iter& b)	{ return &(*a) < &(*b); }
+				operator> (const Iter& a, const Iter& b) {
+					
+					return a.operator->() > b.operator->();
+				}
 
 
-	template<typename Iter>
-		bool operator!= (const Iter& a, const Iter& b) { return not (a == b); }
 
-	template<typename Iter>
-		bool operator> (const Iter& a, const Iter& b) { return  b < a; }
-
-	template<typename Iter>
-		bool operator<= (const Iter& a, const Iter& b) { return not (b < a); }
-
-	template<typename Iter>
-		bool operator>= (const Iter& a, const Iter& b) { return not (a <  b); }
 
 	template < class _InputIter>
 	typename _InputIter::difference_type
@@ -230,7 +236,10 @@ template <class _Iter>
 
 } /* namespace ft */
 
+#define CMPL_ITER
+
 #endif
+# endif
  
 
 
