@@ -6,7 +6,7 @@
 #    By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/03 22:09:06 by mes-sadk          #+#    #+#              #
-#    Updated: 2023/02/08 16:15:14 by mes-sadk         ###   ########.fr        #
+#    Updated: 2023/02/09 18:02:17 by mes-sadk         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,14 +15,14 @@ NAME = rec_cs
 
 N_ORG = 
 
-CC = c++
+CC = c++ -std=c++98
 INC = -I$(shell pwd)
 
 RED = #\033[0;31m
 GREEN =# \033[0;32m
 NO_COLOR = #\033[0m
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98 #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror  #-fsanitize=address
 
 SRC_FILES = main_tests/main.cpp \
 			main_tests/mmap.cpp \

@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/31 13:24:58 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/09 13:12:58 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,6 @@ template <class _Iter>
 
 	template<typename Iter>
 		bool operator>= (const Iter& a, const Iter& b) { return not (a <  b); }
-
 
 	template < class _InputIter>
 	typename _InputIter::difference_type
