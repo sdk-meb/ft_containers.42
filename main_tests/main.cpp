@@ -142,7 +142,9 @@ int main(int argc, char** argv) {
 	std::cout << std::endl;
 
 	#if  defined(__has_feature)
-	# if not __has_feature(address_sanitizer)
+	# if not __has_feature(address_sanitizer)\
+		and defined(leaks)\
+		and leaks
 	#if LEET ==  1337
     	system ("leaks rec_cs");
 	#else

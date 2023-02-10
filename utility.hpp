@@ -6,12 +6,11 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 16:19:08 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:35:45 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILITY_HPP
-# define UTILITY_HPP
+#if not defined(UTILITY_HPP)
 
 
 namespace   ft {
@@ -99,11 +98,14 @@ namespace   ft {
 
 };
 
+# define UTILITY_HPP
+#include "./type_traits.hpp"
+
 template <class T>
-    struct is_pair { static const bool value = false; };
+    struct is_pair : public ft::false_type { };
 
 template <class T1, class T2>
-    struct is_pair< ft::pair<T1, T2> > { static const bool value = true; };
+    struct is_pair< ft::pair<T1, T2> > : public ft::true_type { };
 
 
 
