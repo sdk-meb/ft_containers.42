@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:29:08 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/09 18:34:54 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 16:19:08 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,20 @@ namespace   ft {
 		bool	equal (InputIt1 frst1, InputIt1 last1, InputIt2 frst2){
 
 			for (; frst1 not_eq last1; ++frst1, ++frst2)
-				if (*frst1 not_eq *frst1)
+				if (frst1.operator*() not_eq frst2.operator*())
 					return false;
 			return true;
 		}
 
+
 	template < class InputIt1, class InputIt2>
 		bool	lexicographical_compare (InputIt1 frst1, InputIt1 last1, InputIt2 frst2, InputIt2 last2 ) {
 
-			for (; (frst1 not_eq last1) and (frst2 not_eq last2); ++frst1, (void) ++frst2) {
+			for (; frst1 not_eq last1 and frst2 not_eq last2; ++frst1, ++frst2) {
 
-				if (*frst1 < *frst2)
+				if (frst1.operator*() < frst2.operator*())
 					return true;
-				if (*frst2 < *frst1)
+				if (frst2.operator*() < frst1.operator*())
 					return false;
 			}
 
@@ -81,11 +82,11 @@ namespace   ft {
 	template < class InputIt1, class InputIt2, class Compare>
 		bool lexicographical_compare (InputIt1 frst1, InputIt1 last1, InputIt2 frst2, InputIt2 last2, Compare comp ) {
 
-			for (; (frst1 not_eq last1) and (frst2 not_eq last2); ++frst1, (void) ++frst2) {
+			for (; frst1 not_eq last1 and frst2 not_eq last2; ++frst1, ++frst2) {
 
-				if (comp(*frst1, *frst2))
+				if (comp (*frst1, *frst2))
 					return true;
-				if (comp(*frst2, *frst1))
+				if (comp (*frst2, *frst1))
 						return false;
 			}
 			return (frst1 == last1) and (frst2 not_eq last2);

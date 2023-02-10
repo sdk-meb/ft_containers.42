@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 11:01:33 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:15:49 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,12 +211,10 @@ namespace ft {
 		typename ft::enable_if < 
 			ft::__is_input_iter<typename Iter::iterator_category>::value,
 			bool >::type 
-				operator> (const Iter& a, const Iter& b) {
+				operator< (const Iter& a, const Iter& b) {
 					
-					return a.operator->() > b.operator->();
+					return a.operator->() < b.operator->();
 				}
-
-
 
 
 	template < class _InputIter>
