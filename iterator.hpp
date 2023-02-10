@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/24 15:13:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 17:15:49 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 19:02:39 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ struct random_access_iterator_tag : public bidirectional_iterator_tag { };/* Lag
 template< class _Tp, class Iter_traits = iterator_traits<_Tp> >
 	struct normal_iterator {
 
+			typedef 		 Iter_traits					iterator_type;
 			typedef typename Iter_traits::difference_type	difference_type;
 			typedef typename Iter_traits::value_type		value_type;
 			typedef typename Iter_traits::pointer			pointer;
@@ -155,6 +156,7 @@ template <class _Iter>
 	struct reverse_iterator {
 
 			typedef _Iter									iterator_type;
+			typedef	typename _Iter::value_type				value_type;
 			typedef typename _Iter::difference_type			difference_type;
 			typedef typename _Iter::pointer					pointer;
 			typedef typename _Iter::reference				reference;

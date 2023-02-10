@@ -6,18 +6,13 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/01/31 10:56:16 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 19:17:30 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef _TYPE_TRAITS_HPP
-# define _TYPE_TRAITS_HPP
-
+#if not defined(_TYPE_TRAITS_HPP)
 
 namespace ft {
-
-
-	namespace __Fundamental_Integral_Types {
 
 
 		template < class T, T v>
@@ -33,7 +28,7 @@ namespace ft {
 			struct is_integral< bool> : public true_type { };
 		template < >
 			struct is_integral< char> : public true_type { };
-#ifdef	__APPLE__2
+#ifdef	__APPLE__
 		template < >
 			struct is_integral< char16_t> : public true_type { };
 		template < >
@@ -61,9 +56,8 @@ namespace ft {
 			struct is_integral< unsigned long int> : public true_type { };
 		template < >
 			struct is_integral< unsigned long long int> : public true_type { };
-	}
 
-	namespace __Enable_if {
+
 
 		// Primary template.
 		/**
@@ -78,15 +72,12 @@ namespace ft {
   		// Partial specialization for true.
 		template < class T>
 			struct enable_if<true, T> { typedef T type; };
-	}
 
 
-
-	using namespace __Fundamental_Integral_Types;
-	using namespace __Enable_if;
 
 
 }/* END of namesp ft */
 
+# define _TYPE_TRAITS_HPP
 
 # endif
