@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 17:18:15 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 10:49:36 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:34:41 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,8 +304,23 @@ template <
 				std::swap (_Alloc, other._Alloc);
 			}
 
+	friend bool	operator!= (const set& lhs, const set& rhs)	{
+		
+			return lhs.size() not_eq rhs.size() or not ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
 
-    };
+	friend bool	operator< (const set& lhs, const set& rhs) {
+	
+			return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+
+	friend bool	operator> (const set& lhs, const set& rhs) {
+	
+			return ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end());
+	}
+
+};
+
 
 
 }

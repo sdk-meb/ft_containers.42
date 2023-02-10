@@ -5,9 +5,9 @@
 
 # include "test.hpp"
 
-#define VEC false
+#define VEC true
 #define MAP true
-#define SET false
+#define SET true
 
 // MAX_RAM 4 294 967 296 ( 4294967296 )
 
