@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 08:14:29 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 11:04:55 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 16:56:19 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,6 @@ template <typename TF, typename comp >
     typename ft::enable_if < not is_pair<TF>::value , bool >::type
 		t_comp (const TF& f1, const TF& f2, const comp& cmp) { return cmp (f1, f2); }
 
-template <typename __V>
-    typename ft::enable_if < is_pair<__V>::value , bool >::type
-        operator!= (const __V& pr1, const __V& pr2) {
-
-            return pr1.first not_eq pr2.first;
-        }
 
 /**
  * @brief comparing operators_
@@ -59,33 +53,41 @@ template <typename __V>
 */
 template <typename __V>
     typename ft::enable_if < is_pair<__V>::value , bool >::type
+        operator!= (const __V& pr1, const __V& pr2) {
+
+            return pr1.second not_eq pr2.second or pr1.first not_eq pr2.first;
+        }
+
+template <typename __V>
+    typename ft::enable_if < is_pair<__V>::value , bool >::type
+        operator< (const __V& _v1, const __V& _v2) {
+
+            return _v1.first < _v2.first or (not (_v2.first < _v1.first) and _v1.second < _v2.second);
+        }
+
+template <typename __V>
+    typename ft::enable_if < is_pair<__V>::value , bool >::type
         operator> (const __V& _v1, const __V& _v2) {
 
-            return _v1.first > _v2.first;
+            return _v2 < _v1;
         }
 
 template <typename __V>
-    bool    operator== (const __V& _v1, const __V& _v2) {
-
-            return  not (_v1 not_eq _v2);
-        }
-
-template <typename __V>
-    bool    operator< (const __V& _v1, const __V& _v2) {
-
-            return _v2 > _v1;
-        }
-
-template <typename __V>
-    bool    operator>= (const __V& _v1, const __V& _v2) {
+        bool    operator>= (const __V& _v1, const __V& _v2) {
 
             return not (_v1 < _v2);
         }
 
 template <typename __V>
-    bool    operator<= (const __V& _v1, const __V& _v2) {
+        bool    operator<= (const __V& _v1, const __V& _v2) {
 
-            return not (_v2 > _v1);
+            return not (_v2 < _v1);
+        }
+
+template <typename __V>
+        bool    operator== (const __V& _v1, const __V& _v2) {
+
+            return  not (_v1 not_eq _v2);
         }
 
 }

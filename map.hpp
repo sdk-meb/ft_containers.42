@@ -353,13 +353,21 @@ template	<
 					return *this;
 				}
 
-};
+}; /* map ./././ */
 
 template <class key, class T, class Comp, class Alloc>
 	bool operator!= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
 
-		return (lhs.size() not_eq rhs.size()) or (not ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+		return lhs.size() not_eq rhs.size() or not ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
+
+
+template <class key, class T, class Comp, class Alloc>
+	bool operator> (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
+
+		return ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end());
+	}
+
 
 template <class key, class T, class Comp, class Alloc>
 	bool operator< (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
@@ -367,28 +375,6 @@ template <class key, class T, class Comp, class Alloc>
 		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
-template <class key, class T, class Comp, class Alloc>
-	bool operator== (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
-
-		return not (lhs not_eq rhs);
-	}
-
-template <class key, class T, class Comp, class Alloc>
-	bool operator>= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
-
-		return not (lhs < rhs);
-	}
-
-template <class key, class T, class Comp, class Alloc>
-	bool operator> (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
-
-		return rhs < lhs;
-	}
-template <class key, class T, class Comp, class Alloc>
-	bool operator<= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
-
-		return not (rhs < lhs);
-	}
 
 
 }
