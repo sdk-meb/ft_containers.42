@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 17:30:56 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 11:06:50 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 18:13:29 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,34 +30,40 @@ template < class DS >
 		typedef typename DS::key_type		key_type;
 		typedef typename DS::key_compare		key_compare;
 		typedef	__road_<value_type>	__node;
+		typedef	 std::binary_function<key_type, key_type, bool>	_kcmp_base;
 	
 		typedef	__node&						ref_node;
 		typedef	__node*						ptr_node;
 	
-        const key_compare&    k_comp;
+        _kcmp_base*    k_comp;
 		ptr_node		ItR;
 		__node			nul_;
 
 		template <typename _IterTT>
 			void	operator= (const _IterTT& tree) {
 
+			if (tree.k_comp) delete k_comp;
+			k_comp = reinterpret_cast<_kcmp_base*> (new typename _IterTT::key_compare());
 			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
 			else ItR = tree.ItR;
 		}
 		void	operator= (const __IterTree_& tree) {
 
+			if (tree.k_comp) delete k_comp;
+			k_comp = reinterpret_cast<_kcmp_base*> (new key_compare());
 			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
 			else ItR = tree.ItR;
 		}
 			
 
-		__IterTree_ (const key_compare& cmp=key_compare()) : k_comp(cmp) { ItR = &nul_; }
-		__IterTree_ (ref_node _P, const key_compare& cmp, bool) : k_comp(cmp) { nul_.P = &_P; ItR = &nul_; }
-		__IterTree_ (ref_node tree, const key_compare& cmp): k_comp(cmp), ItR(&tree) { }
-		__IterTree_ (ptr_node tree, const key_compare& cmp): k_comp(cmp), ItR(tree) { }
+		__IterTree_ ( ) : k_comp(NULL) { ItR = &nul_; }
+		__IterTree_ (const key_compare&) : k_comp(NULL) { ItR = &nul_; }
+		__IterTree_ (ref_node _P, const key_compare&, bool) { k_comp = reinterpret_cast<_kcmp_base*> (new key_compare()); nul_.P = &_P; ItR = &nul_; }
+		__IterTree_ (ref_node tree, const key_compare&): ItR(&tree) { k_comp = reinterpret_cast<_kcmp_base*> (new key_compare()); }
+		__IterTree_ (ptr_node tree, const key_compare&): ItR(tree) { k_comp = reinterpret_cast<_kcmp_base*> (new key_compare()); }
 		// template <typename _IterTT>
-			__IterTree_ (const __IterTree_& tree) : k_comp(tree.k_comp)  { *this = tree; }
-
+			__IterTree_ (const __IterTree_& tree) :k_comp(NULL) { *this = tree; }
+		~__IterTree_ ( ) { if (k_comp) delete k_comp; }
 	/*********************************************************************************************************
 	*	@return	next node in tree contine the next sequence key
 	*********************************************************************************************************/	
@@ -115,17 +121,17 @@ template < class DS >
 
 		__IterTree_&		operator << (key_type& key) {
 
-			try { while ( ft::t_comp(key, *ItR->Ship, k_comp)) ItR = &prev();}
+			try { while ( ft::t_comp(key, *ItR->Ship, *reinterpret_cast<key_compare*>(k_comp))) ItR = &prev();}
 			catch (const std::range_error&) { return *this; }
-			try { while ( ft::t_comp(*ItR->Ship, key, k_comp)) ItR = &next(); }
+			try { while ( ft::t_comp(*ItR->Ship, key, *reinterpret_cast<key_compare*>(k_comp))) ItR = &next(); }
 			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NULL; }
 			return *this;
 		}
 		__IterTree_&		operator >> (key_type& key) {
 
-			try { while (ft::t_comp(key, *ItR->Ship, k_comp)) ItR = &prev(); }
+			try { while (ft::t_comp(key, *ItR->Ship, *reinterpret_cast<key_compare*>(k_comp))) ItR = &prev(); }
 			catch (const std::range_error&) { return *this; }
-			try { while (not ft::t_comp(key, *ItR->Ship, k_comp)) ItR = &next(); }
+			try { while (not ft::t_comp(key, *ItR->Ship, *reinterpret_cast<key_compare*>(k_comp))) ItR = &next(); }
 			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NULL; }
 			return *this;
 		}

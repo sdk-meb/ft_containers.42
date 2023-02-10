@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 21:47:28 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 11:23:38 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 18:44:22 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,11 @@ namespace ft {
 				typedef typename INTERFACE::reference				reference;
 				typedef typename INTERFACE::iterator_category		iterator_category;
 
-				map_iterator() : Super (typename treeiter::key_compare()) { }
+				map_iterator() { }
 				explicit map_iterator(const treeiter& _x) :Super(_x)  { }
-				template <typename m_Iter>
-					map_iterator (typename ft::enable_if < 
-						ft::__is_bidirectional_iter < 
-						typename  m_Iter::iterator_category >::value, const m_Iter&>::type other)
-						: Super(other.Super) { }
+				template <typename __triter>
+					map_iterator (const map_iterator<__triter>& other)
+					{ Super = other.Super; }
 
 				map_iterator&	operator++ ()  { ++Super; return *this; }
 				map_iterator&	operator-- ()  { --Super; return *this; }
@@ -51,6 +49,7 @@ namespace ft {
 
 				template <typename _Iter>
 					void operator= (const _Iter& other) { Super = other.Super;}
+				void operator= (const map_iterator& other) { Super = other.Super;}
 				template <typename, typename, typename, typename>
 					friend class map;
 				template <typename, typename, typename>
@@ -79,6 +78,49 @@ namespace ft {
 						{ this->Super = other.Super; }
 
 		};
+
+
+template < typename Iter1, typename Iter2>
+	typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter1::iterator_category>::value and
+			ft::__is_input_iter<typename Iter2::iterator_category>::value,
+		bool >::type  
+		operator!= (const Iter1& a, const Iter2& b)	{ return a.operator->() not_eq b.operator->(); }
+
+template < typename Iter1, typename Iter2> 
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter1::iterator_category>::value and
+			ft::__is_input_iter<typename Iter2::iterator_category>::value,
+		bool >::type 
+		operator< (const Iter1& a, const Iter2& b) { return a.operator->() < b.operator->(); }
+
+template < typename Iter1, typename Iter2> 
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter1::iterator_category>::value and
+			ft::__is_input_iter<typename Iter2::iterator_category>::value,
+		bool >::type 
+        operator> (const Iter1& a, const Iter2& b) { return b < a; }
+
+template < typename Iter1, typename Iter2> 
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter1::iterator_category>::value and
+			ft::__is_input_iter<typename Iter2::iterator_category>::value,
+		bool >::type
+		operator>= (const Iter1& a, const Iter2& b) { return not (a < b); }
+
+template < typename Iter1, typename Iter2> 
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter1::iterator_category>::value and
+			ft::__is_input_iter<typename Iter2::iterator_category>::value,
+		bool >::type
+		operator<= (const Iter1& a, const Iter2& b) { return not (b < a); }
+
+template < typename Iter1, typename Iter2> 
+		typename ft::enable_if < 
+			ft::__is_input_iter<typename Iter1::iterator_category>::value and
+			ft::__is_input_iter<typename Iter2::iterator_category>::value,
+		bool >::type
+		operator== (const Iter1& a, const Iter2& b) { return  not (a not_eq b); }
 
 
 }
