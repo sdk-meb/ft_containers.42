@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:46:23 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/08 15:57:48 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:07:18 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # include"type_traits.hpp"
 # include"utility.hpp"
 # include"iterator.hpp"
+# include"./__compaires.hpp"
 
 			# define	__RED	1
 			# define	BLACK	0
@@ -427,24 +428,7 @@ template < class T_SHIP, class Allocator = std::allocator<T_SHIP> >
 template < class T_SHIP, class Alloc>
 	T_SHIP	__road_<T_SHIP, Alloc>::nul_;
 
-
-
-template <typename TP, typename TF, typename comp >
-    typename ft::enable_if < is_pair<TP>::value and not is_pair<TF>::value , bool >::type
-        t_comp (const TP& pr, const TF& frst, const comp& cmp) { return cmp (pr.first, frst); }
-
-template <typename TF, typename TP, typename comp >
-    typename ft::enable_if < is_pair<TP>::value and not is_pair<TF>::value , bool >::type
-        t_comp (const TF& frst, const TP& pr, const comp& cmp) { return cmp (frst, pr.first); }
-
-template <typename TP, typename comp>
-    typename ft::enable_if < is_pair<TP>::value , bool >::type
-        t_comp (const TP& pr1, const TP& pr2, const comp& cmp) { return cmp (pr1.first, pr2.first); }
-
-template <typename TF, typename comp >
-    typename ft::enable_if < not is_pair<TF>::value , bool >::type
-		t_comp (const TF& f1, const TF& f2, const comp& cmp) { return cmp (f1, f2); }
-
+# include "__compaires.hpp"
 
 # include"./base_tree.hpp"
 
@@ -465,8 +449,9 @@ template < class Container, class v_map>
 		typedef typename Container::value_type			T_SHIP;
 
 		typedef typename Allocator::template rebind<__road_<T_SHIP> >::other	SAllocator;
+
 		typedef const typename Container::key_type			key_type;
-		typedef typename Container::key_compare			key_compare;
+		typedef typename Container::key_compare				key_compare;
 
 		typedef		__road_<T_SHIP, Allocator>				__road;
 
@@ -606,15 +591,15 @@ template < class Container, class v_map>
 
 			__road*	sub = &this->find_place (*_node.Ship);
 
-			if (not t_comp (*_node.Ship, *sub->Ship, this->k_comp) and
-				not t_comp (*sub->Ship, *_node.Ship, this->k_comp)) {
+			if (not ft::t_comp (*_node.Ship, *sub->Ship, this->k_comp) and
+				not ft::t_comp (*sub->Ship, *_node.Ship, this->k_comp)) {
 
 				_node.destroy(this->_Alloc,this-> _SAlloc);
 				if (not ex) return *sub;
 				std::__throw_overflow_error ("similar shipment violates the property of map rules") ;
 			}
 
-			__road*&	child = t_comp (*_node.Ship, *sub->Ship, this->k_comp)
+			__road*&	child = ft::t_comp (*_node.Ship, *sub->Ship, this->k_comp)
 							? sub->L_ch : sub->R_ch;
 		
 			child = this->_SAlloc.allocate(1),

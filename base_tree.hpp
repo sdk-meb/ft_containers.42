@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 17:30:56 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/07 22:42:07 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:06:50 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 # include"utility.hpp"
 
+# include"./__compaires.hpp"
 
 /*************************************************************************************************************
 *	@brief	iterator helper, manage pointing tree
@@ -37,16 +38,25 @@ template < class DS >
 		ptr_node		ItR;
 		__node			nul_;
 
-		__IterTree_ (const key_compare& cmp=key_compare()) : k_comp(cmp) { ItR = &nul_; }
-		__IterTree_ (ref_node _P, const key_compare& cmp, bool) : k_comp(cmp) { nul_.P = &_P; ItR = &nul_; }
-		__IterTree_ (ref_node tree, const key_compare& cmp): k_comp(cmp), ItR(&tree) { }
-		__IterTree_ (ptr_node tree, const key_compare& cmp): k_comp(cmp), ItR(tree) { }
-		__IterTree_ (const __IterTree_& tree) : k_comp(tree.k_comp)  { *this = tree; }
+		template <typename _IterTT>
+			void	operator= (const _IterTT& tree) {
+
+			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
+			else ItR = tree.ItR;
+		}
 		void	operator= (const __IterTree_& tree) {
 
 			if (tree.ItR and tree.ItR->Ship == nul_.Ship) { nul_.P = tree.ItR->P ; ItR = &nul_; }
 			else ItR = tree.ItR;
 		}
+			
+
+		__IterTree_ (const key_compare& cmp=key_compare()) : k_comp(cmp) { ItR = &nul_; }
+		__IterTree_ (ref_node _P, const key_compare& cmp, bool) : k_comp(cmp) { nul_.P = &_P; ItR = &nul_; }
+		__IterTree_ (ref_node tree, const key_compare& cmp): k_comp(cmp), ItR(&tree) { }
+		__IterTree_ (ptr_node tree, const key_compare& cmp): k_comp(cmp), ItR(tree) { }
+		// template <typename _IterTT>
+			__IterTree_ (const __IterTree_& tree) : k_comp(tree.k_comp)  { *this = tree; }
 
 	/*********************************************************************************************************
 	*	@return	next node in tree contine the next sequence key
@@ -105,17 +115,17 @@ template < class DS >
 
 		__IterTree_&		operator << (key_type& key) {
 
-			try { while ( t_comp(key, *ItR->Ship, k_comp)) ItR = &prev();}
+			try { while ( ft::t_comp(key, *ItR->Ship, k_comp)) ItR = &prev();}
 			catch (const std::range_error&) { return *this; }
-			try { while ( t_comp(*ItR->Ship, key, k_comp)) ItR = &next(); }
+			try { while ( ft::t_comp(*ItR->Ship, key, k_comp)) ItR = &next(); }
 			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NULL; }
 			return *this;
 		}
 		__IterTree_&		operator >> (key_type& key) {
 
-			try { while (t_comp(key, *ItR->Ship, k_comp)) ItR = &prev(); }
+			try { while (ft::t_comp(key, *ItR->Ship, k_comp)) ItR = &prev(); }
 			catch (const std::range_error&) { return *this; }
-			try { while (not t_comp(key, *ItR->Ship, k_comp)) ItR = &next(); }
+			try { while (not ft::t_comp(key, *ItR->Ship, k_comp)) ItR = &next(); }
 			catch (const std::range_error&) { ItR = &nul_; ItR->Ship = NULL; }
 			return *this;
 		}
@@ -159,9 +169,9 @@ template < class Container >
 			if (not sub) sub = const_cast<__road*> (seed);
 			while (sub) {
 
-				if (t_comp (key, *sub->Ship, this->k_comp))
+				if (ft::t_comp (key, *sub->Ship, this->k_comp))
 						sub = sub->L_ch;
-				else if (t_comp (*sub->Ship, key, this->k_comp))
+				else if (ft::t_comp (*sub->Ship, key, this->k_comp))
 						sub = sub->R_ch;
 				else break ;
 			}
@@ -177,9 +187,9 @@ template < class Container >
 			__road* sub = const_cast<__road*> (seed);
 			while (sub) {
 
-				if (t_comp (ship, *sub->Ship, this->k_comp) and sub->L_ch)
+				if (ft::t_comp (ship, *sub->Ship, this->k_comp) and sub->L_ch)
 						sub = sub->L_ch;
-				else if (t_comp (*sub->Ship, ship, this->k_comp) and sub->R_ch)
+				else if (ft::t_comp (*sub->Ship, ship, this->k_comp) and sub->R_ch)
 						sub = sub->R_ch;
 				else break ;
 			}

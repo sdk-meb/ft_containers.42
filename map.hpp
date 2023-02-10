@@ -129,8 +129,8 @@ template	<
 	*	@exception out_of_range
 	*	@param	key
 	*********************************************************************************************************/
-			mapped_type&			at (const key_type& key)		{ return tree.search(key, __EXCEPTIONS); }
-			const mapped_type&		at (const key_type& key) const	{ return tree.search(key, __EXCEPTIONS); }
+			mapped_type&			at (const key_type& key)		{ return tree.search(key, __EXCEPTIONS).second; }
+			const mapped_type&		at (const key_type& key) const	{ return tree.search(key, __EXCEPTIONS).second; }
 
 	/*********************************************************************************************************
 	*	@brief	get mapped value by key scershing, ifnot endefined behavier
@@ -341,19 +341,19 @@ template	<
 				allocator_type	_Alloc ;
 				_tree			tree;
 
-			map&			operator= (const map& other) {
+			public:
+				map&	operator= (const map& other) {
 
-				if (this == &other) return *this;
+					if (this == &other) return *this;
 
-				tree .destroy();
-				if (other.size())
-					tree = const_cast<map&> (other).tree;
+					tree .destroy();
+					if (other.size())
+						tree = const_cast<map&> (other).tree;
 
-				return *this;
-			}
+					return *this;
+				}
 
 };
-
 
 template <class key, class T, class Comp, class Alloc>
 	bool operator!= (const ft::map<key, T, Comp, Alloc>& lhs, const ft::map<key, T, Comp, Alloc>& rhs) {
