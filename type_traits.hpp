@@ -6,7 +6,7 @@
 /*   By: mes-sadk <mes-sadk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 17:49:41 by mes-sadk          #+#    #+#             */
-/*   Updated: 2023/02/10 19:17:30 by mes-sadk         ###   ########.fr       */
+/*   Updated: 2023/02/11 10:35:30 by mes-sadk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,14 @@ namespace ft {
 
 
 		template < class T, T v>
-			struct integral_constant { static const T value = v; };
+			struct integral_constant {
+
+					typedef T               	value_type;
+   					typedef integral_constant	type;
+
+				static const value_type value = v;
+				operator value_type() const throw() { return value; }
+			};
 
 		typedef integral_constant< bool, true>	true_type;
 		typedef integral_constant< bool, false>	false_type;
@@ -56,7 +63,6 @@ namespace ft {
 			struct is_integral< unsigned long int> : public true_type { };
 		template < >
 			struct is_integral< unsigned long long int> : public true_type { };
-
 
 
 		// Primary template.
